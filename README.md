@@ -8,13 +8,13 @@
 <br>
 
 ## 🛠 BE 기술 스택
-- <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Javascript/javascript3.svg">
-- <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/NodeJS/nodejs3.svg">
-- DB: <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/MySQL/mysql2.svg"> <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prisma/prisma2.svg">
-- Cloud: <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AWS/aws2.svg">
-- API test: <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Postman/postman3.svg">
+- <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Javascript/javascript3.svg">
+- <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/NodeJS/nodejs3.svg">
+- DB: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/MySQL/mysql2.svg"> <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prisma/prisma2.svg">
+- Cloud: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AWS/aws2.svg">
+- API test: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Postman/postman3.svg">
 - API Documentation: Swagger UI
-- Formatting: <img height="15" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prettier/prettier2.svg">
+- Formatting: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prettier/prettier2.svg">
 <br>
 
 ## 🌳 브랜치 전략
