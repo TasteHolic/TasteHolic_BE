@@ -8,7 +8,7 @@
 <br>
 
 ## 🛠 BE 기술 스택
-- <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Javascript/javascript3.svg" style="vertical-align: middle>
+- <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Javascript/javascript3.svg" style="vertical-align: middle">
 - <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/NodeJS/nodejs3.svg">
 - DB: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/MySQL/mysql2.svg"> <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prisma/prisma2.svg">
 - Cloud: <img height="18" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AWS/aws2.svg">
