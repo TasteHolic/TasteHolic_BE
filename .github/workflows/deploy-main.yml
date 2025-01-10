@@ -63,7 +63,7 @@ jobs:
         run: |
           ssh tasteholic-umc-7th '
             echo "[Unit]
-            Description=UMC 7th Project 
+            Description=UMC 7th Project
             After=network.target
 
             [Service]
