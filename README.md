@@ -8,11 +8,11 @@
 <br>
 
 ## 🛠 BE 기술 스택
-- JS
-- Node.js
-- DB: mySQL, Prisma
-- Cloud: EC2
-- API test: Postman
+- <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Javascript/javascript3.svg">
+- <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/NodeJS/nodejs3.svg">
+- DB: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/MySQL/mysql2.svg"> <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prisma/prisma2.svg">
+- Cloud: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AWS/aws2.svg">
+- API test: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Postman/postman3.svg">
 - Swagger UI
 <br>
 
