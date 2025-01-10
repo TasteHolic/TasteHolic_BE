@@ -52,12 +52,12 @@ jobs:
       - name: Install dependencies
         run: |
           ssh tasteholic-umc-7th 'npm install --prefix /opt/app/'
-          ssh playground-umc-7th 'cd /opt/app; npm exec prisma generate'
-      
-       - name: Apply prisma migrations
+          ssh tasteholic-umc-7th 'cd /opt/app; npm exec prisma generate'
+
+      - name: Apply prisma migrations
         if: steps.paths-filter.outputs.prisma == 'true'
         run: |
-          ssh playground-umc-7th 'cd /opt/app; npm exec prisma migrate deploy'
+          ssh tasteholic-umc-7th 'cd /opt/app; npm exec prisma migrate deploy'
 
       - name: Copy systemd service file
         run: |
