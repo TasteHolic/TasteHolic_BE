@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: TasteHolic API 
+  description: TasteHolic API 서버 문서
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000 # 추후 수정 필요
+    description: Local server
+# 예시시
+paths:
+  /home/recommend:
+    get:
+      summary: 추천 칵테일 가져오기
+      description: 매일 랜덤으로 칵테일을 추천.
+      responses:
+        200:
+          description: 추천된 칵테일 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "cocktail_123"
+                  name:
+                    type: string
+                    example: "Margarita"
+                  image:
+                    type: string
+                    example: "https://example.com/images/margarita.png"
+                  taste:
+                    type: string
+                    example: "Sweet & Sour"
+                  alcohol_level:
+                    type: number
+                    example: 15
+                  description:
+                    type: string
+                    example: "A refreshing cocktail with lime and tequila."
+
+        
+
