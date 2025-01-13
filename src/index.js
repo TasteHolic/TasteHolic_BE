@@ -19,6 +19,6 @@ const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening on port ${port}`);
 });
