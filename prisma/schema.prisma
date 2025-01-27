@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model AlcoholTastingNotes {
   id           BigInt    @id @default(autoincrement())
   userId       BigInt
@@ -35,7 +34,6 @@ model Alcohols {
   nameKor             String                @db.VarChar(255)
   categoryEng         String                @db.VarChar(255)
   categoryKor         String                @db.VarChar(255)
-  group               String                @db.VarChar(255)
   aromas              Json?
   tastes              Json?
   finishes            Json?
@@ -62,23 +60,21 @@ model CocktailFavorites {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Cocktails {
-  id                BigInt              @id @default(autoincrement())
-  nameEng           String              @db.VarChar(255)
-  nameKor           String              @db.VarChar(255)
-  categoryEng       String              @db.VarChar(255)
-  categoryKor       String              @db.VarChar(255)
-  ingredients       Json?
-  recipe            String?             @db.Text
-  aromas            Json?
-  tastes            Json?
-  abv               Int?
-  timing            Json?
-  color             Json?
-  createdAt         DateTime            @default(now()) @db.DateTime(0)
-  updatedAt         DateTime            @default(now()) @db.DateTime(0)
-  glass             String?             @db.VarChar(255)
-  glassSize         String?             @db.VarChar(255)
-  CocktailFavorites CocktailFavorites[]
+  id                   BigInt                 @id @default(autoincrement())
+  nameEng              String                 @db.VarChar(255)
+  nameKor              String                 @db.VarChar(255)
+  ingredients          Json?
+  recipe               String?                @db.Text
+  aromas               Json?
+  tastes               Json?
+  abv                  Int?
+  timing               Json?
+  color                Json?
+  createdAt            DateTime               @default(now()) @db.DateTime(0)
+  updatedAt            DateTime               @default(now()) @db.DateTime(0)
+  glass                String?                @db.VarChar(255)
+  CocktailFavorites    CocktailFavorites[]
+  CocktailTastingNotes CocktailTastingNotes[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -131,21 +127,42 @@ model UserRecipes {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Users {
-  id                  BigInt                @id @default(autoincrement())
-  email               String                @unique(map: "email") @db.VarChar(255)
-  password            String?               @db.VarChar(255)
-  nickname            String                @db.VarChar(50)
-  status              Users_status          @default(active)
-  createdAt           DateTime              @default(now()) @db.DateTime(0)
-  updatedAt           DateTime              @default(now()) @db.DateTime(0)
-  deletedAt           DateTime?             @db.DateTime(0)
-  agreement           Json?
-  imageUrl            String?               @db.Text
-  AlcoholTastingNotes AlcoholTastingNotes[]
-  CocktailFavorites   CocktailFavorites[]
-  MyBars              MyBars[]
-  UserRecipeFavorites UserRecipeFavorites[]
-  UserRecipes         UserRecipes[]
+  id                   BigInt                 @id @default(autoincrement())
+  email                String                 @unique(map: "email") @db.VarChar(255)
+  password             String?                @db.VarChar(255)
+  nickname             String                 @db.VarChar(50)
+  status               Users_status           @default(active)
+  createdAt            DateTime               @default(now()) @db.DateTime(0)
+  updatedAt            DateTime               @default(now()) @db.DateTime(0)
+  deletedAt            DateTime?              @db.DateTime(0)
+  agreement            Json?
+  imageUrl             String?                @db.Text
+  AlcoholTastingNotes  AlcoholTastingNotes[]
+  CocktailFavorites    CocktailFavorites[]
+  CocktailTastingNotes CocktailTastingNotes[]
+  MyBars               MyBars[]
+  UserRecipeFavorites  UserRecipeFavorites[]
+  UserRecipes          UserRecipes[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CocktailTastingNotes {
+  id          BigInt     @id @default(autoincrement())
+  userId      BigInt
+  cocktailId  BigInt?
+  name        String?    @db.VarChar(255)
+  tasteRating Json?
+  aromaRating Json?
+  abv         Int?       @db.TinyInt
+  color       Json?
+  description String?    @db.Text
+  createdAt   DateTime   @default(now()) @db.DateTime(0)
+  updatedAt   DateTime   @default(now()) @db.DateTime(0)
+  Users       Users      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_1")
+  Cocktails   Cocktails? @relation(fields: [cocktailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_2")
+
+  @@index([cocktailId], map: "cocktailId")
+  @@index([userId], map: "userId")
 }
 
 enum Users_status {
