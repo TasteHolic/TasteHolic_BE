@@ -1,241 +1,343 @@
 openapi: 3.0.0
 info:
-    title: TasteHolic API
-    description: TasteHolic API 서버 문서
-    version: 1.0.0
+  title: TasteHolic API
+  description: TasteHolic API 서버 문서
+  version: 1.0.0
 servers:
-    - url: http://localhost:3000 # 추후 수정 필요
-      description: Local server
+  - url: http://localhost:3000 # 추후 수정 필요
+    description: Local server
 # 예시
 paths:
-    /api/v1/users/my-bar/post:
-        post:
-            summary: 마이바에 술 추가
-            description: 술 종류와 이름으로 술 등록.
-            requestBody:
-              required: true
-              content:
-                application/json:
-                  schema:
+  /api/v1/users/my-bar/post:
+    post:
+      summary: 마이바에 술 추가
+      description: 술 종류와 이름으로 술 등록.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "까베르네 쇼비뇽"
+                category:
+                  type: string
+                  example: "Wine"
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 등록한 술 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
                     type: object
                     properties:
+                      id:
+                        type: string
+                        example: "9"
+                      userId:
+                        type: string
+                        example: "1"
+                      alcoholId:
+                        type: string
+                        nullable: true
+                        example: null
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T09:48:17.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T09:48:17.000Z"
                       name:
                         type: string
-                        example: "까베르네 쇼비뇽"
+                        example: null
                       category:
                         type: string
-                        example: "Wine"
-            tags:
-               - MyBar
-            responses:
-                200:
-                  description: 등록한 술 정보
-                  content:
-                    application/json:
-                      schema:
-                        type: object
-                        properties:
-                          resultType:
-                            type: string
-                            example: "SUCCESS"
-                          error:
-                            type: object
-                            nullable: true
-                            properties:
-                              code:
-                                type: string
-                                example: null
-                              message:
-                                type: string
-                                example: null
-                          success:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: "9"
-                              userId:
-                                type: string
-                                example: "1"
-                              alcoholId:
-                                type: string
-                                nullable: true
-                                example: null
-                              createdAt:
-                                type: string
-                                format: date-time
-                                example: "2025-02-01T09:48:17.000Z"
-                              updatedAt:
-                                type: string
-                                format: date-time
-                                example: "2025-02-01T09:48:17.000Z"
-                              name:
-                                type: string
-                                example: null
-                              category:
-                                type: string
-                                example: null
-                400:
-                    description: 잘못된 요청 (이미 마이바에 추가된 술)
-                    content:
-                      application/json:
-                        schema:
+                        example: null
+        400:
+          description: 잘못된 요청 (이미 마이바에 추가된 술)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "이미 마이바에 추가되어 있는 술입니다."
+                  success:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/users/my-bar/view:
+    get:
+      summary: 마이바 조회
+      description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 사용자의 마이바 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
                           type: object
                           properties:
-                            resultType:
+                            id:
                               type: string
-                              example: "FAIL"
-                            error:
-                              type: object
-                              properties:
-                                code:
-                                  type: string
-                                  example: "U001"
-                                message:
-                                  type: string
-                                  example: "이미 마이바에 추가되어 있는 술입니다."
-                            success:
-                              type: object
+                              example: "9"
+                            userId:
+                              type: string
+                              example: "1"
+                            alcoholId:
+                              type: string
                               nullable: true
                               example: null
-    /api/v1/users/my-bar/view:
-        get:
-          summary: 마이바 조회
-          description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
-          tags:
-            - MyBar
-          responses:
-              200:
-                description: 사용자의 마이바 정보
-                content:
-                  application/json:
-                    schema:
-                      type: object
-                      properties:
-                        resultType:
-                          type: string
-                          example: "SUCCESS"
-                        error:
-                          type: object
-                          nullable: true
-                          properties:
-                            code:
+                            createdAt:
                               type: string
-                              example: null
-                            message:
+                              format: date-time
+                              example: "2025-02-01T09:48:17.000Z"
+                            updatedAt:
                               type: string
-                              example: null
-                        success:
-                          type: object
-                          properties:
-                            data:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  id:
-                                    type: string
-                                    example: "9"
-                                  userId:
-                                    type: string
-                                    example: "1"
-                                  alcoholId:
-                                    type: string
-                                    nullable: true
-                                    example: null
-                                  createdAt:
-                                    type: string
-                                    format: date-time
-                                    example: "2025-02-01T09:48:17.000Z"
-                                  updatedAt:
-                                    type: string
-                                    format: date-time
-                                    example: "2025-02-01T09:48:17.000Z"
-                                  name:
-                                    type: string
-                                    example: "까베르네 쇼비뇽"
-                                  category:
-                                    type: string
-                                    example: "Wine"
-    /api/v1/users/my-bar/delete/{barId}:
-      delete:
-        summary: 마이바의 특정 술 삭제
-        description: 삭제한 술 정보를 반환.
-        parameters:
-          - in: path
-            name: barId
+                              format: date-time
+                              example: "2025-02-01T09:48:17.000Z"
+                            name:
+                              type: string
+                              example: "까베르네 쇼비뇽"
+                            category:
+                              type: string
+                              example: "Wine"
+  /api/v1/users/my-bar/delete/{barId}:
+    delete:
+      summary: 마이바의 특정 술 삭제
+      description: 삭제한 술 정보를 반환.
+      parameters:
+        - in: path
+          name: barId
+          schema:
+            type: integer
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 삭제한 술 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "9"
+                      userId:
+                        type: string
+                        example: "1"
+                      alcoholId:
+                        type: string
+                        nullable: true
+                        example: null
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T09:48:17.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T09:48:17.000Z"
+                      name:
+                        type: string
+                        example: null
+                      category:
+                        type: string
+                        example: null
+        400:
+          description: 잘못된 요청 (마이바에 없는 술)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U002"
+                      message:
+                        type: string
+                        example: "마이바에 존재하지 않는 술입니다."
+                  success:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/recipes:
+    post:
+      summary: 사용자 레시피 등록
+      description: 사용자가 새로운 레시피를 등록하는 API입니다.
+      tags:
+        - Recipes
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-                type: integer
-        tags:
-            - MyBar
-        responses:
-                200:
-                  description: 삭제한 술 정보
-                  content:
-                    application/json:
-                      schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 레시피 이름
+                  example: "모히토"
+                imageUrl:
+                  type: string
+                  description: 레시피 이미지 URL
+                  example: "https://example.com/images/mojito.jpg"
+                ingredients:
+                  type: object
+                  description: 재료 목록 (JSON 형식)
+                  example:
+                    라임 웨지: "3개"
+                    민트 잎: "7개"
+                    심플 시럽: "3/4 온스"
+                    라이트 럼: "2 온스"
+                    소다수: "적당량"
+                recipe:
+                  type: array
+                  items:
+                    type: string
+                  description: 레시피 단계 (JSON 형식)
+                  example:
+                    - "라임과 민트를 으깬다."
+                    - "럼과 얼음을 넣고 섞는다."
+                    - "소다수를 추가하고 저어준다."
+                glassType:
+                  type: string
+                  description: 사용할 잔 유형
+                  example: "하이볼 글라스"
+                status:
+                  type: string
+                  enum: [draft, published]
+                  description: 레시피 상태 (임시저장 또는 발행)
+                  example: "published"
+      responses:
+        "201":
+          description: 성공적으로 레시피가 등록됨
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 123
+                      userId:
+                        type: integer
+                        example: 45
+                      name:
+                        type: string
+                        example: "모히토"
+                      imageUrl:
+                        type: string
+                        example: "https://example.com/images/mojito.jpg"
+                      ingredients:
                         type: object
-                        properties:
-                          resultType:
-                            type: string
-                            example: "SUCCESS"
-                          error:
-                            type: object
-                            nullable: true
-                            properties:
-                              code:
-                                type: string
-                                example: null
-                              message:
-                                type: string
-                                example: null
-                          success:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: "9"
-                              userId:
-                                type: string
-                                example: "1"
-                              alcoholId:
-                                type: string
-                                nullable: true
-                                example: null
-                              createdAt:
-                                type: string
-                                format: date-time
-                                example: "2025-02-01T09:48:17.000Z"
-                              updatedAt:
-                                type: string
-                                format: date-time
-                                example: "2025-02-01T09:48:17.000Z"
-                              name:
-                                type: string
-                                example: null
-                              category:
-                                type: string
-                                example: null
-                400:
-                    description: 잘못된 요청 (마이바에 없는 술)
-                    content:
-                      application/json:
-                        schema:
-                          type: object
-                          properties:
-                            resultType:
-                              type: string
-                              example: "FAIL"
-                            error:
-                              type: object
-                              properties:
-                                code:
-                                  type: string
-                                  example: "U002"
-                                message:
-                                  type: string
-                                  example: "마이바에 존재하지 않는 술입니다."
-                            success:
-                              type: object
-                              nullable: true
-                              example: null
+                        example:
+                          라임 웨지: "3개"
+                          민트 잎: "7개"
+                          심플 시럽: "3/4 온스"
+                          라이트 럼: "2 온스"
+                          소다수: "적당량"
+                      recipe:
+                        type: array
+                        example:
+                          - "라임과 민트를 으깬다."
+                          - "럼과 얼음을 넣고 섞는다."
+                          - "소다수를 추가하고 저어준다."
+                      glassType:
+                        type: string
+                        example: "하이볼 글라스"
+                      status:
+                        type: string
+                        example: "published"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T12:34:56Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-01T12:34:56Z"
