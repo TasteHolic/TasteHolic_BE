@@ -8,109 +8,234 @@ servers:
       description: Local server
 # 예시
 paths:
-    /home/recommend:
-        get:
-            summary: 추천 칵테일 가져오기
-            description: 매일 랜덤으로 칵테일을 추천.
+    /api/v1/users/my-bar/post:
+        post:
+            summary: 마이바에 술 추가
+            description: 술 종류와 이름으로 술 등록.
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "까베르네 쇼비뇽"
+                      category:
+                        type: string
+                        example: "Wine"
+            tags:
+               - MyBar
             responses:
                 200:
-                    description: 추천된 칵테일 정보
+                  description: 등록한 술 정보
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          resultType:
+                            type: string
+                            example: "SUCCESS"
+                          error:
+                            type: object
+                            nullable: true
+                            properties:
+                              code:
+                                type: string
+                                example: null
+                              message:
+                                type: string
+                                example: null
+                          success:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: "9"
+                              userId:
+                                type: string
+                                example: "1"
+                              alcoholId:
+                                type: string
+                                nullable: true
+                                example: null
+                              createdAt:
+                                type: string
+                                format: date-time
+                                example: "2025-02-01T09:48:17.000Z"
+                              updatedAt:
+                                type: string
+                                format: date-time
+                                example: "2025-02-01T09:48:17.000Z"
+                              name:
+                                type: string
+                                example: null
+                              category:
+                                type: string
+                                example: null
+                400:
+                    description: 잘못된 요청 (이미 마이바에 추가된 술)
                     content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    id:
-                                        type: string
-                                        example: "cocktail_123"
-                                    name:
-                                        type: string
-                                        example: "Margarita"
-                                    image:
-                                        type: string
-                                        example: "https://example.com/images/margarita.png"
-                                    taste:
-                                        type: string
-                                        example: "Sweet & Sour"
-                                    alcohol_level:
-                                        type: number
-                                        example: 15
-                                    description:
-                                        type: string
-                                        example: "A refreshing cocktail with lime and tequila."
-    /home/best-taste:
+                      application/json:
+                        schema:
+                          type: object
+                          properties:
+                            resultType:
+                              type: string
+                              example: "FAIL"
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  example: "U001"
+                                message:
+                                  type: string
+                                  example: "이미 마이바에 추가되어 있는 술입니다."
+                            success:
+                              type: object
+                              nullable: true
+                              example: null
+    /api/v1/users/my-bar/view:
         get:
-            summary: 인기 있는 칵테일 가져오기
-            description: 최근에 열람이 많이 된 칵테일 리스트를 반환.
-            responses:
-                200:
-                    description: 인기 있는 칵테일 리스트
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: object
-                                    properties:
-                                        id:
-                                            type: string
-                                            example: "cocktail_456"
-                                        name:
-                                            type: string
-                                            example: "Old Fashioned"
-                                        image:
-                                            type: string
-                                            example: "https://example.com/images/old_fashioned.png"
-                                        views:
-                                            type: number
-                                            example: 1200
-    /home/taste-mood:
-        get:
-          summary: 분위기별 칵테일 추천
-          description: 특정 분위기에 어울리는 칵테일 리스트를 반환.
-          parameters:
-            - in: query
-              name: mood
-              schema:
-                  type: string
-              
+          summary: 마이바 조회
+          description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
+          tags:
+            - MyBar
           responses:
               200:
-                description: 분위기별 추천 칵테일 리스트
+                description: 사용자의 마이바 정보
                 content:
                   application/json:
                     schema:
-                      type: array
-                      items:
+                      type: object
+                      properties:
+                        resultType:
+                          type: string
+                          example: "SUCCESS"
+                        error:
+                          type: object
+                          nullable: true
+                          properties:
+                            code:
+                              type: string
+                              example: null
+                            message:
+                              type: string
+                              example: null
+                        success:
+                          type: object
+                          properties:
+                            data:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: "9"
+                                  userId:
+                                    type: string
+                                    example: "1"
+                                  alcoholId:
+                                    type: string
+                                    nullable: true
+                                    example: null
+                                  createdAt:
+                                    type: string
+                                    format: date-time
+                                    example: "2025-02-01T09:48:17.000Z"
+                                  updatedAt:
+                                    type: string
+                                    format: date-time
+                                    example: "2025-02-01T09:48:17.000Z"
+                                  name:
+                                    type: string
+                                    example: "까베르네 쇼비뇽"
+                                  category:
+                                    type: string
+                                    example: "Wine"
+    /api/v1/users/my-bar/delete/{barId}:
+      delete:
+        summary: 마이바의 특정 술 삭제
+        description: 삭제한 술 정보를 반환.
+        parameters:
+          - in: path
+            name: barId
+            schema:
+                type: integer
+        tags:
+            - MyBar
+        responses:
+                200:
+                  description: 삭제한 술 정보
+                  content:
+                    application/json:
+                      schema:
                         type: object
                         properties:
-                          id:
+                          resultType:
                             type: string
-                            example: "cocktail_789"
-                          name:
-                            type: string
-                            example: "Cosmopolitan"
-                          image:
-                            type: string
-                            example: "https://example.com/images/cosmopolitan.png"
-                          mood:
-                            type: string
-                            example: "romantic"
-    /holic-now:
-      get:
-        summary: 최신 유튜브 영상 가져오기
-        description: 칵테일 관련 최신 유튜브 영상 URL 제공.
-        responses:
-          200:
-            description: 유튜브 영상 정보
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    video_title:
-                      type: string
-                      example: "Top 5 Cocktails You Must Try!"
-                    video_url:
-                      type: string
-                      example: "https://www.youtube.com/watch?v=abcd1234"
+                            example: "SUCCESS"
+                          error:
+                            type: object
+                            nullable: true
+                            properties:
+                              code:
+                                type: string
+                                example: null
+                              message:
+                                type: string
+                                example: null
+                          success:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: "9"
+                              userId:
+                                type: string
+                                example: "1"
+                              alcoholId:
+                                type: string
+                                nullable: true
+                                example: null
+                              createdAt:
+                                type: string
+                                format: date-time
+                                example: "2025-02-01T09:48:17.000Z"
+                              updatedAt:
+                                type: string
+                                format: date-time
+                                example: "2025-02-01T09:48:17.000Z"
+                              name:
+                                type: string
+                                example: null
+                              category:
+                                type: string
+                                example: null
+                400:
+                    description: 잘못된 요청 (마이바에 없는 술)
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          properties:
+                            resultType:
+                              type: string
+                              example: "FAIL"
+                            error:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  example: "U002"
+                                message:
+                                  type: string
+                                  example: "마이바에 존재하지 않는 술입니다."
+                            success:
+                              type: object
+                              nullable: true
+                              example: null
