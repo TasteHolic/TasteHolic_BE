@@ -2,10 +2,12 @@ import { StatusCodes } from "http-status-codes";
 import {
   createRecipeService,
   getRecipeListService,
-  getRecipeService,
   updateRecipeService,
   deleteRecipeService,
+  getCocktailRecipeService,
+  getUserRecipeService,
 } from "../services/recipe.service.js";
+import { RecipeStepsDto } from "../dtos/recipe.dto.js";
 
 export const createRecipe = async (req, res, next) => {
   try {
@@ -58,7 +60,10 @@ export const deleteRecipe = async (req, res, next) => {
 
     const { recipeId } = req.params;
 
-    const deleteResponse = await deleteRecipeService(BigInt(recipeId), BigInt(userId));
+    const deleteResponse = await deleteRecipeService(
+      BigInt(recipeId),
+      BigInt(userId)
+    );
 
     if (deleteResponse.success) {
       return res.status(StatusCodes.NO_CONTENT).send();
@@ -90,9 +95,24 @@ export const getRecipe = async (req, res, next) => {
     console.log("특정 레시피 조회 요청!");
 
     const { recipeId } = req.params;
-    const recipe = await readRecipeService(recipeId);
+    let id = "";
+    let recipe = null;
 
-    res.status(StatusCodes.OK).json({ success: true, data: recipe });
+    if (recipeId.startsWith("cocktail-")) {
+      id = recipeId.replace("cocktail-", "");
+      recipe = await getCocktailRecipeService(BigInt(id));
+    } else if (recipeId.startsWith("user-")) {
+      id = recipeId.replace("user-", "");
+      recipe = await getUserRecipeService(BigInt(id));
+    } else {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, message: "잘못된 recipeId 형식입니다." });
+    }
+
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: RecipeStepsDto(recipe) });
   } catch (err) {
     next(err);
   }

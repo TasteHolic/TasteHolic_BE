@@ -49,3 +49,31 @@ export const deleteRecipeInDB = async (recipeId, userId) => {
     throw err;
   }
 };
+
+export const readCocktailInDB = async (cocktailId) => {
+  try {
+    const cocktail = await prisma.cocktails.update({
+      where: {
+        id: cocktailId,
+      },
+      data: { views: { increment: 1 } },
+    });
+    return cocktail;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const readUserRecipeInDB = async (recipeId) => {
+  try {
+    const userRecipe = await prisma.userRecipes.update({
+      where: {
+        id: recipeId,
+      },
+      data: { views: { increment: 1 } },
+    });
+    return userRecipe;
+  } catch (error) {
+    return null;
+  }
+};

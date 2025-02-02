@@ -3,6 +3,8 @@ import {
   updateRecipeInDB,
   findRecipeInDB,
   deleteRecipeInDB,
+  readCocktailInDB,
+  readUserRecipeInDB,
 } from "../repositories/recipe.repository.js";
 import { NoRecipeError, NoPermission } from "../error.js";
 
@@ -45,6 +47,30 @@ export const deleteRecipeService = async (recipeId, userId) => {
   }
 };
 
-export const getRecipeListService = async (data) => {};
+export const getCocktailRecipeService = async (cocktailId) => {
+  try {
+    const recipe = await readCocktailInDB(cocktailId);
+    if (!recipe) {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    return recipe;
+  } catch (err) {
+    console.error("알 수 없는 오류 발생:", err);
+    throw err;
+  }
+};
 
-export const getRecipeService = async (data) => {};
+export const getUserRecipeService = async (recipeId) => {
+  try {
+    const recipe = await readUserRecipeInDB(recipeId);
+    if (!recipe) {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    return recipe;
+  } catch (err) {
+    console.error("알 수 없는 오류 발생:", err);
+    throw err;
+  }
+};
+
+export const getRecipeListService = async (data) => {};
