@@ -28,6 +28,50 @@ export const createRecipe = async (req, res, next) => {
   }
 };
 
+export const updateRecipe = async (req, res, next) => {
+  try {
+    console.log("레시피 수정 요청!");
+
+    // mock user Id
+    const userId = 1;
+
+    const { recipeId } = req.params;
+
+    const updatedRecipe = await updateRecipeService(
+      BigInt(recipeId),
+      BigInt(userId),
+      req.body
+    );
+
+    res.status(StatusCodes.OK).json({ success: true, data: updatedRecipe });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteRecipe = async (req, res, next) => {
+  try {
+    console.log("레시피 삭제 요청!");
+
+    // mock user Id
+    const userId = 1;
+
+    const { recipeId } = req.params;
+
+    const deleteResponse = await deleteRecipeService(BigInt(recipeId), BigInt(userId));
+
+    if (deleteResponse.success) {
+      return res.status(StatusCodes.NO_CONTENT).send();
+    } else {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: deleteResponse.message });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getRecipeList = async (req, res, next) => {
   try {
     console.log("레시피 목록 조회 요청!");
@@ -49,32 +93,6 @@ export const getRecipe = async (req, res, next) => {
     const recipe = await readRecipeService(recipeId);
 
     res.status(StatusCodes.OK).json({ success: true, data: recipe });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const updateRecipe = async (req, res, next) => {
-  try {
-    console.log("레시피 수정 요청!");
-
-    const { recipeId } = req.params;
-    const updatedRecipe = await updateUserRecipeService(recipeId, req.body);
-
-    res.status(StatusCodes.OK).json({ success: true, data: updatedRecipe });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const deleteRecipe = async (req, res, next) => {
-  try {
-    console.log("레시피 삭제 요청!");
-
-    const { recipeId } = req.params;
-    await deleteUserRecipeService(recipeId);
-
-    res.status(StatusCodes.NO_CONTENT).send();
   } catch (err) {
     next(err);
   }

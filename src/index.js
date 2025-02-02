@@ -27,7 +27,6 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   res.success = function (data) {
-    
     this.status(this.statusCode || 200).json({
       resultType: "SUCCESS",
       error: null,
@@ -68,7 +67,7 @@ app.post("/api/v1/recipes", createRecipe);
 app.get("/api/v1/recipes/", getRecipeList);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
-app.delete("/api/v1/users/recipes/:recipeId", deleteRecipe);
+app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 
 // app.js
 app.use((err, req, res, next) => {

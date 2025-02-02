@@ -1,24 +1,50 @@
 import {
   createRecipeInDB,
-  updateRecipeInDB
+  updateRecipeInDB,
+  findRecipeInDB,
+  deleteRecipeInDB,
 } from "../repositories/recipe.repository.js";
+import { NoRecipeError, NoPermission } from "../error.js";
 
 export const createRecipeService = async (data) => {
   const recipe = await createRecipeInDB(data);
   return recipe;
 };
 
-export const getRecipeListService = async (data) => {
-  
-}
+export const updateRecipeService = async (recipeId, userId, data) => {
+  try {
+    const recipe = await findRecipeInDB(recipeId);
+    if (!recipe) {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    if (recipe.userId !== userId) {
+      throw new NoPermission("글 수정 권한이 없습니다.");
+    }
+    const updatedRecipe = await updateRecipeInDB(recipeId, userId, data);
+    return updatedRecipe;
+  } catch (err) {
+    console.error("알 수 없는 오류 발생:", err);
+    throw err;
+  }
+};
 
-export const getRecipeService = async (data) => {
-  
-}
+export const deleteRecipeService = async (recipeId, userId) => {
+  try {
+    const recipe = await findRecipeInDB(recipeId);
+    if (!recipe) {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    if (recipe.userId !== userId) {
+      throw new NoPermission("글 수정 권한이 없습니다.");
+    }
+    const response = await deleteRecipeInDB(recipeId, userId);
+    return response;
+  } catch (err) {
+    console.error("알 수 없는 오류 발생:", err);
+    throw err;
+  }
+};
 
-export const updateRecipeService = async (data) => {
-  
-}
+export const getRecipeListService = async (data) => {};
 
-export const deleteRecipeService = async (data) => {
-  
+export const getRecipeService = async (data) => {};
