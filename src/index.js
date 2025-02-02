@@ -27,10 +27,17 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   res.success = function (data) {
+    // BigInt를 처리하는 방법
+    const serializedData = JSON.parse(
+      JSON.stringify(data, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+
     this.status(this.statusCode || 200).json({
       resultType: "SUCCESS",
       error: null,
-      success: data,
+      success: serializedData,
     });
     return this;
   };
@@ -68,6 +75,8 @@ app.get("/api/v1/recipes/", getRecipeList);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
+// app.put("/api/v1/recipes/:recipeId/like", updateRecipeLike);
+// app.put("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 
 // app.js
 app.use((err, req, res, next) => {

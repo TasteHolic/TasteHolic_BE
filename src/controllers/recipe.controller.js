@@ -7,7 +7,6 @@ import {
   getCocktailRecipeService,
   getUserRecipeService,
 } from "../services/recipe.service.js";
-import { RecipeStepsDto } from "../dtos/recipe.dto.js";
 
 export const createRecipe = async (req, res, next) => {
   try {
@@ -24,7 +23,7 @@ export const createRecipe = async (req, res, next) => {
 
     const newRecipe = await createRecipeService(userRecipeDTO);
 
-    res.status(StatusCodes.CREATED).json({ success: true, data: newRecipe });
+    res.status(StatusCodes.CREATED).success(newRecipe);
   } catch (err) {
     next(err);
   }
@@ -45,7 +44,7 @@ export const updateRecipe = async (req, res, next) => {
       req.body
     );
 
-    res.status(StatusCodes.OK).json({ success: true, data: updatedRecipe });
+    res.status(StatusCodes.OK).success(updatedRecipe);
   } catch (err) {
     next(err);
   }
@@ -66,7 +65,7 @@ export const deleteRecipe = async (req, res, next) => {
     );
 
     if (deleteResponse.success) {
-      return res.status(StatusCodes.NO_CONTENT).send();
+      return res.status(StatusCodes.OK).success(deleteResponse);
     } else {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -84,7 +83,7 @@ export const getRecipeList = async (req, res, next) => {
     const { cursor, limit } = req.query;
     const recipes = await readRecipeListService({ cursor, limit });
 
-    res.status(StatusCodes.OK).json({ success: true, data: recipes });
+    res.status(StatusCodes.OK).success(recipes);
   } catch (err) {
     next(err);
   }
@@ -110,10 +109,56 @@ export const getRecipe = async (req, res, next) => {
         .json({ success: false, message: "잘못된 recipeId 형식입니다." });
     }
 
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, data: RecipeStepsDto(recipe) });
+    res.status(StatusCodes.OK).success(recipe);
   } catch (err) {
     next(err);
   }
 };
+
+// export const updateRecipeLike = async (req, res, next) => {
+//   console.log("특정 레시피 조회 요청!");
+
+//   const { recipeId } = req.params;
+//   let id = "";
+//   let recipe = null;
+
+//   if (recipeId.startsWith("cocktail-")) {
+//     id = recipeId.replace("cocktail-", "");
+//     recipe = await updateCocktaillikeService(BigInt(id));
+//   } else if (recipeId.startsWith("user-")) {
+//     id = recipeId.replace("user-", "");
+//     recipe = await updateUserRecipelikeService(BigInt(id));
+//   } else {
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ success: false, message: "잘못된 recipeId 형식입니다." });
+//   }
+
+//   res
+//     .status(StatusCodes.OK)
+//     .json({ success: true, data: RecipeStepsDto(recipe) });
+// };
+
+// export const updateCancelRecipeLike = async (req, res, next) => {
+//   console.log("특정 레시피 조회 요청!");
+
+//   const { recipeId } = req.params;
+//   let id = "";
+//   let recipe = null;
+
+//   if (recipeId.startsWith("cocktail-")) {
+//     id = recipeId.replace("cocktail-", "");
+//     recipe = await updateCocktaillikeService(BigInt(id));
+//   } else if (recipeId.startsWith("user-")) {
+//     id = recipeId.replace("user-", "");
+//     recipe = await updateUserRecipelikeService(BigInt(id));
+//   } else {
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ success: false, message: "잘못된 recipeId 형식입니다." });
+//   }
+
+//   res
+//     .status(StatusCodes.OK)
+//     .json({ success: true, data: RecipeStepsDto(recipe) });
+// };
