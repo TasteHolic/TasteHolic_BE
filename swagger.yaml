@@ -241,10 +241,170 @@ paths:
                     example: null
   /api/v1/recipes:
     post:
-      summary: 사용자 레시피 등록
-      description: 사용자가 새로운 레시피를 등록하는 API입니다.
+      summary: 유저 레시피 등록
+      description: 새로운 유저 레시피를 등록합니다.
+      operationId: createUserRecipe
       tags:
         - Recipes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - ingredients
+                - recipe
+                - glassType
+                - status
+                - abv
+              properties:
+                name:
+                  type: string
+                  example: "SampleDrink"
+                ingredients:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    "라임 웨지": "3개"
+                    "민트 잎": "7개"
+                    "심플 시럽": "3/4 온스"
+                    "라이트 럼": "2 온스"
+                    "소다수": "적당량"
+                recipe:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "재료들을 함께 넣고 섞는다"
+                    - "차갑게 마신다"
+                glassType:
+                  type: string
+                  example: "Martini"
+                status:
+                  type: string
+                  enum: [published, draft]
+                  example: "published"
+                tastes:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Sweet", "Sour"]
+                aromas:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Citrus"]
+                colors:
+                  type: array
+                  items:
+                    type: string
+                  example: ["#FFFFFF"]
+                abv:
+                  type: number
+                  example: 12
+      responses:
+        "200":
+          description: 레시피 등록 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 11
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "SampleDrink"
+                      imageUrl:
+                        type: string
+                        nullable: true
+                        example: "example/test.jpg"
+                      ingredients:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        example:
+                          "소다수": "적당량"
+                          "민트 잎": "5개"
+                          "라이트 럼": "3 온스"
+                          "라임 웨지": "2개"
+                          "심플 시럽": "1 온스"
+                      recipe:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "재료들을 함께 넣고 흔든다"
+                          - "얼음과 함께 차갑게 마신다"
+                      glassType:
+                        type: string
+                        example: "Old Fashioned"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T14:00:50.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T15:30:20.000Z"
+                      status:
+                        type: string
+                        enum: [published, draft]
+                        example: "published"
+                      tastes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Sweet", "Bitter"]
+                      aromas:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Woody"]
+                      colors:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        example: ["#FFFFFF"]
+                      likes:
+                        type: integer
+                        example: 0
+                      abv:
+                        type: number
+                        example: 15
+                      views:
+                        type: integer
+                        example: 10
+  /api/v1/recipes/{recipeId}:
+    patch:
+      summary: 레시피 수정
+      description: 기존 레시피를 수정합니다. 레시피 소유자만 수정할 수 있습니다.
+      tags:
+        - Recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 수정할 레시피 ID
       requestBody:
         required: true
         content:
@@ -254,90 +414,383 @@ paths:
               properties:
                 name:
                   type: string
-                  description: 레시피 이름
-                  example: "모히토"
-                imageUrl:
-                  type: string
-                  description: 레시피 이미지 URL
-                  example: "https://example.com/images/mojito.jpg"
+                  example: "Updated SampleDrink"
                 ingredients:
                   type: object
-                  description: 재료 목록 (JSON 형식)
+                  additionalProperties:
+                    type: string
                   example:
-                    라임 웨지: "3개"
-                    민트 잎: "7개"
-                    심플 시럽: "3/4 온스"
-                    라이트 럼: "2 온스"
-                    소다수: "적당량"
+                    "라임 웨지": "2개"
+                    "민트 잎": "5개"
+                    "심플 시럽": "1 온스"
+                    "라이트 럼": "3 온스"
+                    "소다수": "적당량"
                 recipe:
                   type: array
                   items:
                     type: string
-                  description: 레시피 단계 (JSON 형식)
                   example:
-                    - "라임과 민트를 으깬다."
-                    - "럼과 얼음을 넣고 섞는다."
-                    - "소다수를 추가하고 저어준다."
+                    - "재료들을 함께 넣고 흔든다"
+                    - "얼음과 함께 차갑게 마신다"
                 glassType:
                   type: string
-                  description: 사용할 잔 유형
-                  example: "하이볼 글라스"
+                  example: "Old Fashioned"
                 status:
                   type: string
-                  enum: [draft, published]
-                  description: 레시피 상태 (임시저장 또는 발행)
+                  enum: [published, draft]
                   example: "published"
+                tastes:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Sweet", "Bitter"]
+                aromas:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Woody"]
+                colors:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  example: ["#FFFFFF"]
+                abv:
+                  type: number
+                  example: 15
       responses:
-        "201":
-          description: 성공적으로 레시피가 등록됨
+        "200":
+          description: 레시피 수정 성공
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
                   success:
-                    type: boolean
-                    example: true
-                  data:
                     type: object
                     properties:
                       id:
                         type: integer
-                        example: 123
+                        example: 11
                       userId:
                         type: integer
-                        example: 45
+                        example: 1
                       name:
                         type: string
-                        example: "모히토"
+                        example: "Updated SampleDrink"
                       imageUrl:
                         type: string
-                        example: "https://example.com/images/mojito.jpg"
+                        nullable: true
+                        example: "example/test.jpg"
                       ingredients:
                         type: object
+                        additionalProperties:
+                          type: string
                         example:
-                          라임 웨지: "3개"
-                          민트 잎: "7개"
-                          심플 시럽: "3/4 온스"
-                          라이트 럼: "2 온스"
-                          소다수: "적당량"
+                          "소다수": "적당량"
+                          "민트 잎": "5개"
+                          "라이트 럼": "3 온스"
+                          "라임 웨지": "2개"
+                          "심플 시럽": "1 온스"
                       recipe:
                         type: array
+                        items:
+                          type: string
                         example:
-                          - "라임과 민트를 으깬다."
-                          - "럼과 얼음을 넣고 섞는다."
-                          - "소다수를 추가하고 저어준다."
+                          - "재료들을 함께 넣고 흔든다"
+                          - "얼음과 함께 차갑게 마신다"
                       glassType:
                         type: string
-                        example: "하이볼 글라스"
-                      status:
-                        type: string
-                        example: "published"
+                        example: "Old Fashioned"
                       createdAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T12:34:56Z"
+                        example: "2025-02-02T14:00:50.000Z"
                       updatedAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T12:34:56Z"
+                        example: "2025-02-02T15:30:20.000Z"
+                      status:
+                        type: string
+                        enum: [published, draft]
+                        example: "published"
+                      tastes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Sweet", "Bitter"]
+                      aromas:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Woody"]
+                      colors:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        example: ["#FFFFFF"]
+                      likes:
+                        type: integer
+                        example: 0
+                      abv:
+                        type: number
+                        example: 15
+                      views:
+                        type: integer
+                        example: 10
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "R001"
+                      message:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                  success:
+                    type: "null"
+                    example: null
+        "403":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "수정 권한이 없습니다."
+                  success:
+                    type: "null"
+                    example: null
+    get:
+      summary: 레시피 조회
+      description: 유저 레시피 또는 칵테일 레시피를 조회합니다.
+      operationId: getRecipe
+      tags:
+        - Recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: |
+            조회할 레시피 ID.  
+            - 유저 레시피 → `user-000`  
+            - 칵테일 레시피 → `cocktail-000`
+      responses:
+        "200":
+          description: 레시피 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 11
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Updated SampleDrink"
+                      imageUrl:
+                        type: string
+                        nullable: true
+                        example: "example/test.jpg"
+                      ingredients:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        example:
+                          "소다수": "적당량"
+                          "민트 잎": "5개"
+                          "라이트 럼": "3 온스"
+                          "라임 웨지": "2개"
+                          "심플 시럽": "1 온스"
+                      recipe:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "재료들을 함께 넣고 흔든다"
+                          - "얼음과 함께 차갑게 마신다"
+                      glassType:
+                        type: string
+                        example: "Old Fashioned"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T14:00:50.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T15:30:20.000Z"
+                      status:
+                        type: string
+                        enum: [published, draft]
+                        example: "published"
+                      tastes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Sweet", "Bitter"]
+                      aromas:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Woody"]
+                      colors:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        example: ["#FFFFFF"]
+                      likes:
+                        type: integer
+                        example: 0
+                      abv:
+                        type: number
+                        example: 15
+                      views:
+                        type: integer
+                        example: 10
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "R001"
+                      message:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                  success:
+                    type: string
+                    example: null
+    delete:
+      summary: 레시피 삭제
+      description: 특정 레시피를 삭제합니다.
+      operationId: deleteRecipe
+      tags:
+        - Recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 삭제할 레시피 ID 
+      responses:
+        "200":
+          description: 삭제 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R001"
+                      reason:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+        "403":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "수정 권한이 없습니다."
+                  success:
+                    type: "null"
+                    example: null
