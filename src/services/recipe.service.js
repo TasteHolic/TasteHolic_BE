@@ -7,6 +7,8 @@ import {
   readUserRecipeInDB,
   updateLikeOnCocktailInDB,
   updateLikeOnUserRecipeInDB,
+  cancelLikeOnUserRecipeInDB,
+  cancelLikeOnCocktailInDB,
 } from "../repositories/recipe.repository.js";
 import { NoRecipeError, NoPermission, ExistingFavError } from "../error.js";
 
@@ -96,5 +98,29 @@ export const updateCocktailLikeService = async (cocktailId, userId) => {
     throw err;
   }
 };
+
+export const updateUserRecipeLikeCancelService = async (recipeId, userId) => {
+  try {
+    const { recipe, fav } = await cancelLikeOnUserRecipeInDB(recipeId, userId);
+
+    return recipe;
+  } catch (err) {
+    console.error("업데이트 중 오류 발생:", err.message || err);
+    throw err;
+  }
+};
+
+export const updateCocktailLikeCancelService = async (cocktailId, userId) => {
+  try {
+    const { recipe, fav } = await cancelLikeOnCocktailInDB(cocktailId, userId);
+
+    return recipe;
+  } catch (err) {
+    console.error("업데이트 중 오류 발생:", err.message || err);
+    throw err;
+  }
+};
+
+
 
 export const getRecipeListService = async (data) => {};

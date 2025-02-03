@@ -1,5 +1,10 @@
 import { prisma } from "../../db.config.js";
-import { NoRecipeError, NoPermission, ExistingFavError } from "../error.js";
+import {
+  NoRecipeError,
+  NoPermission,
+  ExistingFavError,
+  NoExistingFavError,
+} from "../error.js";
 
 export const createRecipeInDB = async (data) => {
   return await prisma.userRecipes.create({
@@ -136,6 +141,80 @@ export const updateLikeOnCocktailInDB = async (recipeId, userId) => {
 
       const fav = await tx.cocktailFavorites.create({
         data: {
+          cocktailId: recipeId,
+          userId: userId,
+        },
+      });
+
+      return { recipe: updatedRecipe, fav };
+    });
+  } catch (err) {
+    if (err.code === "P2025") {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    console.error("좋아요 업데이트 중 오류 발생:", err);
+    throw err;
+  }
+};
+
+export const cancelLikeOnUserRecipeInDB = async (recipeId, userId) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existingFav = await tx.userRecipeFavorites.findFirst({
+        where: {
+          recipeId: recipeId,
+          userId: userId,
+        },
+      });
+
+      if (!existingFav) {
+        throw new NoExistingFavError("좋아요 기록이 없습니다.");
+      }
+
+      const updatedRecipe = await tx.userRecipe.update({
+        where: { id: recipeId },
+        data: { likes: { decrement: 1 } },
+      });
+
+      const fav = await tx.userRecipeFavorites.deleteMany({
+        where: {
+          recipeId: recipeId,
+          userId: userId,
+        },
+      });
+
+      return { recipe: updatedRecipe, fav };
+    });
+  } catch (err) {
+    if (err.code === "P2025") {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    console.error("좋아요 업데이트 중 오류 발생:", err);
+    throw err;
+  }
+};
+
+export const cancelLikeOnCocktailInDB = async (recipeId, userId) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existingFav = await tx.cocktailFavorites.findFirst({
+        where: {
+          cocktailId: recipeId,
+          userId: userId,
+        },
+      });
+
+      if (!existingFav) {
+        throw new NoExistingFavError("좋아요 기록이 없습니다.");
+      }
+
+      const updatedRecipe = await tx.cocktails.update({
+        where: { id: recipeId },
+        data: { likes: { decrement: 1 } },
+      });
+
+      const fav = await tx.cocktailFavorites.deleteMany({
+        where: {
           cocktailId: recipeId,
           userId: userId,
         },

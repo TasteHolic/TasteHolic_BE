@@ -41,6 +41,16 @@ export class ExistingFavError extends Error {
     this.data = data;
   }
 }
+export class NoExistingFavError extends Error {
+  errorCode = "R003";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
 
 export class NoPermission extends Error {
   errorCode = "U001";
