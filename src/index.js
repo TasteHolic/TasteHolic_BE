@@ -13,6 +13,7 @@ import {
   getRecipe,
   updateRecipe,
   deleteRecipe,
+  updateRecipeLike,
 } from "./controllers/recipe.controller.js";
 
 // BigInt 변환 설정
@@ -75,8 +76,8 @@ app.get("/api/v1/recipes/", getRecipeList);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
-// app.put("/api/v1/recipes/:recipeId/like", updateRecipeLike);
-// app.put("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
+app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
+// app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 
 // app.js
 app.use((err, req, res, next) => {

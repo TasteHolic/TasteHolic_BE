@@ -1,5 +1,5 @@
 import { prisma } from "../../db.config.js";
-import { NoRecipeError, NoPermission } from "../error.js";
+import { NoRecipeError, NoPermission, ExistingFavError } from "../error.js";
 
 export const createRecipeInDB = async (data) => {
   return await prisma.userRecipes.create({
@@ -75,5 +75,79 @@ export const readUserRecipeInDB = async (recipeId) => {
     return userRecipe;
   } catch (error) {
     return null;
+  }
+};
+
+export const updateLikeOnUserRecipeInDB = async (recipeId, userId) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existingFav = await tx.userRecipeFavorites.findFirst({
+        where: {
+          recipeId: recipeId,
+          userId: userId,
+        },
+      });
+
+      if (existingFav) {
+        throw new ExistingFavError("이미 좋아요를 눌렀습니다.");
+      }
+
+      const updatedRecipe = await tx.userRecipes.update({
+        where: { id: recipeId },
+        data: { likes: { increment: 1 } },
+      });
+
+      const fav = await tx.userRecipeFavorites.create({
+        data: {
+          recipeId: recipeId,
+          userId: userId,
+        },
+      });
+
+      return { recipe: updatedRecipe, fav };
+    });
+  } catch (err) {
+    if (err.code === "P2025") {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    console.error("좋아요 업데이트 중 오류 발생:", err);
+    throw err;
+  }
+};
+
+export const updateLikeOnCocktailInDB = async (recipeId, userId) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existingFav = await tx.cocktailFavorites.findFirst({
+        where: {
+          cocktailId: recipeId,
+          userId: userId,
+        },
+      });
+
+      if (existingFav) {
+        throw new ExistingFavError("이미 좋아요를 눌렀습니다.");
+      }
+
+      const updatedRecipe = await tx.cocktails.update({
+        where: { id: recipeId },
+        data: { likes: { increment: 1 } },
+      });
+
+      const fav = await tx.cocktailFavorites.create({
+        data: {
+          cocktailId: recipeId,
+          userId: userId,
+        },
+      });
+
+      return { recipe: updatedRecipe, fav };
+    });
+  } catch (err) {
+    if (err.code === "P2025") {
+      throw new NoRecipeError("존재하지 않는 레시피입니다.");
+    }
+    console.error("좋아요 업데이트 중 오류 발생:", err);
+    throw err;
   }
 };
