@@ -1,14 +1,12 @@
-// src/repositories/user.repository.js
+import { prisma } from "../../db.config.js";
 
-const prisma = require('../prisma/client');
-
-exports.getUserByEmail = async (email) => {
+export const getUserByEmail = async (email) => {
   return await prisma.user.findUnique({
     where: { email },
   });
 };
 
-exports.createUser = async (email, password, nickname) => {
+export const createUser = async (email, password, nickname) => {
   return await prisma.user.create({
     data: {
       email,
@@ -18,7 +16,7 @@ exports.createUser = async (email, password, nickname) => {
   });
 };
 
-exports.deleteUserById = async (userId) => {
+export const deleteUserById = async (userId) => {
   return await prisma.user.delete({
     where: { id: userId },
   });

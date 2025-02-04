@@ -50,8 +50,8 @@ export const logoutUser = (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const user = authenticateUser(req);
-    await userService.deleteUser(user.id);
-    res.status(200).json({ message: "회원 탈퇴 성공" });
+    const result = await userService.deleteUser(user.id);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -62,6 +62,6 @@ export const socialLogin = async (req, res) => {
     const result = await userService.socialLogin(req.body.accessToken);
     res.status(200).json(result);
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ message: error.message });   
   }
 };
