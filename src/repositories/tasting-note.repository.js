@@ -67,7 +67,7 @@ export const addTastingNote = async (data, type) => {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
         
         values = [
-          data.userId,
+          1,
           data.alcoholId,
           JSON.stringify(data.tasteRating),  
           JSON.stringify(data.aromaRating), 

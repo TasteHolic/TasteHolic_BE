@@ -7,6 +7,10 @@ import { handleSearchDrinks, handleUserTastingNote } from "./controllers/tasting
 const app = express();
 const port = 3000;
 
+// JSON 형식의 body를 파싱할 수 있도록 설정
+app.use(express.json());  // POST 요청에 대해 JSON 형식으로 body를 파싱
+app.use(express.urlencoded({ extended: true }));  // URL 인코딩된 데이터 처리
+
 app.get("/", (req, res) => {
     res.send("TasteHolic Server");
 });
