@@ -1,0 +1,13 @@
+const express = require('express');
+const { registerUser, loginUser, logoutUser, deleteUser, socialLogin } = require('../controllers/userController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.post('/logout', logoutUser);
+router.delete('/delete', protect, deleteUser);
+router.post('/social-login', socialLogin);
+
+module.exports = router;

@@ -1,24 +1,20 @@
-import express from "express"; 
-import fs from "fs";
-import yaml from "js-yaml";
-import swaggerUi from "swagger-ui-express";
+const app = require('./app');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const swaggerUi = require('swagger-ui-express');
 
-const app = express();
-const port = 3000;
+const PORT = 8080;
 
-app.get("/", (req, res) => {
-    res.send("TasteHolic Server");
-});
+// Swagger 설정 (예외 처리 추가)
+let swaggerDocument;
+try {
+  swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log('✅ Swagger 문서 로드 성공');
+} catch (error) {
+  console.error('❌ Swagger 문서를 찾을 수 없습니다:', error.message);
+}
 
-
-// Swagger
-// YAML 파일 로드
-const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
-
-// Swagger UI 설정
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Example app listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`🚀 서버가 http://localhost:${PORT} 에서 실행 중`);
 });

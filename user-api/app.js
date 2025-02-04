@@ -1,20 +1,24 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const userRoutes = require('./routes/userRoutes');
+const dotenv = require('dotenv');
 const cors = require('cors');
-const userRoutes = require('./user');
+
+dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// 미들웨어 설정
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
-// Routes
-app.use('/api/v1/users', userRoutes);
+// 라우트 등록
+app.use('/api/users', userRoutes);
 
-// Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// 기본 라우트
+app.get('/', (req, res) => {
+  res.send('서버가 정상적으로 실행 중입니다.');
 });
 
 module.exports = app;

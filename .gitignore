@@ -83,6 +83,9 @@ web_modules/
 .env.production.local
 .env.local
 
+# Explicitly ignore .env files
+*.env
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -140,5 +143,10 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+
+# Ensure .env files are ignored
+.env
+*.env
+.env.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node
