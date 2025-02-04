@@ -142,3 +142,10 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# 환경설정 파일
+.env
+
+# 데이터베이스 파일
+*.sql
+TasteHolic_DB.sql
