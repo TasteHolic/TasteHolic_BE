@@ -1,7 +1,13 @@
 import express from "express";
+import cookieParser from "cookie-parser";  // 추가
+import cors from "cors";
 import fs from "fs";
 import yaml from "js-yaml";
 import swaggerUi from "swagger-ui-express";
+
+import dotenv from "dotenv";
+import cors from "cors";
+
 import {
   handleMyBarPost,
   handleMyBarGet,
@@ -16,7 +22,7 @@ import {
   updateRecipeLike,
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
-import { handleSearch } from "./controllers/search.controller.js";
+
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -26,6 +32,7 @@ BigInt.prototype.toJSON = function () {
 const app = express();
 const port = 3000;
 
+app.use(cors()); // CORS 설정
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -61,6 +68,12 @@ app.get("/", (req, res) => {
   res.send("TasteHolic Server");
 });
 
+app.post("/api/register", registerUser);
+app.post("/api/login", loginUser);
+app.post("/api/logout", logoutUser);
+app.delete("/api/user", deleteUser);
+app.post("/api/social-login", socialLogin);
+
 // Swagger
 // YAML 파일 로드
 const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
@@ -80,7 +93,6 @@ app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
-app.post("/api/v1/users/search", handleSearch);
 
 // app.js
 app.use((err, req, res, next) => {
@@ -101,6 +113,22 @@ app.use((err, req, res, next) => {
     success: null,
   });
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Swagger 설정
+try {
+  const swaggerPath = path.resolve(__dirname, "../swagger.yaml");
+  if (!fs.existsSync(swaggerPath)) {
+    throw new Error(`Swagger 파일이 존재하지 않습니다: ${swaggerPath}`);
+  }
+  const swaggerDocument = yaml.load(fs.readFileSync(swaggerPath, "utf8"));
+  app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log("Swagger 설정 완료: /swagger 에서 확인 가능");
+} catch (error) {
+  console.error("Swagger 설정 중 오류 발생:", error.message);
+}
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Example app listening on port ${port}`);
