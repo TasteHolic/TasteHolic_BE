@@ -4,9 +4,10 @@ import cors from "cors";
 import fs from "fs";
 import yaml from "js-yaml";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
-import cors from "cors";
 
 import {
   handleMyBarPost,
@@ -22,6 +23,7 @@ import {
   updateRecipeLike,
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
+import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
 
 
 // BigInt 변환 설정
@@ -116,6 +118,8 @@ app.use((err, req, res, next) => {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 // Swagger 설정
 try {
