@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import yaml from "js-yaml";
 import swaggerUi from "swagger-ui-express";
-import { handleSearchDrinks, handleUserTastingNote } from "./controllers/tasting-note.controller.js";
+import {handleSearchDrinks, handleUserTastingNote, handleGetTastingNote } from "./controllers/tasting-note.controller.js";
 
 const app = express();
 const port = 3000;
@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
 app.post("/api/v1/users/tasting-note", handleUserTastingNote);
+app.get("/api/v1/users/tasting-note/view", handleGetTastingNote);
 
 // Swagger
 // YAML 파일 로드
