@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { bodyToCocktailTastingNote, bodyToAlcoholTastingNote } from "../dtos/tastingnote.dto.js";
-import { userTastingNote, searchDrinks, userTastingNoteDetail, expertTastingNoteDetail, tastingNoteDetail} from "../services/tastingnote.service.js";
+import { userTastingNote, searchDrinks} from "../services/tastingnote.service.js";
 
 export const handleSearchDrinks = async (req, res, next) => {
     try {
@@ -45,45 +45,3 @@ export const handleUserTastingNote = async (req, res, next) => {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
-
-export const handleGetUserTastingNote = async (req, res, next) => {
-  try {
-    const { type, noteId } = req.query; // tasting-note ID
-
-    const userTastingNote = await userTastingNoteDetail(type, noteId); // 서비스에서 사용자 테이스팅 노트 조회
-
-    res.status(StatusCodes.OK).json({ userTastingNote });
-  } catch (error) {
-    console.error("오류 발생:", error.message);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-  }
-};
-
-export const handleGetExpertTastingNote = async (req, res, next) => {
-  try {
-    const { type, noteId } = req.query; // type과 id
-
-    const expertTastingNote = await expertTastingNoteDetail(type,noteId); // 서비스에서 전문가 테이스팅 노트 조회
-
-    if (!expertTastingNote) {
-      return res.status(StatusCodes.NOT_FOUND).json({ error: "전문가의 테이스팅 노트가 없습니다." });
-    }
-
-    res.status(StatusCodes.OK).json({ expertTastingNote });
-  } catch (error) {
-    console.error("오류 발생:", error.message);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-  }
-};
-
-export const handleGetTastingNote = async (req, res, next) => {
-    try {
-      const { type, noteId } = req.query; // noteId와 userId를 받아옴
-  
-      const result = await tastingNoteDetail(type, noteId);
-        res.status(200).json(result);
-    } catch (error) {
-      console.error("오류 발생:", error.message);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
-  };

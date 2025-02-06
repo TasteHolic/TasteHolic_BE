@@ -183,38 +183,4 @@ export const addTastingNote = async (data, type) => {
   };
   
 
-  // 사용자 테이스팅 노트 조회
-  export const getUserTastingNote = async (type, noteId) => {
-    if(type="cocktail"){
-        return await prisma.CocktailTastingNotes.findFirst({
-            where: {
-              id: Number(noteId),
-            },
-          });
-    }else{
-        return await prisma.AlcoholTastingNotes.findFirst({
-            where: {
-              id: Number(noteId),
-            },
-          });
-    }
-    
-  };
   
-  // 전문가 테이스팅 노트 조회
-  export const getExpertTastingNote = async (type, id) => {
-    if(type="cocktail"){
-        return await prisma.Cocktails.findFirst({
-            where: {
-              id: Number(id),
-            },
-          });
-    }else{
-        return await prisma.Alcohols.findFirst({
-            where: {
-              id: Number(id),
-            },
-          });
-    }
-    
-  };
