@@ -10,6 +10,15 @@ import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 
+
+import {
+    handleRegisterUser,
+    handleLoginUser,
+    handleLogoutUser,
+    handleDeleteUser,
+    handleSocialLogin,
+  } from "./controllers/user.controller.js";
+
 import {
   handleMyBarPost,
   handleMyBarGet,
@@ -38,6 +47,7 @@ const port = 3000;
 
 app.use(cors()); // CORS 설정
 app.use(express.json());
+app.use(cookieParser()); 
 
 app.use((req, res, next) => {
   res.success = function (data) {
@@ -72,11 +82,11 @@ app.get("/", (req, res) => {
   res.send("TasteHolic Server");
 });
 
-app.post("/api/register", registerUser);
-app.post("/api/login", loginUser);
-app.post("/api/logout", logoutUser);
-app.delete("/api/user", deleteUser);
-app.post("/api/social-login", socialLogin);
+app.post("/api/v1/register", registerUser);
+app.post("/api/v1/login", loginUser);
+app.post("/api/v1/logout", logoutUser);
+app.delete("/api/v1/user", deleteUser);
+app.post("/api/v1/social-login", socialLogin);
 
 // Swagger
 // YAML 파일 로드
