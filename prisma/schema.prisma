@@ -14,7 +14,7 @@ model AlcoholTastingNotes {
   tasteRating  Json?
   aromaRating  Json?
   finishRating Json?
-  abvRating    Json?
+  abvRating    Decimal?  @db.Decimal(5, 2)
   description  String?   @db.Text
   createdAt    DateTime  @default(now()) @db.DateTime(0)
   updatedAt    DateTime  @default(now()) @db.DateTime(0)
@@ -67,7 +67,7 @@ model Cocktails {
   recipe               String?                @db.Text
   aromas               Json?
   tastes               Json?
-  abv                  Int?
+  abv                  Decimal?               @db.Decimal(5, 2)
   timing               Json?
   color                Json?
   createdAt            DateTime               @default(now()) @db.DateTime(0)
@@ -157,7 +157,7 @@ model CocktailTastingNotes {
   name        String?    @db.VarChar(255)
   tasteRating Json?
   aromaRating Json?
-  abv         Int?       @db.TinyInt
+  abv         Decimal?   @db.Decimal(5, 2)
   color       Json?
   description String?    @db.Text
   createdAt   DateTime   @default(now()) @db.DateTime(0)
