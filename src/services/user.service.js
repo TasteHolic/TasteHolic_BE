@@ -1,8 +1,6 @@
-// user.service.js
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-// ※ user.repository.js의 함수들 재활용 권장
 import { getUserByEmail, createUser, deleteUserById } from "../repositories/user.repository.js";
 
 dotenv.config();
@@ -62,8 +60,6 @@ export const loginUser = async ({ email, password }) => {
 
 // 로그아웃
 export const logoutUser = async () => {
-  // 필요한 로직이 있다면 추가(예: 세션 관리). 
-  // 여기서는 단순히 성공 메시지만 반환한다고 가정
   return { message: "로그아웃 성공" };
 };
 
@@ -84,10 +80,7 @@ export const socialLogin = async (accessToken) => {
     throw new Error("액세스 토큰이 필요합니다.");
   }
 
-  // 실제 카카오 API 호출 로직은 추후 추가
   const kakaoUser = { id: 12345 }; // 가짜 예시 데이터
-
-  // 카카오 유저 정보로 JWT 발급
   const token = generateToken(kakaoUser.id);
   return { message: "카카오 로그인 성공", token };
 };
