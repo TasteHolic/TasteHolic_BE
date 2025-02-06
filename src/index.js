@@ -16,6 +16,7 @@ import {
   updateRecipeLike,
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
+import { handleSearch } from "./controllers/search.controller.js";
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -79,6 +80,7 @@ app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
+app.post("/api/v1/users/search", handleSearch);
 
 // app.js
 app.use((err, req, res, next) => {
