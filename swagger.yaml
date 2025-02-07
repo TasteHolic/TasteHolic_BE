@@ -972,7 +972,6 @@ paths:
                   success:
                     type: "null"
                     example: null
-  
   /api/v1/users/tasting-note:
       post:
         summary: 사용자 테이스팅 노트 작성
@@ -1127,7 +1126,6 @@ paths:
                     error:
                       type: string
                       description: "오류 메시지"
-
 
   paths:
   /api/v1/users/register:
