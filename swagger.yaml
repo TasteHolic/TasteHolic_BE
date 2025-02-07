@@ -1298,6 +1298,67 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+    delete:
+      summary: 사용자 테이스팅 노트 삭제
+      description: 사용자가 작성한 칵테일 또는 주류의 테이스팅 노트를 삭제합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "삭제할 테이스팅 노트 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입 (cocktail 또는 alcohol)"
+          schema:
+            type: string
+            enum: [cocktail, alcohol]
+      responses:
+        '200':
+          description: "테이스팅 노트 삭제 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "삭제 완료 메시지"
+        '400':
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        '404':
+          description: "테이스팅 노트가 존재하지 않음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        '500':
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+
 
 
   paths:

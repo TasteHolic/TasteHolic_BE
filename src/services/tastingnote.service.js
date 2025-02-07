@@ -4,7 +4,8 @@ import {
   addTastingNote,
   getTastingNote,
   modifyTastingNote,
-  findTastingNoteById
+  findTastingNoteById,
+  removeTastingNote
 } from "../repositories/tastingnote.repository.js";
 
 export const searchDrinks = async (query, type) => {
@@ -39,3 +40,8 @@ export const getTastingNoteById = async (noteId, type) => {
 export const updateTastingNote = async (noteId, updatedData, type) => {
     return await modifyTastingNote(noteId, updatedData, type);
   };
+
+// 테이스팅 노트 삭제
+export const deleteTastingNote = async (noteId, type) => {
+    return await removeTastingNote(noteId, type);
+}

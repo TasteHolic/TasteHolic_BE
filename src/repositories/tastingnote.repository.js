@@ -209,3 +209,16 @@ export const modifyTastingNote = async (noteId, updatedData, type) => {
       });
     }
   };
+
+  // 테이스팅 노트 삭제
+export const removeTastingNote = async (noteId, type) => {
+    if (type === "cocktail") {
+      return await prisma.cocktailTastingNotes.delete({
+        where: { id: noteId },
+      });
+    } else {
+      return await prisma.alcoholTastingNotes.delete({
+        where: { id: noteId },
+      });
+    }
+  };
