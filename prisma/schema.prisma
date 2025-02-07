@@ -17,7 +17,7 @@ model AlcoholTastingNotes {
   abvRating    Decimal?  @db.Decimal(5, 2)
   description  String?   @db.Text
   createdAt    DateTime  @default(now()) @db.DateTime(0)
-  updatedAt    DateTime  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)
   name         String?   @db.VarChar(255)
   category     String?   @db.VarChar(255)
   Alcohols     Alcohols? @relation(fields: [alcoholId], references: [id], onUpdate: NoAction, map: "FK_CopyOfNotes_Alcohol")
@@ -163,7 +163,7 @@ model CocktailTastingNotes {
   color       Json?
   description String?    @db.Text
   createdAt   DateTime   @default(now()) @db.DateTime(0)
-  updatedAt   DateTime   @default(now()) @db.DateTime(0)
+  updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime(0)
   Users       Users      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_1")
   Cocktails   Cocktails? @relation(fields: [cocktailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_2")
 
