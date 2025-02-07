@@ -1,4 +1,5 @@
 import express from "express";
+import { pool } from "../db.config.js";
 import cookieParser from "cookie-parser";  // 추가
 import cors from "cors";
 import fs from "fs";
@@ -33,6 +34,7 @@ import {
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
 import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
+import { handleUserTastingNote, handleSearchDrinks } from "./controllers/tastingnote.controller.js";
 
 
 // BigInt 변환 설정
@@ -105,6 +107,9 @@ app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
+
+app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
+app.post("/api/v1/users/tasting-note", handleUserTastingNote);
 
 // app.js
 app.use((err, req, res, next) => {
