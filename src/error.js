@@ -75,7 +75,6 @@ export class UnavailableData extends Error {
   }
 }
 
-
 export class DuplicateUserError extends Error {
   errorCode = "U100"; // 중복된 사용자 에러 코드
   statusCode = 400; // Bad Request
