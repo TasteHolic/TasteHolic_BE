@@ -33,7 +33,7 @@ import {
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
 import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
-
+import { handleSearchCategory } from "./controllers/category.controller.js";
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -106,6 +106,7 @@ app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 
+app.post("/api/v1/users/search/category", handleSearchCategory);
 // app.js
 app.use((err, req, res, next) => {
   console.error("Caught error:", err);
