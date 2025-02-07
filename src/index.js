@@ -34,7 +34,7 @@ import {
   updateCancelRecipeLike,
 } from "./controllers/recipe.controller.js";
 import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
-import { handleUserTastingNote, handleSearchDrinks, handleUpdateTastingNote } from "./controllers/tastingnote.controller.js";
+import { handleUserTastingNote, handleSearchDrinks, handleUpdateTastingNote, handleDeleteTastingNote } from "./controllers/tastingnote.controller.js";
 
 
 // BigInt 변환 설정
@@ -109,7 +109,7 @@ app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
 app.post("/api/v1/users/tasting-note", handleUserTastingNote);
 app.patch("/api/v1/users/tasting-note/:noteId", handleUpdateTastingNote);
-
+app.delete("/api/v1/users/tasting-note/:noteId", handleDeleteTastingNote);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
