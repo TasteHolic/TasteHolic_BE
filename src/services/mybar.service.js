@@ -20,8 +20,8 @@ export const myBarPost = async (data) => {
       return bar;
   };
 
-  export const myBarGet = async () => {
-    const bar = await viewBar();
+  export const myBarGet = async (userId) => {
+    const bar = await viewBar(userId);
     
     if (!bar) {
       return null;

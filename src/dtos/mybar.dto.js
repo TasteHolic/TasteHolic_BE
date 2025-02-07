@@ -1,8 +1,8 @@
-export const bodyToBar = (body) => {
+export const bodyToBar = (body, userId) => {
     const date = new Date().toISOString();
   
     return {
-      userId: 1,
+      userId: userId,
       alcoholId: body.alcoholId,
       createdAt: date,
       updatedAt: date,
