@@ -1,4 +1,5 @@
 import { prisma } from "../../db.config.js";
+import { authenticateUser } from "../controllers/user.controller.js";
 
 export const getBar = async (barId) => {
     const bar = await prisma.MyBars.findFirst({
@@ -46,9 +47,10 @@ export const addBar = async (data) => {
     return result.id;
 };
 
-export const viewBar = async () => {
+export const viewBar = async (userId) => {
+
     const bar = await prisma.MyBars.findMany({
-      where: { userId: 1 },
+      where: { userId: userId },
     });
   
     if (!bar || bar.length === 0) {

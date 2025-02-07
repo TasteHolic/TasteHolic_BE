@@ -3,7 +3,7 @@ import { validateRegister, validateLogin } from "../dtos/user.dto.js";
 import * as userService from "../services/user.service.js";
 import jwt from "jsonwebtoken";
 
-const authenticateUser = (req) => {
+export const authenticateUser = (req) => {
   try {
     const token = req.cookies?.token;
     if (!token) throw new Error("인증이 필요합니다.");

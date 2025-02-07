@@ -63,6 +63,7 @@ export class NoPermission extends Error {
   }
 }
 
+
 export class UnavailableData extends Error {
   errorCode = "D001"; 
   statusCode = 400; 

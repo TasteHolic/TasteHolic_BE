@@ -14,7 +14,7 @@ model AlcoholTastingNotes {
   tasteRating  Json?
   aromaRating  Json?
   finishRating Json?
-  abvRating    Json?
+  abvRating    Decimal?  @db.Decimal(5, 2)
   description  String?   @db.Text
   createdAt    DateTime  @default(now()) @db.DateTime(0)
   updatedAt    DateTime  @default(now()) @db.DateTime(0)
@@ -41,6 +41,7 @@ model Alcohols {
   description         String?               @db.Text
   createdAt           DateTime              @default(now()) @db.DateTime(0)
   updatedAt           DateTime              @default(now()) @db.DateTime(0)
+  Category            String?               @db.VarChar(255)
   AlcoholTastingNotes AlcoholTastingNotes[]
   MyBars              MyBars[]
 }
@@ -63,16 +64,17 @@ model Cocktails {
   id                   BigInt                 @id @default(autoincrement())
   nameEng              String                 @db.VarChar(255)
   nameKor              String                 @db.VarChar(255)
-  ingredients          Json?
-  recipe               String?                @db.Text
+  ingredientsEng       Json?
+  recipe               Json?
   aromas               Json?
   tastes               Json?
-  abv                  Int?
+  abv                  Decimal?               @db.Decimal(5, 2)
   timing               Json?
   color                Json?
   createdAt            DateTime               @default(now()) @db.DateTime(0)
   updatedAt            DateTime               @default(now()) @db.DateTime(0)
   glass                String?                @db.VarChar(255)
+  ingredientsKor       Json?
   CocktailFavorites    CocktailFavorites[]
   CocktailTastingNotes CocktailTastingNotes[]
 }
@@ -157,7 +159,7 @@ model CocktailTastingNotes {
   name        String?    @db.VarChar(255)
   tasteRating Json?
   aromaRating Json?
-  abv         Int?       @db.TinyInt
+  abv         Decimal?   @db.Decimal(5, 2)
   color       Json?
   description String?    @db.Text
   createdAt   DateTime   @default(now()) @db.DateTime(0)
