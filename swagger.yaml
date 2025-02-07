@@ -1126,6 +1126,179 @@ paths:
                     error:
                       type: string
                       description: "오류 메시지"
+  /api/v1/users/tasting-note/{noteId}:
+    patch:
+      summary: 사용자 테이스팅 노트 수정
+      description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 수정합니다.
+      tags: 
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "수정할 테이스팅 노트의 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입 (cocktail 또는 alcohol)"
+          schema:
+            type: string
+            enum: [cocktail, alcohol]
+      requestBody:
+        description: "사용자가 수정한 테이스팅 노트"
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abv:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (칵테일)"
+                    color:
+                      type: array
+                      items:
+                        type: string
+                      description: "색상 평가"
+                    description:
+                      type: string
+                      description: "테이스팅 노트에 대한 설명"
+                  required:
+                    - tasteRating
+                    - aromaRating
+                    - abv
+                    - color
+                    - description
+
+                - type: object
+                  properties:
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abvRating:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (알코올)"
+                    finishRating:
+                      type: number
+                      format: float
+                      description: "마지막 맛 평가"
+                    description:
+                      type: string
+                      description: "테이스팅 노트에 대한 설명"
+                  required:
+                    - tasteRating
+                    - aromaRating
+                    - abvRating
+                    - finishRating
+                    - description
+
+      responses:
+        '200':
+          description: "테이스팅 노트 수정 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      finishRating:
+                        type: string
+                        nullable: true
+                        description: "후미 평가 (선택 사항)"
+                      description:
+                        type: string
+                        description: "테이스팅 노트에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        '400':
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        '404':
+          description: "테이스팅 노트를 찾을 수 없음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        '403':
+          description: "수정 권한이 없음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        '500':
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+
 
   paths:
   /api/v1/users/register:

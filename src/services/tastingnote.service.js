@@ -3,6 +3,8 @@ import {
   searchDrinksInDB,
   addTastingNote,
   getTastingNote,
+  modifyTastingNote,
+  findTastingNoteById
 } from "../repositories/tastingnote.repository.js";
 
 export const searchDrinks = async (query, type) => {
@@ -28,3 +30,12 @@ export const userTastingNote = async (data, type) => {
   return responseFromUser({ tastingnote });
 };
 
+// 테이스팅 노트 ID로 조회
+export const getTastingNoteById = async (noteId, type) => {
+    return await findTastingNoteById(noteId, type);
+  };
+
+// 테이스팅 노트 수정
+export const updateTastingNote = async (noteId, updatedData, type) => {
+    return await modifyTastingNote(noteId, updatedData, type);
+  };

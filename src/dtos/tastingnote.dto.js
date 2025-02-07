@@ -58,5 +58,25 @@ export const responseFromUser = ({ tastingnote, type }) => {
       };
     }
   };
-  
+
+  // 테이스팅 노트 수정 DTO
+export const updateTastingNoteDto = (body, type) => {
+    if (type === "cocktail") {
+      return {
+        tasteRating: body.tasteRating,
+        aromaRating: body.aromaRating,
+        abv: body.abv,
+        color: body.color,
+        description: body.description,
+      };
+    } else {
+      return {
+        tasteRating: body.tasteRating,
+        aromaRating: body.aromaRating,
+        finishRating: body.finishRating,
+        abvRating: body.abvRating,
+        description: body.description,
+      };
+    }
+  };
   

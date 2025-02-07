@@ -182,5 +182,30 @@ export const addTastingNote = async (data, type) => {
     }
   };
   
+// 테이스팅 노트 ID로 해당 노트 정보 조회
+export const findTastingNoteById = async (noteId, type) => {
+    if (type === "cocktail"){
+        return await prisma.cocktailTastingNotes.findUnique({
+            where: { id: noteId },
+          });
+    } else {
+        return await prisma.alcoholTastingNotes.findUnique({
+            where: { id: noteId },
+          });
+    }
+  };
 
-  
+  // 테이스팅 노트 수정
+export const modifyTastingNote = async (noteId, updatedData, type) => {
+    if (type === "cocktail") {
+      return await prisma.cocktailTastingNotes.update({
+        where: { id: noteId },
+        data: updatedData,
+      });
+    } else {
+      return await prisma.alcoholTastingNotes.update({
+        where: { id: noteId },
+        data: updatedData,
+      });
+    }
+  };
