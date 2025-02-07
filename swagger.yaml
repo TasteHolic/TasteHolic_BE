@@ -972,7 +972,8 @@ paths:
                   success:
                     type: "null"
                     example: null
-  /api/register:
+  paths:
+  /api/v1/users/register:
     post:
       summary: 회원가입
       description: 이메일, 비밀번호, 닉네임을 통해 회원가입.
@@ -997,11 +998,28 @@ paths:
       responses:
         201:
           description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "회원가입이 완료되었습니다."
         400:
           description: 잘못된 요청 데이터
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일 형식이 잘못되었습니다."
         500:
           description: 서버 오류
-  /api/login:
+
+  /api/v1/users/login:
     post:
       summary: 로그인
       description: 이메일과 비밀번호로 로그인.
@@ -1023,11 +1041,31 @@ paths:
       responses:
         200:
           description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그인 성공"
+                  token:
+                    type: string
+                    example: "jwt_token_here"
         401:
           description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일 또는 비밀번호가 잘못되었습니다."
         500:
           description: 서버 오류
-  /api/logout:
+
+  /api/v1/users/logout:
     post:
       summary: 로그아웃
       description: 인증 토큰을 삭제하여 로그아웃 처리.
@@ -1036,9 +1074,18 @@ paths:
       responses:
         200:
           description: 로그아웃 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그아웃이 완료되었습니다."
         500:
           description: 서버 오류
-  /api/user:
+
+  /api/v1/users/delete-user:
     delete:
       summary: 회원 탈퇴
       description: 인증된 사용자가 회원 탈퇴 요청.
@@ -1047,11 +1094,28 @@ paths:
       responses:
         200:
           description: 회원 탈퇴 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "회원 탈퇴가 완료되었습니다."
         401:
           description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "인증 실패"
         500:
           description: 서버 오류
-  /api/social-login:
+
+  /api/v1/users/social-login:
     post:
       summary: 카카오 소셜 로그인
       description: 카카오 API를 통한 소셜 로그인.
@@ -1070,9 +1134,33 @@ paths:
       responses:
         200:
           description: 카카오 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "소셜 로그인 성공"
         400:
           description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         401:
           description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "카카오 인증 실패"
         500:
           description: 서버 오류

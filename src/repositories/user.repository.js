@@ -1,53 +1,39 @@
-import { prisma } from "../../db.config.js";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const getUserByEmail = async (email) => {
-    const user = await prisma.Users.findFirst({
-        where: { email },
-    });
-
-    if (!user) {
-        return null;
-    }
-
-    return user;
+  const user = await prisma.users.findFirst({
+    where: { email },
+  });
+  return user ? { ...user, id: user.id.toString() } : null;
 };
 
 export const createUser = async (data) => {
-    const userExists = await prisma.Users.findFirst({
-        where: { email: data.email },
-    });
-
-    if (userExists) {
-        console.log("이미 존재하는 이메일입니다.", userExists);
-        return null;
-    }
-
-    const result = await prisma.Users.create({
-        data: {
-            email: data.email,
-            password: data.password,
-            nickname: data.nickname,
-            createdAt: data.createdAt,
-            updatedAt: data.updatedAt,
-        },
-    });
-
-    return result.id;
+  const result = await prisma.users.create({
+    data: {
+      email: data.email,
+      password: data.password,
+      nickname: data.nickname,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    },
+  });
+  return { ...result, id: result.id.toString() };
 };
 
 export const deleteUserById = async (userId) => {
-    const user = await prisma.Users.findUnique({
-        where: { id: userId },
-    });
+  const user = await prisma.users.findUnique({
+    where: { id: BigInt(userId) },
+  });
 
-    if (!user) {
-        console.log("해당 ID의 사용자가 존재하지 않습니다.");
-        return null;
-    }
+  if (!user) {
+    throw new Error("해당 ID의 사용자가 존재하지 않습니다.");
+  }
 
-    await prisma.Users.delete({
-        where: { id: userId },
-    });
+  await prisma.users.delete({
+    where: { id: BigInt(userId) },
+  });
 
-    return user;
+  return { ...user, id: user.id.toString() };
 };
