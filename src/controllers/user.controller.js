@@ -3,36 +3,55 @@ import { validateRegister, validateLogin } from "../dtos/user.dto.js";
 import * as userService from "../services/user.service.js";
 import jwt from "jsonwebtoken";
 
-// ✅ 인증 유틸 함수 개선 (에러 핸들링 추가)
 const authenticateUser = (req) => {
   try {
     const token = req.cookies?.token;
     if (!token) throw new Error("인증이 필요합니다.");
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      throw new Error("토큰이 만료되었습니다.");
+    }
     throw new Error("유효하지 않은 토큰입니다.");
   }
 };
 
-// ✅ 함수 네이밍 일관성 유지
+const jsonResponse = (res, status, data) => {
+  const serializedData = JSON.parse(
+    JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value))
+  );
+  res.status(status).json({
+    resultType: "SUCCESS",
+    error: null,
+    success: serializedData,
+  });
+};
+
+const jsonErrorResponse = (res, status, errorCode, reason, data = null) => {
+  res.status(status).json({
+    resultType: "FAIL",
+    error: { errorCode, reason, data },
+    success: null,
+  });
+};
+
 export const handleRegisterUser = async (req, res, next) => {
   const { error } = validateRegister(req.body);
   if (error) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ message: error.details[0].message });
+    return jsonErrorResponse(res, StatusCodes.BAD_REQUEST, "validation_error", error.details[0].message);
   }
-
   try {
     const result = await userService.registerUser(req.body);
-    res.status(StatusCodes.CREATED).json(result);
+    jsonResponse(res, StatusCodes.CREATED, result);
   } catch (err) {
-    next(err);
+    jsonErrorResponse(res, err.statusCode || StatusCodes.CONFLICT, "registration_error", err.message);
   }
 };
 
 export const handleLoginUser = async (req, res, next) => {
   const { error } = validateLogin(req.body);
   if (error) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ message: error.details[0].message });
+    return jsonErrorResponse(res, StatusCodes.BAD_REQUEST, "validation_error", error.details[0].message);
   }
 
   try {
@@ -40,40 +59,49 @@ export const handleLoginUser = async (req, res, next) => {
     res
       .status(StatusCodes.OK)
       .cookie("token", result.token, { httpOnly: true })
-      .json({ message: "로그인 성공", token: result.token });
+      .json({
+        resultType: "SUCCESS",
+        error: null,
+        success: { message: "로그인 성공", token: result.token },
+      });
   } catch (err) {
-    next(err);
+    jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "login_error", err.message);
   }
 };
 
 export const handleLogoutUser = async (req, res, next) => {
   try {
-    res.clearCookie("token", { httpOnly: true }).json({ message: "로그아웃 성공" });
+    res
+      .clearCookie("token", { httpOnly: true })
+      .json({
+        resultType: "SUCCESS",
+        error: null,
+        success: { message: "로그아웃 성공" },
+      });
   } catch (err) {
     next(err);
   }
 };
 
-// ✅ handleDeleteUser로 네이밍 변경
 export const handleDeleteUser = async (req, res, next) => {
   try {
     const user = authenticateUser(req);
     if (!user?.id) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ message: "사용자 인증 실패" });
+      return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
     }
 
     const result = await userService.deleteUser(user.id);
-    res.status(StatusCodes.OK).json({ message: "회원 삭제 완료", result });
+    jsonResponse(res, StatusCodes.OK, { message: "회원 삭제 완료", result });
   } catch (err) {
-    next(err);
+    jsonErrorResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, "delete_error", err.message);
   }
 };
 
 export const handleSocialLogin = async (req, res, next) => {
   try {
     const result = await userService.socialLogin(req.body.accessToken);
-    res.status(StatusCodes.OK).json(result);
+    jsonResponse(res, StatusCodes.OK, result);
   } catch (err) {
-    next(err);
+    jsonErrorResponse(res, StatusCodes.BAD_REQUEST, "social_login_error", err.message);
   }
 };

@@ -45,6 +45,9 @@ BigInt.prototype.toJSON = function () {
 const app = express();
 const port = 3000;
 
+// Load environment variables
+dotenv.config();
+
 app.use(cors()); // CORS 설정
 app.use(express.json());
 app.use(cookieParser()); 
@@ -82,12 +85,6 @@ app.get("/", (req, res) => {
   res.send("TasteHolic Server");
 });
 
-app.post("/api/v1/register", registerUser);
-app.post("/api/v1/login", loginUser);
-app.post("/api/v1/logout", logoutUser);
-app.delete("/api/v1/user", deleteUser);
-app.post("/api/v1/social-login", socialLogin);
-
 // Swagger
 // YAML 파일 로드
 const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
@@ -110,6 +107,13 @@ app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
 app.post("/api/v1/users/tasting-note", handleUserTastingNote);
+
+
+app.post("/api/v1/users/register", handleRegisterUser);
+app.post("/api/v1/users/login", handleLoginUser);
+app.post("/api/v1/users/logout", handleLogoutUser);
+app.delete("/api/v1/users/delete-user", handleDeleteUser);
+app.post("/api/v1/users/social-login", handleSocialLogin);
 
 // app.js
 app.use((err, req, res, next) => {
