@@ -1,6 +1,6 @@
-export const bodyToCocktailTastingNote = (body,type) => {
+export const bodyToCocktailTastingNote = (body,userId) => {
     return {
-      userId: 1,  // 예시로 하드코딩된 userId (실제로는 인증된 사용자의 ID)
+      userId,
       cocktailId: body.cocktailId,  // Cocktail의 id
       name: body.name || "",
       tasteRating: body.tasteRating || "",
@@ -11,9 +11,9 @@ export const bodyToCocktailTastingNote = (body,type) => {
     };
   };
   
-  export const bodyToAlcoholTastingNote = (body,type) => {
+  export const bodyToAlcoholTastingNote = (body,userId) => {
     return {
-      userId: 1,  // 예시로 하드코딩된 userId (실제로는 인증된 사용자의 ID)
+      userId,
       alcoholId: body.alcoholId,  // Alcohol의 id
       name: body.name || "",
       category: body.category || "",

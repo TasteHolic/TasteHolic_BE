@@ -12,9 +12,9 @@ export const searchDrinks = async (query, type) => {
     return await searchDrinksInDB(query, type);  // type을 전달
 };
  
-export const userTastingNote = async (data, type) => {
+export const userTastingNote = async (userId, data, type) => {
   const tastingNoteId = await addTastingNote({
-    userId: data.userId,
+    userId,
     cocktailId: data.cocktailId,
     alcoholId: data.alcoholId,
     name: data.name,

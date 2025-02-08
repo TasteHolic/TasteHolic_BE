@@ -65,7 +65,7 @@ export const addTastingNote = async (data, type) => {
                 query = `INSERT INTO ${tableName} (userId, cocktailId, name, tasteRating, aromaRating, abv, color, description, createdAt, updatedAt) 
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
                 values = [
-                    1, // userId 하드코딩
+                    data.userId, // userId 하드코딩
                     cocktailId, // 조회된 칵테일 ID
                     data.name,
                     JSON.stringify(data.tasteRating),
@@ -79,7 +79,7 @@ export const addTastingNote = async (data, type) => {
                 query = `INSERT INTO ${tableName} (userId, name, tasteRating, aromaRating, abv, color, description, createdAt, updatedAt) 
                          VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
                 values = [
-                    1, // userId 하드코딩
+                    data.userId,
                     data.name,
                     JSON.stringify(data.tasteRating),
                     JSON.stringify(data.aromaRating),
@@ -117,7 +117,7 @@ export const addTastingNote = async (data, type) => {
             query = `INSERT INTO ${tableName} (userId, alcoholId, name, category, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
             values = [
-                1, // userId 하드코딩
+                data.userId,
                 alcoholId, // 조회된 주류 ID
                 data.name,
                 category,
@@ -132,7 +132,7 @@ export const addTastingNote = async (data, type) => {
             query = `INSERT INTO ${tableName} (userId, name, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
             values = [
-                1, // userId 하드코딩
+                data.userId,
                 data.name,
                 JSON.stringify(data.tasteRating),
                 JSON.stringify(data.aromaRating),
