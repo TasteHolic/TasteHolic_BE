@@ -10,9 +10,6 @@ export const handleMyBarPost = async (req, res, next) => {
   
     try {
       const user = authenticateUser(req);
-      if (!user?.id) {
-          return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
-      }
 
       const bar = await myBarPost(bodyToBar(req.body, user.id));
       res.status(StatusCodes.OK).success(bar);
@@ -21,12 +18,9 @@ export const handleMyBarPost = async (req, res, next) => {
     }
   };
 
-export const handleMyBarGet = async (req, res) => {
+export const handleMyBarGet = async (req, res, next) => {
     try {
       const user = authenticateUser(req);
-      if (!user?.id) {
-          return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
-      }
 
       const bar = await myBarGet(user.id);  // repository에서 user.id로 조회
       res.status(StatusCodes.OK).json({ success: bar });
@@ -40,9 +34,6 @@ export const handleMyBarDelete = async (req, res, next) => {
 
     try {
       const user = authenticateUser(req);
-      if (!user?.id) {
-          return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
-      }
       
       const bar = await myBarDelete(
           parseInt(req.params.barId));
@@ -57,9 +48,6 @@ export const handleMyBarSearch = async (req, res, next) => {
 
   try {
     const user = authenticateUser(req);
-    if (!user?.id) {
-        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
-    }
     
     const bar = await myBarSearch(user.id);  // repository에서 user.id로 조회
     res.status(StatusCodes.OK).json({ success: bar });
