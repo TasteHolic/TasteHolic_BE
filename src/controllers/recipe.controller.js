@@ -11,7 +11,7 @@ import {
   updateCocktailLikeCancelService,
   updateUserRecipeLikeCancelService,
 } from "../services/recipe.service.js";
-import { parseRecipeList } from "../dtos/recipe.dto.js";
+import { parseRecipeList, parseRecipeDetail } from "../dtos/recipe.dto.js";
 import { authenticateUser } from "./user.controller.js";
 import { NoQuery, NoParameter, UnavailableType } from "../error.js";
 
@@ -153,7 +153,9 @@ export const getRecipe = async (req, res, next) => {
       throw new UnavailableType("user 또는 cocktail만 가능합니다.");
     }
 
-    res.status(StatusCodes.OK).success(recipe);
+    const parsedRecipe = parseRecipeDetail(recipe, type);
+
+    res.status(StatusCodes.OK).success({ recipe: parsedRecipe });
   } catch (err) {
     next(err);
   }
