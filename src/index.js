@@ -16,13 +16,14 @@ import {
     handleLoginUser,
     handleLogoutUser,
     handleDeleteUser,
-    handleSocialLogin,
+    handleSocialLogin
   } from "./controllers/user.controller.js";
 
 import {
   handleMyBarPost,
   handleMyBarGet,
   handleMyBarDelete,
+  handleMyBarSearch
 } from "./controllers/mybar.controller.js";
 import {
   createRecipe,
@@ -93,6 +94,7 @@ const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
+app.get("/api/v1/users/my-bar/search", handleMyBarSearch);
 app.post("/api/v1/users/my-bar/post", handleMyBarPost);
 app.get("/api/v1/users/my-bar/view", handleMyBarGet);
 app.delete("/api/v1/users/my-bar/delete/:barId", handleMyBarDelete);
