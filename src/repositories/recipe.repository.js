@@ -43,13 +43,21 @@ export const updateRecipeInDB = async (recipeId, userId, data) => {
 
 export const deleteRecipeInDB = async (recipeId, userId) => {
   try {
-    await prisma.userRecipes.delete({
-      where: {
-        id: recipeId,
-        userId: userId,
-      },
-    });
-    return { success: true };
+    const [deletedFavs, deletedRecipe] = await prisma.$transaction([
+      prisma.userRecipeFavorites.deleteMany({
+        where: { recipeId: recipeId },
+      }),
+      prisma.userRecipes.delete({
+        where: {
+          id: recipeId,
+          userId: userId,
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+    };
   } catch (err) {
     throw err;
   }
@@ -57,6 +65,7 @@ export const deleteRecipeInDB = async (recipeId, userId) => {
 
 export const readCocktailInDB = async (cocktailId) => {
   try {
+    console.log("?");
     const cocktail = await prisma.cocktails.update({
       where: {
         id: cocktailId,
