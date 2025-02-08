@@ -59,7 +59,7 @@ export const deleteRecipeService = async (recipeId, userId) => {
   }
 };
 
-export const increaseCocktailViewService = async (cocktailId) => {
+export const cocktailViewService = async (cocktailId) => {
   try {
     const recipe = await readCocktailInDB(cocktailId);
     if (!recipe) {
@@ -71,7 +71,7 @@ export const increaseCocktailViewService = async (cocktailId) => {
   }
 };
 
-export const increaseUserRecipeViewService = async (recipeId) => {
+export const userRecipeViewService = async (recipeId) => {
   try {
     const recipe = await readUserRecipeInDB(recipeId);
     if (!recipe) {
@@ -145,7 +145,7 @@ export const getRecipeListService = async (type, cursor, limit) => {
         break;
       case "high":
         ({ recipes, nextCursor } = await getFilteredRecipesFromDB(
-          type, 
+          type,
           cursor,
           limit
         ));

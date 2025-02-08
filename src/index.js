@@ -27,7 +27,7 @@ import {
 import {
   createRecipe,
   getRecipeList,
-  increaseRecipeView,
+  getRecipe,
   updateRecipe,
   deleteRecipe,
   updateRecipeLike,
@@ -112,7 +112,7 @@ app.post("/api/v1/recipes", createRecipe);
 app.get("/api/v1/recipes/", getRecipeList);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
-app.patch("/api/v1/recipes/:recipeId/view", increaseRecipeView);
+app.get("/api/v1/recipes/:recipeId", getRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
 

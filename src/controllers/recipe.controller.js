@@ -4,8 +4,8 @@ import {
   getRecipeListService,
   updateRecipeService,
   deleteRecipeService,
-  increaseCocktailViewService,
-  increaseUserRecipeViewService,
+  cocktailViewService,
+  userRecipeViewService,
   updateCocktailLikeService,
   updateUserRecipeLikeService,
   updateCocktailLikeCancelService,
@@ -127,8 +127,8 @@ export const getRecipeList = async (req, res, next) => {
   }
 };
 
-export const increaseRecipeView = async (req, res, next) => {
-  console.log("레시피 조회수 증가 요청!");
+export const getRecipe = async (req, res, next) => {
+  console.log("레시피 상세 조회 요청!");
   try {
     const { type } = req.query;
     const { recipeId } = req.params;
@@ -144,16 +144,14 @@ export const increaseRecipeView = async (req, res, next) => {
     let recipe = null;
 
     if (type === "cocktail") {
-      recipe = await increaseCocktailViewService(recipeId);
+      recipe = await cocktailViewService(recipeId);
     } else if (type === "user") {
-      recipe = await increaseUserRecipeViewService(id);
+      recipe = await userRecipeViewService(id);
     } else {
       throw new UnavailableType("user 또는 cocktail만 가능합니다.");
     }
 
-    res
-      .status(StatusCodes.OK)
-      .success({ recipeId: id, viewCount: recipe.views });
+    res.status(StatusCodes.OK).success(recipe);
   } catch (err) {
     next(err);
   }
