@@ -1,4 +1,5 @@
 import { prisma } from "../../db.config.js";
+import { Prisma } from "@prisma/client";
 import { authenticateUser } from "../controllers/user.controller.js";
 
 export const getBar = async (barId) => {
@@ -75,4 +76,53 @@ export const viewBar = async (userId) => {
       });
   
     return bar;
+  };
+
+
+  export const searchBar = async (userId) => {
+      const mybar = await prisma.MyBars.findMany({
+        where: { userId: userId },
+        select: { category: true },
+      });
+  
+      const categories = [...new Set(mybar.map((bar) => bar.category))];
+      console.log("검색할 카테고리:", categories);
+  
+      if (categories.length === 0) {
+        return {
+          cocktails: [],
+          recipes: [],
+        };
+      }
+  
+      // Cocktails 검색
+      const cocktailsQuery = Prisma.sql`
+        SELECT *
+        FROM Cocktails
+        WHERE ${Prisma.join(
+          categories.map(
+            category => Prisma.sql`JSON_EXTRACT(ingredientsEng, ${`$."${category}"`}) IS NOT NULL`
+          )
+        , ' OR ')}
+      `;
+      
+      const cocktails = await prisma.$queryRaw(cocktailsQuery);
+  
+      // UserRecipes 검색
+      const recipesQuery = Prisma.sql`
+        SELECT *
+        FROM UserRecipes
+        WHERE ${Prisma.join(
+          categories.map(
+            category => Prisma.sql`JSON_EXTRACT(ingredients, ${`$."${category}"`}) IS NOT NULL`
+          )
+        , ' OR ')}
+      `;
+      
+      const recipes = await prisma.$queryRaw(recipesQuery);
+  
+      return {
+        cocktails,
+        recipes,
+      };
   };

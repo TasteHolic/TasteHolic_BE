@@ -52,29 +52,22 @@ paths:
                     type: object
                     properties:
                       id:
-                        type: string
-                        example: "9"
+                        type: integer
                       userId:
-                        type: string
-                        example: "1"
+                        type: integer
                       alcoholId:
-                        type: string
+                        type: integer
                         nullable: true
-                        example: null
                       createdAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T09:48:17.000Z"
                       updatedAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T09:48:17.000Z"
                       name:
                         type: string
-                        example: null
                       category:
                         type: string
-                        example: null
         400:
           description: 잘못된 요청 (이미 마이바에 추가된 술)
           content:
@@ -134,29 +127,22 @@ paths:
                           type: object
                           properties:
                             id:
-                              type: string
-                              example: "9"
+                              type: integer
                             userId:
-                              type: string
-                              example: "1"
+                              type: integer
                             alcoholId:
                               type: string
                               nullable: true
-                              example: null
                             createdAt:
                               type: string
                               format: date-time
-                              example: "2025-02-01T09:48:17.000Z"
                             updatedAt:
                               type: string
                               format: date-time
-                              example: "2025-02-01T09:48:17.000Z"
                             name:
                               type: string
-                              example: "까베르네 쇼비뇽"
                             category:
                               type: string
-                              example: "Wine"
   /api/v1/users/my-bar/delete/{barId}:
     delete:
       summary: 마이바의 특정 술 삭제
@@ -193,29 +179,22 @@ paths:
                     type: object
                     properties:
                       id:
-                        type: string
-                        example: "9"
+                        type: integer
                       userId:
-                        type: string
-                        example: "1"
+                        type: integer
                       alcoholId:
                         type: string
                         nullable: true
-                        example: null
                       createdAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T09:48:17.000Z"
                       updatedAt:
                         type: string
                         format: date-time
-                        example: "2025-02-01T09:48:17.000Z"
                       name:
                         type: string
-                        example: null
                       category:
                         type: string
-                        example: null
         400:
           description: 잘못된 요청 (마이바에 없는 술)
           content:
@@ -239,6 +218,93 @@ paths:
                     type: object
                     nullable: true
                     example: null
+  /api/v1/users/my-bar/search:
+    get:
+      summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
+      description: 해당하는 칵테일과 유저 레시피를 반환.
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 칵테일과 유저 레시피 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          cocktails:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                nameEng:
+                                  type: string
+                                nameKor:
+                                  type: string
+                                ingredientsEng:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                                recipe:
+                                  type: array
+                                  items:
+                                    type: string
+                                aromas:
+                                  type: array
+                                  items:
+                                    type: string
+                                tastes:
+                                  type: array
+                                  items:
+                                    type: string
+                                abv:
+                                  type: string
+                                glass:
+                                  type: string
+                                ingredientsKor:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                          recipes:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                userId:
+                                  type: integer
+                                name:
+                                  type: string
+                                ingredients:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                                status:
+                                  type: string
+                                likes:
+                                  type: integer
   /api/v1/recipes:
     post:
       summary: 유저 레시피 등록

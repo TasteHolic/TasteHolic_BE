@@ -1,4 +1,4 @@
-import { getBar, addBar, viewBar, deleteBar } from "../repositories/mybar.repository.js";
+import { getBar, addBar, viewBar, deleteBar, searchBar } from "../repositories/mybar.repository.js";
 import { responseFromMyBar } from "../dtos/mybar.dto.js";
 import { DuplicateAlcoholError, NoAlcoholError } from "../error.js";
 
@@ -38,4 +38,14 @@ export const myBarPost = async (data) => {
     }
   
     return deletedBar;
+  };
+
+  export const myBarSearch = async (userId) => {
+    const bar = await searchBar(userId);
+    
+    if (!bar) {
+      return null;
+    }
+  
+    return responseFromMyBar(bar);
   };
