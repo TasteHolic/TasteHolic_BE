@@ -1,12 +1,7 @@
-import { searchRepository } from "../repositories/search.repository.js";
+//service
 
-export const searchService = {
-    async searchCocktailsAndAlcohols(filters) {
-        const [cocktails, alcohols] = await Promise.all([
-            searchRepository.findCocktailsByFilters(filters),
-            searchRepository.findAlcoholsByFilters(filters)
-        ]);
-        
-        return [...cocktails, ...alcohols];
-    }
-};
+import { findAlcoholsAndCocktails } from "../repositories/search.repository.js";
+
+export async function searchAlcoholsAndCocktails(category, minAbv, maxAbv) {
+  return await findAlcoholsAndCocktails(category, minAbv, maxAbv);
+}
