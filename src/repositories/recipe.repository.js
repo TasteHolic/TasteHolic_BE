@@ -239,3 +239,141 @@ export const cancelLikeOnCocktailInDB = async (recipeId, userId) => {
     throw err;
   }
 };
+
+// 🔹 공통적인 커서 기반 페이지네이션 옵션 생성 함수
+const getPaginationOptions = (cursor, limit) => {
+  const options = {
+    take: parseInt(limit),
+    orderBy: { id: "desc" }, // ID 기준 오름차순 정렬
+  };
+
+  if (cursor) {
+    options.cursor = { id: parseInt(cursor) };
+    options.skip = 1; // 커서 이후부터 가져오기
+  }
+
+  return options;
+};
+
+// 🔹 사용자 레시피 가져오기
+export const getUserRecipesFromDB = async (cursor, limit) => {
+  const options = getPaginationOptions(cursor, limit);
+  const recipes = await prisma.userRecipes.findMany(options);
+  const nextCursor =
+    recipes.length === limit ? recipes[recipes.length - 1].id : null;
+
+  return { recipes, nextCursor };
+};
+
+export const getFilteredRecipesFromDB = async (filter, cursor, limit) => {
+  try {
+    // 최신순 정렬을 위한 페이지네이션 옵션 적용
+    const paginationOptions = getPaginationOptions(cursor, limit);
+
+    let query;
+    let values = [];
+
+    // 필터별 SQL 쿼리 설정 (최신순 적용)
+    if (filter === "zero") {
+      query = `
+        SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+        FROM Cocktails
+        WHERE abv = 0
+      `;
+    } else {
+      query = `
+        SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+        FROM Cocktails
+        WHERE abv > 30
+      `;
+    }
+
+    if (cursor) {
+      query += ` AND id < ? `; // 최신순이므로 id < cursor 적용
+      values.push(cursor);
+    }
+
+    // UNION ALL 추가 (userRecipes 포함)
+    query += `
+      UNION ALL
+      SELECT id, name, ingredients, likes, views, 'user' as type
+      FROM UserRecipes
+    `;
+
+    if (filter === "zero") {
+      query += ` WHERE abv = 0 `;
+    } else {
+      query += ` WHERE abv > 30 `;
+    }
+
+    if (cursor) {
+      query += ` AND id < ? `;
+      values.push(cursor);
+    }
+
+    query += `
+      ORDER BY id DESC
+      LIMIT ?
+    `;
+    values.push(limit); // LIMIT 추가
+
+    // Prisma raw query 실행
+    const recipes = await prisma.$queryRawUnsafe(query, ...values);
+
+    // `nextCursor` 설정 (가장 마지막 항목의 ID)
+    const nextCursor =
+      recipes.length === limit ? recipes[recipes.length - 1].id : null;
+
+    return { recipes, nextCursor };
+  } catch (err) {
+    console.error("❌ 데이터 조회 실패:", err.message || err);
+    throw err;
+  }
+};
+
+export const getUnder2RecipesFromDB = async (cursor, limit) => {
+  try {
+    let query = `
+      SELECT id, name, ingredients, likes, views, 'user' as type
+      FROM UserRecipes
+      WHERE JSON_LENGTH(ingredients) <= 2
+    `;
+
+    let values = [];
+
+    if (cursor) {
+      query += ` AND id < ? `;
+      values.push(cursor);
+    }
+
+    query += `
+      UNION ALL
+      SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+      FROM Cocktails
+      WHERE JSON_LENGTH(ingredientsEng) <= 2
+    `;
+
+    if (cursor) {
+      query += ` AND id < ? `;
+      values.push(cursor);
+    }
+
+    query += `
+      ORDER BY id DESC
+      LIMIT ?
+    `;
+    values.push(limit);
+
+    // Prisma raw query 실행
+    const recipes = await prisma.$queryRawUnsafe(query, ...values);
+
+    // `nextCursor` 설정 (가장 마지막 항목의 ID)
+    const nextCursor =
+      recipes.length === limit ? recipes[recipes.length - 1].id : null;
+
+    return { recipes, nextCursor };
+  } catch (err) {
+    console.error("❌ 데이터 조회 실패:", err.message || err);
+    throw err;
+  }
+};

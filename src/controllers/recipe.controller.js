@@ -102,30 +102,26 @@ export const deleteRecipe = async (req, res, next) => {
 
 export const getRecipeList = async (req, res, next) => {
   console.log("레시피 목록 조회 요청!");
+
   try {
-    const { type } = req.query;
+    const { type, cursor, limit = 10 } = req.query;
 
     if (!type) {
-      throw new NoQuery("입력된 타입이 없습니다.(user/cocktail)");
-    }
-
-    let recipes = null;
-
-    if (
-      type === "user" ||
-      type === "zero" ||
-      type === "high" ||
-      type === "fruity" ||
-      type === "under2"
-    ) {
-      recipes = await getRecipeListService(type);
-    } else {
-      throw new UnavailableType(
-        "타입 값이 잘못되었습니다. (user, zero, high, fruity, under2만 가능)"
+      throw new NoQuery(
+        "입력된 타입이 없습니다. (user/zero/high/fruity/under2)"
       );
     }
 
-    res.status(StatusCodes.OK).success(recipes);
+    const { recipes, nextCursor } = await getRecipeListService(
+      type,
+      cursor,
+      parseInt(limit)
+    );
+
+    res.status(StatusCodes.OK).success({
+      recipes,
+      nextCursor,
+    });
   } catch (err) {
     next(err);
   }

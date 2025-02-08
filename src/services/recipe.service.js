@@ -9,8 +9,16 @@ import {
   updateLikeOnUserRecipeInDB,
   cancelLikeOnUserRecipeInDB,
   cancelLikeOnCocktailInDB,
+  getUserRecipesFromDB,
+  getFilteredRecipesFromDB,
+  getUnder2RecipesFromDB,
 } from "../repositories/recipe.repository.js";
-import { NoRecipeError, NoPermission, ExistingFavError } from "../error.js";
+import {
+  NoRecipeError,
+  NoPermission,
+  ExistingFavError,
+  UnavailableType,
+} from "../error.js";
 
 export const createRecipeService = async (data) => {
   const recipe = await createRecipeInDB(data);
@@ -119,4 +127,44 @@ export const updateCocktailLikeCancelService = async (cocktailId, userId) => {
   }
 };
 
-export const getRecipeListService = async (type) => {};
+export const getRecipeListService = async (type, cursor, limit) => {
+  try {
+    let recipes = null;
+    let nextCursor = null;
+
+    switch (type) {
+      case "user":
+        ({ recipes, nextCursor } = await getUserRecipesFromDB(cursor, limit));
+        break;
+      case "zero":
+        ({ recipes, nextCursor } = await getFilteredRecipesFromDB(
+          type,
+          cursor,
+          limit
+        ));
+        break;
+      case "high":
+        ({ recipes, nextCursor } = await getFilteredRecipesFromDB(
+          type, 
+          cursor,
+          limit
+        ));
+        break;
+      case "fruity":
+        // ({ recipes, nextCursor } = await getFruityRecipesFromDB(cursor, limit));
+        throw new UnavailableType("현재 지원하지 않는 서비스입니다. (개발중)");
+        break;
+      case "under2":
+        ({ recipes, nextCursor } = await getUnder2RecipesFromDB(cursor, limit));
+        break;
+      default:
+        throw new UnavailableType(
+          "타입 값이 잘못되었습니다. (user, zero, high, fruity, under2만 가능)"
+        );
+    }
+    return { recipes, nextCursor };
+  } catch (err) {
+    console.error("리스트 조회 중 오류 발생:", err.message || err);
+    throw err;
+  }
+};
