@@ -15,11 +15,11 @@ export const parseRecipeDetail = (recipe, type) => {
 
   return {
     id: recipe.id,
+    userId: recipe.userId || 0,
     name: recipe.name || recipe.nameKor,
     nameEng: recipe.nameEng || null, // 이름 통합
     imageUrl: recipe.imageUrl || null,
     ingredients: recipe.ingredients || recipe.ingredientsEng || {}, // 재료 통합
-    ingredientsEng: undefined,
     ingredientsKor: recipe.ingredientsKor || null,
     recipe: recipe.recipe || [],
     glassType: recipe.glass || recipe.glassType || null, // 잔 종류 통합

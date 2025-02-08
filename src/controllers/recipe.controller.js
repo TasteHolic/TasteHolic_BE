@@ -10,6 +10,7 @@ import {
   updateUserRecipeLikeService,
   updateCocktailLikeCancelService,
   updateUserRecipeLikeCancelService,
+  getMyRecipesService,
 } from "../services/recipe.service.js";
 import { parseRecipeList, parseRecipeDetail } from "../dtos/recipe.dto.js";
 import { authenticateUser } from "./user.controller.js";
@@ -109,8 +110,13 @@ export const getRecipeList = async (req, res, next) => {
 
     if (!type) {
       throw new NoQuery(
-        "입력된 타입이 없습니다. (user/zero/high/fruity/under2)"
+        "입력된 타입이 없습니다. (user/zero/high/fruity/under2/my)"
       );
+    }
+
+    if (type === "my") {
+      await getMyRecipes(req, res, next);
+      return;
     }
 
     const { recipes, nextCursor } = await getRecipeListService(
@@ -247,6 +253,31 @@ export const updateCancelRecipeLike = async (req, res, next) => {
     }
 
     res.status(StatusCodes.OK).success({ recipeId, likeCount: recipe.likes });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getMyRecipes = async (req, res, next) => {
+  console.log("내가 등록한 레시피 리스트 조회 요청!");
+  try {
+    const user = authenticateUser(req);
+    if (!user?.id) {
+      return jsonErrorResponse(
+        res,
+        StatusCodes.UNAUTHORIZED,
+        "auth_error",
+        "사용자 인증 실패"
+      );
+    }
+    const userId = user.id;
+    const recipes = await getMyRecipesService(userId);
+    console.log(recipes);
+    const parsedRecipes = parseRecipeList(recipes);
+
+    res.status(StatusCodes.OK).success({
+      recipes: parsedRecipes,
+    });
   } catch (err) {
     next(err);
   }

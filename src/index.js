@@ -32,6 +32,7 @@ import {
   deleteRecipe,
   updateRecipeLike,
   updateCancelRecipeLike,
+  getMyRecipes,
 } from "./controllers/recipe.controller.js";
 import {
   registerUser,
@@ -109,7 +110,7 @@ app.get("/api/v1/users/my-bar/view", handleMyBarGet);
 app.delete("/api/v1/users/my-bar/delete/:barId", handleMyBarDelete);
 
 app.post("/api/v1/recipes", createRecipe);
-app.get("/api/v1/recipes/", getRecipeList);
+app.get("/api/v1/recipes", getRecipeList);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
 app.get("/api/v1/recipes/:recipeId", getRecipe);

@@ -430,3 +430,13 @@ export const getUnder2RecipesFromDB = async (cursor, limit) => {
     throw err;
   }
 };
+
+export const getMyRecipesFromDB = async (id) => {
+  console.log(id);
+  return await prisma.userRecipes.findMany({
+    where: {
+      userId: id,
+    },
+    orderBy: { id: "desc" },
+  });
+};

@@ -13,6 +13,7 @@ import {
   getFilteredRecipesFromDB,
   getFruityRecipesFromDB,
   getUnder2RecipesFromDB,
+  getMyRecipesFromDB,
 } from "../repositories/recipe.repository.js";
 import {
   NoRecipeError,
@@ -20,6 +21,7 @@ import {
   ExistingFavError,
   UnavailableType,
 } from "../error.js";
+import { getMyRecipes } from "../controllers/recipe.controller.js";
 
 export const createRecipeService = async (data) => {
   const recipe = await createRecipeInDB(data);
@@ -169,3 +171,14 @@ export const getRecipeListService = async (type, cursor, limit) => {
     throw err;
   }
 };
+
+
+export const getMyRecipesService = async (id) => {
+  try {
+    const recipes = getMyRecipesFromDB(id);
+    return recipes;
+  } catch (err) {
+    console.error("리스트 조회 중 오류 발생:", err.message || err);
+    throw err;
+  }
+}
