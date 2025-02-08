@@ -47,6 +47,8 @@ import {
   handleUpdateTastingNote,
   handleDeleteTastingNote,
 } from "./controllers/tastingnote.controller.js";
+import searchRouter from "./controllers/search.controller.js";
+
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -127,6 +129,8 @@ app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", handleLogoutUser);
 app.delete("/api/v1/users/delete-user", handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+
+app.use("/api/v1/users/search/category", searchRouter);
 
 // app.js
 app.use((err, req, res, next) => {

@@ -1,43 +1,24 @@
-import { searchService } from "../services/search.service.js";
-import { searchResultDto } from "../dtos/search.dto.js";
-import { NoAlcoholError } from "../error.js";
+//controller
 
-export const handleSearch = async (req, res) => {
-    try {
-        const { keyword, category, alcoholContent, taste, glassType } = req.body;
+import express from "express";
+import { searchAlcoholsAndCocktails } from "../services/search.service.js";
+import { validateSearchBody, responseFromSearch } from "../dtos/search.dto.js";
 
-        if (!(keyword || category || alcoholContent || taste || glassType)) {
-            return res.status(400).json({
-                errorCode: "INVALID_INPUT",
-                reason: "검색어 또는 필터 중 하나는 반드시 입력해야 합니다.",
-            });
-        }        
+const searchRouter = express.Router();
 
-        const results = await searchService.searchCocktailsAndAlcohols({
-            keyword,
-            category,
-            alcoholContent,
-            taste,
-            glassType,
-        });
+searchRouter.post("/", async (req, res) => {
+  try {
+    // 요청 데이터 검증
+    const { category, minAbv, maxAbv, aroma, taste} = validateSearchBody(req.body);
 
-        if (results.length === 0) {
-            throw new NoAlcoholError("검색된 술이 없습니다.", {
-                keyword,
-                category,
-                alcoholContent,
-                taste,
-                glassType,
-            });
-        }
+    // 검색 실행
+    const results = await searchAlcoholsAndCocktails(category, minAbv, maxAbv, aroma, taste);
 
-        res.json(searchResultDto(results));
-    } catch (error) {
-        console.error("Search error:", error);
-        res.status(error.statusCode || 500).json({
-            errorCode: error.errorCode || "INTERNAL_ERROR",
-            reason: error.reason || "서버 오류가 발생했습니다.",
-            data: error.data || error.message,
-        });
-    }
-};
+    // 응답 변환 후 반환
+    return res.status(200).json({ data: responseFromSearch(results) });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+export default searchRouter;
