@@ -1,6 +1,6 @@
 import express from "express";
 import { pool } from "../db.config.js";
-import cookieParser from "cookie-parser";  // 추가
+import cookieParser from "cookie-parser"; // 추가
 import cors from "cors";
 import fs from "fs";
 import yaml from "js-yaml";
@@ -10,20 +10,19 @@ import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 
-
 import {
-    handleRegisterUser,
-    handleLoginUser,
-    handleLogoutUser,
-    handleDeleteUser,
-    handleSocialLogin
-  } from "./controllers/user.controller.js";
+  handleRegisterUser,
+  handleLoginUser,
+  handleLogoutUser,
+  handleDeleteUser,
+  handleSocialLogin,
+} from "./controllers/user.controller.js";
 
 import {
   handleMyBarPost,
   handleMyBarGet,
   handleMyBarDelete,
-  handleMyBarSearch
+  handleMyBarSearch,
 } from "./controllers/mybar.controller.js";
 import {
   createRecipe,
@@ -33,10 +32,21 @@ import {
   deleteRecipe,
   updateRecipeLike,
   updateCancelRecipeLike,
+  getMyRecipes,
 } from "./controllers/recipe.controller.js";
-import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
-import { handleUserTastingNote, handleSearchDrinks, handleUpdateTastingNote, handleDeleteTastingNote } from "./controllers/tastingnote.controller.js";
-
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  deleteUser,
+  socialLogin,
+} from "./services/user.service.js";
+import {
+  handleUserTastingNote,
+  handleSearchDrinks,
+  handleUpdateTastingNote,
+  handleDeleteTastingNote,
+} from "./controllers/tastingnote.controller.js";
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -51,7 +61,7 @@ dotenv.config();
 
 app.use(cors()); // CORS 설정
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   res.success = function (data) {
@@ -100,13 +110,12 @@ app.get("/api/v1/users/my-bar/view", handleMyBarGet);
 app.delete("/api/v1/users/my-bar/delete/:barId", handleMyBarDelete);
 
 app.post("/api/v1/recipes", createRecipe);
-app.get("/api/v1/recipes/", getRecipeList);
-app.get("/api/v1/recipes/:recipeId", getRecipe);
+app.get("/api/v1/recipes", getRecipeList);
 app.patch("/api/v1/recipes/:recipeId", updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
+app.get("/api/v1/recipes/:recipeId", getRecipe);
 app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
 app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
-
 
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
 app.post("/api/v1/users/tasting-note", handleUserTastingNote);
@@ -141,8 +150,6 @@ app.use((err, req, res, next) => {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
 
 // Swagger 설정
 try {
