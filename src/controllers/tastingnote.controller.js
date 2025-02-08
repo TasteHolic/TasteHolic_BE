@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { bodyToCocktailTastingNote, bodyToAlcoholTastingNote, updateTastingNoteDto } from "../dtos/tastingnote.dto.js";
 import { userTastingNote, searchDrinks, updateTastingNote, getTastingNoteById, deleteTastingNote} from "../services/tastingnote.service.js";
+import { authenticateUser } from "./user.controller.js";
 
 export const handleSearchDrinks = async (req, res, next) => {
     try {
@@ -30,13 +31,17 @@ export const handleUserTastingNote = async (req, res, next) => {
 
     const {type} =req.query;
     let tastingnote;
+    const user = authenticateUser(req);
+    if (!user?.id) {
+        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    }
 
     if (type === "cocktail") {
       // Cocktail 타입일 경우
-      tastingnote = await userTastingNote(bodyToCocktailTastingNote(req.body), "cocktail");
+      tastingnote = await userTastingNote(user.id, bodyToCocktailTastingNote(req.body, user.id), "cocktail");
     } else {
       // Alcohol 타입일 경우
-      tastingnote = await userTastingNote(bodyToAlcoholTastingNote(req.body), "alcohol");
+      tastingnote = await userTastingNote(user.id, bodyToAlcoholTastingNote(req.body, user.id), "alcohol");
     }
 
     res.status(StatusCodes.OK).success(tastingnote);
@@ -51,7 +56,10 @@ export const handleUpdateTastingNote = async (req, res, next) => {
   try {
     const { noteId } = req.params; // 수정할 테이스팅 노트 ID
     const { type } = req.query;
-    const userId = 1;
+    const user = authenticateUser(req);
+    if (!user?.id) {
+        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    }
 
     console.log(`테이스팅 노트 ID: ${noteId} 수정 요청`);
 
@@ -62,7 +70,7 @@ export const handleUpdateTastingNote = async (req, res, next) => {
     }
 
     // 사용자 권한 확인
-    if (Number(existingNote.userId) !== userId) {
+    if (Number(existingNote.userId) !== Number(user.id)) {
       return jsonErrorResponse(res, StatusCodes.FORBIDDEN, "no_permission", "수정 권한이 없습니다.");
     }
 
@@ -93,7 +101,10 @@ export const handleDeleteTastingNote = async (req, res, next) => {
   try {
     const { noteId } = req.params; // 삭제할 테이스팅 노트 ID
     const { type } = req.query;
-    const userId = 1; // 예시로 사용자 ID를 1로 하드코딩
+    const user = authenticateUser(req);
+    if (!user?.id) {
+        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    }
 
     console.log(`테이스팅 노트 ID: ${noteId} 삭제 요청`);
 
@@ -104,7 +115,7 @@ export const handleDeleteTastingNote = async (req, res, next) => {
     }
 
     // 사용자 권한 확인
-    if (Number(existingNote.userId) !== userId) {
+    if (Number(existingNote.userId) !== Number(user.id)) {
       return jsonErrorResponse(res, StatusCodes.FORBIDDEN, "no_permission", "삭제 권한이 없습니다.");
     }
 
