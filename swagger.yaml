@@ -470,22 +470,22 @@ paths:
           required: true
           schema:
             type: string
-            enum: [user, zero, high, fruity, under2]
-          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하)"
+            enum: [user, zero, high, fruity, under2, my]
+          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하, my: 내가 등록한 레시피)"
         - name: cursor
           in: query
           required: false
           schema:
             type: integer
             format: int64
-          description: "페이지네이션을 위한 커서 (이전 응답의 nextCursor 값)"
+          description: "페이지네이션을 위한 커서 (이전 응답의 nextCursor 값) / 내가 등록한 레시피 제외"
         - name: limit
           in: query
           required: false
           schema:
             type: integer
             default: 10
-          description: "가져올 레시피 개수 (기본값: 10)"
+          description: "가져올 레시피 개수 (기본값: 10) / 내가 등록한 레시피 제외"
       responses:
         "200":
           description: 레시피 리스트 조회 성공
@@ -766,8 +766,8 @@ paths:
             enum: [cocktail, user]
           description: "레시피 타입 (cocktail: 칵테일 레시피, user: 유저가 만든 레시피)"
       responses:
-        "200":
-          description: 레시피 상세 조회 성공
+        "200 (기존 칵테일)":
+          description: 레시피 상세 조회 성공 (기존 칵테일)
           content:
             application/json:
               schema:
@@ -791,6 +791,9 @@ paths:
                           name:
                             type: string
                             example: "화이트 러시안"
+                          userId:
+                            type: integer
+                            example: 0
                           nameEng:
                             type: string
                             nullable: true
@@ -865,6 +868,107 @@ paths:
                           type:
                             type: string
                             example: "cocktail"
+        "200 (유저)":
+          description: 레시피 상세 조회 성공 (유저)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipe:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 18
+                          userId:
+                            type: integer
+                            example: 28
+                          name:
+                            type: string
+                            example: "UpdatedDrink"
+                          nameEng:
+                            type: string
+                            nullable: true
+                            example: null
+                          imageUrl:
+                            type: string
+                            nullable: true
+                            example: null
+                          ingredients:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            example:
+                              "소다수": "적당량"
+                              "민트 잎": "7개"
+                              "라이트 럼": "2 온스"
+                              "라임 웨지": "3개"
+                              "심플 시럽": "3/4 온스"
+                          ingredientsKor:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            nullable: true
+                            example: null
+                          recipe:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - "재료들을 함께 넣고 섞는다"
+                              - "차갑게 마신다"
+                          glassType:
+                            type: string
+                            example: "Martini"
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-08T12:44:59.000Z"
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-08T12:44:59.000Z"
+                          status:
+                            type: string
+                            example: "published"
+                          tastes:
+                            type: array
+                            items:
+                              type: string
+                            example: ["Sweet", "Sour"]
+                          aromas:
+                            type: array
+                            items:
+                              type: string
+                            example: ["Citrus"]
+                          colors:
+                            type: array
+                            items:
+                              type: string
+                            nullable: true
+                            example: null
+                          likes:
+                            type: integer
+                            example: 1
+                          abv:
+                            type: number
+                            example: 12
+                          views:
+                            type: integer
+                            example: 9
+                          type:
+                            type: string
+                            example: "user"
         "400":
           description: 잘못된 요청 (쿼리 파라미터 오류)
           content:
