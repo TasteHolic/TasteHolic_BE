@@ -11,6 +11,7 @@ import {
   updateCocktailLikeCancelService,
   updateUserRecipeLikeCancelService,
 } from "../services/recipe.service.js";
+import { parseRecipeList } from "../dtos/recipe.dto.js";
 import { authenticateUser } from "./user.controller.js";
 import { NoQuery, NoParameter, UnavailableType } from "../error.js";
 
@@ -117,9 +118,10 @@ export const getRecipeList = async (req, res, next) => {
       cursor,
       parseInt(limit)
     );
+    const parsedRecipes = parseRecipeList(recipes);
 
     res.status(StatusCodes.OK).success({
-      recipes,
+      recipes: parsedRecipes,
       nextCursor,
     });
   } catch (err) {

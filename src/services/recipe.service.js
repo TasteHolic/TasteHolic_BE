@@ -11,6 +11,7 @@ import {
   cancelLikeOnCocktailInDB,
   getUserRecipesFromDB,
   getFilteredRecipesFromDB,
+  getFruityRecipesFromDB,
   getUnder2RecipesFromDB,
 } from "../repositories/recipe.repository.js";
 import {
@@ -151,8 +152,8 @@ export const getRecipeListService = async (type, cursor, limit) => {
         ));
         break;
       case "fruity":
-        // ({ recipes, nextCursor } = await getFruityRecipesFromDB(cursor, limit));
-        throw new UnavailableType("현재 지원하지 않는 서비스입니다. (개발중)");
+        ({ recipes, nextCursor } = await getFruityRecipesFromDB(cursor, limit));
+
         break;
       case "under2":
         ({ recipes, nextCursor } = await getUnder2RecipesFromDB(cursor, limit));
