@@ -152,3 +152,13 @@ export class UserDeletionError extends Error {
     this.data = data;
   }
 }
+
+export class InvalidFilterError extends Error {
+  constructor(reason, data) {
+      super(reason);
+      this.errorCode = "S001";
+      this.statusCode = 400;
+      this.reason = reason;
+      this.data = data;
+  }
+}

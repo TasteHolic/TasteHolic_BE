@@ -10,7 +10,6 @@ import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 
-
 import {
     handleRegisterUser,
     handleLoginUser,
@@ -35,7 +34,7 @@ import {
 } from "./controllers/recipe.controller.js";
 import { registerUser, loginUser, logoutUser, deleteUser, socialLogin } from "./services/user.service.js";
 import { handleUserTastingNote, handleSearchDrinks } from "./controllers/tastingnote.controller.js";
-
+import { handleSearchCategory } from "./controllers/category.controller.js";
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -114,6 +113,8 @@ app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", handleLogoutUser);
 app.delete("/api/v1/users/delete-user", handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+
+app.post("/api/v1/users/search/category", handleSearchCategory);
 
 // app.js
 app.use((err, req, res, next) => {
