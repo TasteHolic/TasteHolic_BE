@@ -222,3 +222,36 @@ export const removeTastingNote = async (noteId, type) => {
       });
     }
   };
+
+  // 사용자 테이스팅 노트 조회
+  export const getUserTastingNote = async (type, noteId) => {
+    if(type === "cocktail"){
+        return await prisma.cocktailTastingNotes.findUnique({
+          where: { id: BigInt(noteId) },
+          });
+    }else{
+        return await prisma.alcoholTastingNotes.findUnique({
+          where: { id: BigInt(noteId) },
+          });
+    }
+    
+  };
+  
+  // 전문가 테이스팅 노트 조회
+  export const getExpertTastingNote = async (type, id) => {
+    if(type === "cocktail"){
+        return await prisma.cocktails.findUnique({
+            where: {
+              id: BigInt(id),
+            },
+          });
+
+    }else{
+        return await prisma.alcohols.findUnique({
+            where: {
+              id: BigInt(id),
+            },
+          });
+    }
+    
+  };
