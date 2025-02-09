@@ -20,7 +20,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           cat >>~/.ssh/config <<END
-          Host tasteholic-umc-7th
+          Host tasteholic-server
             HostName $EC2_HOST
             User $EC2_USER
             IdentityFile ~/.ssh/id_rsa
@@ -33,24 +33,24 @@ jobs:
 
       - name: Install Node.js 20.x
         run: |
-          ssh tasteholic-umc-7th 'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -'
-          ssh tasteholic-umc-7th 'sudo apt-get install -y nodejs'
+          ssh tasteholic-server 'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -'
+          ssh tasteholic-server 'sudo apt-get install -y nodejs'
 
       - name: Copy Workspace
         run: |
-          ssh tasteholic-umc-7th 'sudo mkdir -p /opt/app'
-          ssh tasteholic-umc-7th 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* tasteholic-umc-7th:/opt/app
+          ssh tasteholic-server 'sudo mkdir -p /opt/app'
+          ssh tasteholic-server 'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* tasteholic-server:/opt/app
 
       - name: Install dependencies
         run: |
-          ssh tasteholic-umc-7th 'npm install --prefix /opt/app/'
+          ssh tasteholic-server 'npm install --prefix /opt/app/'
 
       - name: Copy systemd service file
         run: |
-          ssh tasteholic-umc-7th '
+          ssh tasteholic-server '
             echo "[Unit]
-            Description=UMC 7th Project
+            Description=TasteHolic Server
             After=network.target
 
             [Service]
@@ -64,9 +64,9 @@ jobs:
 
       - name: Enable systemd service
         run: |
-          ssh tasteholic-umc-7th 'sudo systemctl daemon-reload'
-          ssh tasteholic-umc-7th 'sudo systemctl enable app'
+          ssh tasteholic-server 'sudo systemctl daemon-reload'
+          ssh tasteholic-server 'sudo systemctl enable app'
 
       - name: Restart systemd service
         run: |
-          ssh tasteholic-umc-7th 'sudo systemctl restart app'
+          ssh tasteholic-server 'sudo systemctl restart app'
