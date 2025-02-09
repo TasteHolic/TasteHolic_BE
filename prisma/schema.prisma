@@ -13,3 +13,180 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AlcoholTastingNotes {
+  id           BigInt    @id @default(autoincrement())
+  userId       BigInt
+  alcoholId    BigInt?
+  tasteRating  Json?
+  aromaRating  Json?
+  finishRating Json?
+  abvRating    Decimal?  @db.Decimal(5, 2)
+  description  String?   @db.Text
+  createdAt    DateTime  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  name         String?   @db.VarChar(255)
+  category     String?   @db.VarChar(255)
+  Alcohols     Alcohols? @relation(fields: [alcoholId], references: [id], onUpdate: NoAction, map: "FK_CopyOfNotes_Alcohol")
+  Users        Users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_CopyOfNotes_User")
+
+  @@index([alcoholId], map: "FK_CopyOfNotes_Alcohol")
+  @@index([userId], map: "FK_CopyOfNotes_User")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Alcohols {
+  id                  BigInt                @id @default(autoincrement())
+  nameEng             String                @db.VarChar(255)
+  nameKor             String                @db.VarChar(255)
+  categoryEng         String                @db.VarChar(255)
+  categoryKor         String                @db.VarChar(255)
+  aromas              Json?
+  tastes              Json?
+  finishes            Json?
+  abv                 Decimal?              @db.Decimal(5, 2)
+  description         String?               @db.Text
+  createdAt           DateTime              @default(now()) @db.DateTime(0)
+  updatedAt           DateTime              @default(now()) @db.DateTime(0)
+  Category            String?               @db.VarChar(255)
+  AlcoholTastingNotes AlcoholTastingNotes[]
+  MyBars              MyBars[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CocktailFavorites {
+  id         BigInt    @id @default(autoincrement())
+  userId     BigInt
+  cocktailId BigInt
+  createdAt  DateTime  @default(now()) @db.Timestamp(0)
+  Cocktails  Cocktails @relation(fields: [cocktailId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_CocktailFavorites_Cocktail")
+  Users      Users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_CocktailFavorites_User")
+
+  @@index([cocktailId], map: "FK_CocktailFavorites_Cocktail")
+  @@index([userId], map: "FK_CocktailFavorites_User")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Cocktails {
+  id                   BigInt                 @id @default(autoincrement())
+  nameEng              String                 @db.VarChar(255)
+  nameKor              String                 @db.VarChar(255)
+  ingredientsEng       Json?
+  recipe               Json?
+  aromas               Json?
+  tastes               Json?
+  abv                  Decimal?               @db.Decimal(5, 2)
+  timing               Json?
+  color                Json?
+  createdAt            DateTime               @default(now()) @db.DateTime(0)
+  updatedAt            DateTime               @default(now()) @db.DateTime(0)
+  glass                String?                @db.VarChar(255)
+  ingredientsKor       Json?
+  views                Int?                   @default(0)
+  likes                Int?                   @default(0)
+  CocktailFavorites    CocktailFavorites[]
+  CocktailTastingNotes CocktailTastingNotes[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model MyBars {
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt
+  alcoholId BigInt?
+  createdAt DateTime  @default(now()) @db.DateTime(0)
+  updatedAt DateTime  @default(now()) @db.DateTime(0)
+  name      String?   @db.VarChar(255)
+  category  String?   @db.VarChar(255)
+  Alcohols  Alcohols? @relation(fields: [alcoholId], references: [id], onUpdate: NoAction, map: "FK_MyBars_Alcohol")
+  Users     Users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_MyBars_User")
+
+  @@index([alcoholId], map: "FK_MyBars_Alcohol")
+  @@index([userId], map: "FK_MyBars_User")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model UserRecipeFavorites {
+  id          BigInt      @id @default(autoincrement())
+  userId      BigInt
+  recipeId    BigInt
+  createdAt   DateTime    @default(now()) @db.DateTime(0)
+  UserRecipes UserRecipes @relation(fields: [recipeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_UserRecipeFavorites_Recipe")
+  Users       Users       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_UserRecipeFavorites_User")
+
+  @@index([recipeId], map: "FK_UserRecipeFavorites_Recipe")
+  @@index([userId], map: "FK_UserRecipeFavorites_User")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model UserRecipes {
+  id                  BigInt                @id @default(autoincrement())
+  userId              BigInt
+  name                String                @db.VarChar(255)
+  imageUrl            String?               @db.Text
+  ingredients         Json?
+  recipe              Json?
+  glassType           String?               @db.VarChar(255)
+  createdAt           DateTime              @default(now()) @db.DateTime(0)
+  updatedAt           DateTime              @default(now()) @db.DateTime(0)
+  status              UserRecipes_status?
+  tastes              Json?
+  aromas              Json?
+  colors              Json?
+  likes               Int?                  @default(0)
+  abv                 Int?
+  views               Int?                  @default(0)
+  UserRecipeFavorites UserRecipeFavorites[]
+  Users               Users                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_UserRecipes_User")
+
+  @@index([userId], map: "FK_UserRecipes_User")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Users {
+  id                   BigInt                 @id @default(autoincrement())
+  email                String                 @unique(map: "email") @db.VarChar(255)
+  password             String?                @db.VarChar(255)
+  nickname             String                 @db.VarChar(50)
+  status               Users_status           @default(active)
+  createdAt            DateTime               @default(now()) @db.DateTime(0)
+  updatedAt            DateTime               @default(now()) @db.DateTime(0)
+  deletedAt            DateTime?              @db.DateTime(0)
+  agreement            Json?
+  imageUrl             String?                @db.Text
+  AlcoholTastingNotes  AlcoholTastingNotes[]
+  CocktailFavorites    CocktailFavorites[]
+  CocktailTastingNotes CocktailTastingNotes[]
+  MyBars               MyBars[]
+  UserRecipeFavorites  UserRecipeFavorites[]
+  UserRecipes          UserRecipes[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model CocktailTastingNotes {
+  id          BigInt     @id @default(autoincrement())
+  userId      BigInt
+  cocktailId  BigInt?
+  name        String?    @db.VarChar(255)
+  tasteRating Json?
+  aromaRating Json?
+  abv         Decimal?   @db.Decimal(5, 2)
+  color       Json?
+  description String?    @db.Text
+  createdAt   DateTime   @default(now()) @db.DateTime(0)
+  updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime(0)
+  Users       Users      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_1")
+  Cocktails   Cocktails? @relation(fields: [cocktailId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CocktailTastingNotes_ibfk_2")
+
+  @@index([cocktailId], map: "cocktailId")
+  @@index([userId], map: "userId")
+}
+
+enum Users_status {
+  active
+  inactive
+  banned
+}
+
+enum UserRecipes_status {
+  draft
+  published
+}
