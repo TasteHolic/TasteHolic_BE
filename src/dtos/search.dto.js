@@ -12,9 +12,27 @@ export const toSearchParams = (body) => {
   };
 };
 
-export const responseFromSearch = (results) => {
-  return results.map((item) => ({
-    nameKor: item.nameKor,
-    nameEng: item.nameEng,
-  }));
+export const responseFromSearch = (results, category) => {
+  return results.map((item) => {
+    if (category === "Cocktail") {
+      return {
+        id: item.id,
+        nameKor: item.nameKor,
+        nameEng: item.nameEng,
+        aromas: item.aromas,
+        tastes: item.tastes,
+        recipe: item.recipe
+      };
+    } else {
+      return {
+        id: item.id,
+        nameKor: item.nameKor,
+        nameEng: item.nameEng,
+        aromas: item.aromas,
+        tastes: item.tastes,
+        categoryEng: item.categoryEng,
+        categoryKor: item.categoryKor
+      };
+    }
+  });
 };
