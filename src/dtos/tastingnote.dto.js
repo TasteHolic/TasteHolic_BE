@@ -87,7 +87,7 @@ export const updateTastingNoteDto = (body, type) => {
       return {
         id: Number(tastingnote.id),
         userId: Number(tastingnote.userId),
-        cocktailId: tastingnote.cocktailId ? Number(usertastingnote.cocktailId) : null,
+        cocktailId: tastingnote.cocktailId ? Number(tastingnote.cocktailId) : null,
         name: tastingnote.name,
         tasteRating: tastingnote.tasteRating,
         aromaRating: tastingnote.aromaRating,

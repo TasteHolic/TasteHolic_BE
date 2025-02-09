@@ -1381,7 +1381,6 @@ paths:
                     - abvRating
                     - finishRating
                     - description
-
       responses:
         "200":
           description: "테이스팅 노트 작성 성공"
@@ -1533,7 +1532,6 @@ paths:
                     - abvRating
                     - finishRating
                     - description
-
       responses:
         "200":
           description: "테이스팅 노트 수정 성공"
@@ -1660,6 +1658,99 @@ paths:
                     description: "오류 메시지"
         "404":
           description: "테이스팅 노트가 존재하지 않음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+    get:
+      summary: 사용자 테이스팅 노트 조회
+      description: 사용자가 작성한 테이스팅 노트를 조회합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "조회할 테이스팅 노트의 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입 (cocktail 또는 alcohol)"
+          schema:
+            type: string
+            enum: [cocktail, alcohol]
+      responses:
+        "200":
+          description: "테이스팅 노트 조회 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      finishRating:
+                        type: string
+                        nullable: true
+                        description: "후미 평가 (선택 사항)"
+                      description:
+                        type: string
+                        description: "테이스팅 노트에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "404":
+          description: "테이스팅 노트를 찾을 수 없음"
           content:
             application/json:
               schema:

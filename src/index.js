@@ -46,6 +46,7 @@ import {
   handleSearchDrinks,
   handleUpdateTastingNote,
   handleDeleteTastingNote,
+  handleGetTastingNote
 } from "./controllers/tastingnote.controller.js";
 
 // BigInt 변환 설정
