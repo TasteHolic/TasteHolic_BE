@@ -1871,3 +1871,104 @@ paths:
                     example: "카카오 인증 실패"
         500:
           description: 서버 오류
+  /api/v1/users/search/category:
+  post:
+    summary: 술과 칵테일 검색
+    description: 카테고리, 도수 범위, 향, 맛을 기준으로 술과 칵테일을 검색합니다.
+    tags:
+      - Search
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              category:
+                type: string
+                example: "Whiskey"
+              minAbv:
+                type: integer
+                example: 10
+              maxAbv:
+                type: integer
+                example: 40
+              aroma:
+                type: array
+                items:
+                  type: string
+                example: ["바닐라", "오크"]
+              taste:
+                type: array
+                items:
+                  type: string
+                example: ["달콤함", "부드러움"]
+    responses:
+      200:
+        description: 검색된 술 및 칵테일 목록 반환
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nameKor:
+                        type: string
+                        example: "잭다니엘"
+                      nameEng:
+                        type: string
+                        example: "Jack Daniel's"
+      400:
+        description: 잘못된 요청 (유효하지 않은 카테고리 또는 필터 값 포함)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                errorCode:
+                  type: string
+                  example: "S002"
+                message:
+                  type: string
+                  example: "유효한 카테고리를 선택해야 합니다."
+      422:
+        description: 잘못된 요청 (유효하지 않은 도수, 향, 맛 필터 값 포함)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                errorCode:
+                  type: string
+                  example: "S003"
+                message:
+                  type: string
+                  example: "유효한 필터 값을 선택해야 합니다. (도수, 향, 맛)"
+      500:
+        description: 서버 내부 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                errorCode:
+                  type: string
+                  example: "S001"
+                message:
+                  type: string
+                  example: "검색 중 오류가 발생했습니다."
+
+          

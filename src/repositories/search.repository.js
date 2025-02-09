@@ -1,6 +1,9 @@
-import { prisma } from "../../db.config.js";
+// repository
 
-export async function findAlcoholsAndCocktails(category, minAbv, maxAbv, aroma, taste) {
+import { prisma } from "../../db.config.js";
+import { Prisma } from "@prisma/client";
+
+export const findAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, taste) => {
   const conditions = {
     AND: [
       { abv: { gte: minAbv, lte: maxAbv } },
@@ -9,70 +12,78 @@ export async function findAlcoholsAndCocktails(category, minAbv, maxAbv, aroma, 
     ],
   };
 
-  if (category === "Cocktail") {
-    return await prisma.cocktails.findMany({
-      where: conditions,
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
-  } else if (category === "Whiskey") {
-    return await prisma.alcohols.findMany({
-      where: {
-        AND: [
-          { Category: "Whiskey" },
-          conditions, // ✅ AND 적용
-        ],
-      },
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
-  } else if (category === "Gin/Rum/Tequila") {
-    return await prisma.alcohols.findMany({
-      where: {
-        AND: [
-          { Category: { in: ["Gin", "Rum", "Tequila"] } },
-          conditions, // ✅ AND 적용
-        ],
-      },
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
-  } else if (category === "etc") {
-    return await prisma.alcohols.findMany({
-      where: {
-        AND: [
-          { Category: { notIn: ["Whiskey", "Gin", "Rum", "Tequila"] } },
-          conditions, // ✅ AND 적용
-        ],
-      },
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
-  } else if (category === "All") {
-    const cocktails = await prisma.cocktails.findMany({
-      where: conditions,
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
+  switch (category) {
+    case "Cocktail":
+      return await prisma.cocktails.findMany({
+        where: conditions,
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
 
-    const alcohols = await prisma.alcohols.findMany({
-      where: conditions,
-      select: {
-        nameKor: true,
-        nameEng: true,
-      },
-    });
+    case "Whiskey":
+      return await prisma.alcohols.findMany({
+        where: {
+          AND: [
+            { Category: "Whiskey" },
+            conditions,
+          ],
+        },
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
 
-    return [...cocktails, ...alcohols];
+    case "Gin/Rum/Tequila":
+      return await prisma.alcohols.findMany({
+        where: {
+          AND: [
+            { Category: { in: ["Gin", "Rum", "Tequila"] } },
+            conditions,
+          ],
+        },
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
+
+    case "etc":
+      return await prisma.alcohols.findMany({
+        where: {
+          AND: [
+            { Category: { notIn: ["Whiskey", "Gin", "Rum", "Tequila"] } },
+            conditions,
+          ],
+        },
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
+
+    case "All":
+      const cocktails = await prisma.cocktails.findMany({
+        where: conditions,
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
+
+      const alcohols = await prisma.alcohols.findMany({
+        where: conditions,
+        select: {
+          nameKor: true,
+          nameEng: true,
+        },
+      });
+
+      return [...cocktails, ...alcohols];
+
+    default:
+      return [];
   }
-}
+};
