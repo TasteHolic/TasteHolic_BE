@@ -94,15 +94,16 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("TasteHolic Server");
+    res.send("TasteHolic Server");
 });
+
 
 // Swagger
 // YAML 파일 로드
-const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
+const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 
 // Swagger UI 설정
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
 app.get("/api/v1/users/my-bar/search", handleMyBarSearch);
