@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { bodyToCocktailTastingNote, bodyToAlcoholTastingNote, updateTastingNoteDto } from "../dtos/tastingnote.dto.js";
-import { userTastingNote, searchDrinks, updateTastingNote, getTastingNoteById, deleteTastingNote, tastingNoteDetail} from "../services/tastingnote.service.js";
+import { userTastingNote, searchDrinks, updateTastingNote, getTastingNoteById, deleteTastingNote, tastingNoteDetail, getAllTastingNotes} from "../services/tastingnote.service.js";
 import { authenticateUser } from "./user.controller.js";
 
 export const handleSearchDrinks = async (req, res, next) => {
@@ -160,7 +160,7 @@ export const handleGetTastingNote = async (req, res, next) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ success: false, message: " 권한이 없습니다." });
       }  
-      
+
       const result = await tastingNoteDetail(type, noteId);
         res.status(200).json(result);
     } catch (error) {
@@ -168,4 +168,33 @@ export const handleGetTastingNote = async (req, res, next) => {
     }
   };
 
+// 테이스팅 노트 전체 조회
+export const handleGetAllTastingNotes = async (req, res, next) => {
+  console.log("Request received for /api/v1/users/tasting-note/list"); // 이 로그가 콘솔에 출력되는지 확인
+
+  try {
+    const { type } = req.query; // 타입 쿼리 파라미터 (cocktail, whiskey, gin, rum, tequila, wine, beer, other)
+    console.log(type);
+    const user = authenticateUser(req);
+    
+    if (!user?.id) {
+      return res.status(401).json({ success: false, message: "권한이 없습니다." });
+    }
+
+    let tastingNotes;
+
+    console.log("시작");
+    tastingNotes = await getAllTastingNotes(user.id,type);
+
+    // 테이스팅 노트가 없으면 빈 배열로 응답
+    if (!tastingNotes) {
+      return res.status(200).json({ tastingNotes: [] });
+    }
+
+    return res.status(200).json({ tastingNotes });
+  } catch (error) {
+    console.error("오류 발생:", error.message);
+    return res.status(500).json({ error: "서버 오류" });
+  }
+};
 

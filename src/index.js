@@ -46,7 +46,8 @@ import {
   handleSearchDrinks,
   handleUpdateTastingNote,
   handleDeleteTastingNote,
-  handleGetTastingNote
+  handleGetTastingNote,
+  handleGetAllTastingNotes
 } from "./controllers/tastingnote.controller.js";
 
 // BigInt 변환 설정
@@ -123,6 +124,7 @@ app.post("/api/v1/users/tasting-note", handleUserTastingNote);
 app.patch("/api/v1/users/tasting-note/:noteId", handleUpdateTastingNote);
 app.delete("/api/v1/users/tasting-note/:noteId", handleDeleteTastingNote);
 app.get("/api/v1/users/tasting-note/:noteId", handleGetTastingNote);
+app.get("/api/v1/users/tasting-notes", handleGetAllTastingNotes);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);

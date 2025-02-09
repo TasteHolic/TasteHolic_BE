@@ -1769,6 +1769,83 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+  /api/v1/users/tasting-notes:
+    get:
+      summary: 특정 카테고리에 대한 모든 테이스팅 노트 조회
+      description: 주어진 type(카테고리)에 해당하는 모든 테이스팅 노트를 조회합니다. 
+      tags:
+        - TastingNote
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: 조회할 테이스팅 노트의 카테고리
+          schema:
+            type: string
+            example: whiskey
+      responses:
+        '200':
+          description: 테이스팅 노트를 성공적으로 조회함
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tastingNotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        userId:
+                          type: integer
+                          example: 10
+                        Category:
+                          type: string
+                          example: "Bourbon Whiskey"
+                        notes:
+                          type: string
+                          example: "바닐라와 오크의 힌트가 있는 부드러운 맛."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+        '400':
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "type 파라미터가 필요합니다."
+        '401':
+          description: 인증되지 않은 사용자 (로그인 필요)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "권한이 없습니다."
+        '500':
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "서버 오류가 발생했습니다."
 
   paths:
   /api/v1/users/register:
