@@ -63,10 +63,9 @@ export class NoPermission extends Error {
   }
 }
 
-
 export class UnavailableData extends Error {
-  errorCode = "D001"; 
-  statusCode = 400; 
+  errorCode = "D001";
+  statusCode = 400;
 
   constructor(reason, data) {
     super(reason);
@@ -144,6 +143,39 @@ export class NoPermissionError extends Error {
 export class UserDeletionError extends Error {
   errorCode = "U106"; // 회원 탈퇴 실패
   statusCode = 500; // Internal Server Error
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class NoQuery extends Error {
+  errorCode = "R101";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class NoParameter extends Error {
+  errorCode = "R102";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class UnavailableType extends Error {
+  errorCode = "R103";
+  statusCode = 400;
 
   constructor(reason, data) {
     super(reason);
