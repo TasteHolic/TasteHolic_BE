@@ -7,8 +7,8 @@ export const findAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, 
   const conditions = {
     AND: [
       { abv: { gte: minAbv, lte: maxAbv } },
-      ...(aroma?.length > 0 ? [{ aromas: { array_contains: aroma } }] : []),
-      ...(taste?.length > 0 ? [{ tastes: { array_contains: taste } }] : []),
+      ...(aroma?.length > 0 ? [{ aromas: { hasSome: aroma } }] : []),
+      ...(taste?.length > 0 ? [{ tastes: { hasSome: taste } }] : []),
     ],
   };
 

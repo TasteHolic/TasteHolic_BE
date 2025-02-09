@@ -3,7 +3,7 @@
 import { findAlcoholsAndCocktails } from "../repositories/search.repository.js";
 
 const validCategories = ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"];
-const validAromas = ["라임", "시트러스", "아몬드", "바닐라", "민트", "베리", "오크", "커피", "오렌지", "토피", "캐러멜", "과일", "향신료"];
+const validAromas = ["라임", "시트러스", "아몬드", "바닐라", "민트", "베리", "오크", "커피", "오렌지"];
 const validTastes = ["달콤함", "시트러스", "상쾌함", "드라이함", "강렬함", "부드러움", "프루티", "허브", "짭짤함"];
 
 export const searchAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, taste) => {
