@@ -1962,3 +1962,118 @@ paths:
                     example: "카카오 인증 실패"
         500:
           description: 서버 오류
+  /api/v1/users/search/category:
+    post:
+      summary: 술과 칵테일 검색
+      description: 카테고리, 도수 범위, 향, 맛을 기준으로 술과 칵테일을 검색합니다.
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum: ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
+                  example: "Whiskey"
+                minAbv:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  example: 10
+                maxAbv:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  example: 40
+                aroma:
+                  type: array
+                  items:
+                    type: string
+                    enum: ["전체 선택", "라임", "시트러스", "아몬드", "바닐라", "민트", "베리", "오크", "커피", "오렌지"]
+                  example: ["바닐라", "오크"]
+                taste:
+                  type: array
+                  items:
+                    type: string
+                    enum: ["전체 선택", "달콤함", "시트러스", "상쾌함", "드라이함", "강렬함", "부드러움", "프루티", "허브", "짭짤함"]
+                  example: ["달콤함", "부드러움"]
+      responses:
+        200:
+          description: 검색된 술 및 칵테일 목록 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        nameKor:
+                          type: string
+                          example: "잭다니엘"
+                        nameEng:
+                          type: string
+                          example: "Jack Daniel's"
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example: ["바닐라", "오크"]
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example: ["달콤함", "부드러움"]
+                        categoryEng:
+                          type: string
+                          example: "Whiskey"
+                        categoryKor:
+                          type: string
+                          example: "위스키"
+                        recipe:
+                          type: string
+                          example: "온더락으로 즐기세요."
+        400:
+          description: 잘못된 요청 (유효하지 않은 필터 값 포함)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errorCode:
+                    type: string
+                    example: "S003"
+                  message:
+                    type: string
+                    example: "유효한 필터 값을 선택해야 합니다."
+        500:
+          description: 서버 내부 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errorCode:
+                    type: string
+                    example: "S001"
+                  message:
+                    type: string
+                    example: "검색 중 오류가 발생했습니다."

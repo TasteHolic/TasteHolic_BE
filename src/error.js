@@ -183,3 +183,54 @@ export class UnavailableType extends Error {
     this.data = data;
   }
 }
+
+export class SearchError extends Error {
+  errorCode = "S001";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class InvalidCategoryError extends Error {
+  errorCode = "S002";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class InvalidFilterError extends Error {
+  errorCode = "S003";
+  statusCode = 400;
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export const handleError = (err, req, res, next) => {
+  console.error(err);
+
+  if (err instanceof SearchError || err instanceof InvalidCategoryError || err instanceof InvalidFilterError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      errorCode: err.errorCode,
+      message: err.reason,
+      data: err.data,
+    });
+  }
+
+  res.status(500).json({
+    success: false,
+    message: "서버 내부 오류가 발생했습니다.",
+  });
+};

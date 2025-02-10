@@ -1,43 +1,23 @@
-import { searchService } from "../services/search.service.js";
-import { searchResultDto } from "../dtos/search.dto.js";
-import { NoAlcoholError } from "../error.js";
+// controller
 
-export const handleSearch = async (req, res) => {
-    try {
-        const { keyword, category, alcoholContent, taste, glassType } = req.body;
+import { StatusCodes } from "http-status-codes";
+import { toSearchParams, responseFromSearch } from "../dtos/search.dto.js";
+import { searchAlcoholsAndCocktails } from "../services/search.service.js";
 
-        if (!(keyword || category || alcoholContent || taste || glassType)) {
-            return res.status(400).json({
-                errorCode: "INVALID_INPUT",
-                reason: "검색어 또는 필터 중 하나는 반드시 입력해야 합니다.",
-            });
-        }        
+export const handleSearch = async (req, res, next) => {
+  console.log("술과 칵테일 검색을 요청했습니다!");
 
-        const results = await searchService.searchCocktailsAndAlcohols({
-            keyword,
-            category,
-            alcoholContent,
-            taste,
-            glassType,
-        });
+  try {
 
-        if (results.length === 0) {
-            throw new NoAlcoholError("검색된 술이 없습니다.", {
-                keyword,
-                category,
-                alcoholContent,
-                taste,
-                glassType,
-            });
-        }
+    // 요청 데이터 검증
+    const { category, minAbv, maxAbv, aroma, taste } = toSearchParams(req.body);
 
-        res.json(searchResultDto(results));
-    } catch (error) {
-        console.error("Search error:", error);
-        res.status(error.statusCode || 500).json({
-            errorCode: error.errorCode || "INTERNAL_ERROR",
-            reason: error.reason || "서버 오류가 발생했습니다.",
-            data: error.data || error.message,
-        });
-    }
+    // 검색 실행
+    const results = await searchAlcoholsAndCocktails(category, minAbv, maxAbv, aroma, taste);
+
+    // 응답 변환 후 반환
+    res.status(StatusCodes.OK).json({ success: responseFromSearch(results) });
+  } catch (err) {
+    next(err); // 에러가 발생하면 next로 넘겨서 에러 미들웨어로 전달
+  }
 };
