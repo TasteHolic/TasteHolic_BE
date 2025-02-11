@@ -49,7 +49,7 @@ import {
   handleGetTastingNote,
   handleGetAllTastingNotes
 } from "./controllers/tastingnote.controller.js";
-
+import {handleSearch} from "./controllers/search.controller.js";
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
   return Number(this);
@@ -95,15 +95,16 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("TasteHolic Server");
+    res.send("TasteHolic Server");
 });
+
 
 // Swagger
 // YAML 파일 로드
-const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
+const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 
 // Swagger UI 설정
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
 app.get("/api/v1/users/my-bar/search", handleMyBarSearch);
@@ -131,6 +132,8 @@ app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", handleLogoutUser);
 app.delete("/api/v1/users/delete-user", handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+
+app.post("/api/v1/users/search/category", handleSearch);
 
 // app.js
 app.use((err, req, res, next) => {

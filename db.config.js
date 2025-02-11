@@ -16,11 +16,11 @@ export const pool = mysql.createPool({
 
 // DB 연결 테스트
 (async () => {
-    try {
-      const connection = await pool.getConnection();
-      console.log("✅ MySQL 데이터베이스 연결 성공!");
-      connection.release();
-    } catch (error) {
-      console.error("❌ MySQL 연결 실패:", error.message);
-    }
-  })();
+  try {
+    const connection = await pool.getConnection();
+    console.log("✅ MySQL 데이터베이스 연결 성공!");
+    connection.release();
+  } catch (error) {
+    console.error("❌ MySQL 연결 실패:", error.message);
+  }
+})();

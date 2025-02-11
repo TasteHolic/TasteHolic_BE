@@ -13,51 +13,44 @@
 - DB: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/MySQL/mysql2.svg"> <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prisma/prisma2.svg">
 - Cloud: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/AWS/aws2.svg">
 - API test: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Postman/postman3.svg">
-- API Documentation: Swagger UI
+- API Documentation: <img height="15" src="https://static-00.iconduck.com/assets.00/swagger-icon-1024x1024-09037v1r.png"> `Swagger UI`
 - Formatting: <img height="20" src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Prettier/prettier2.svg">
 <br>
 
 ## 🌳 브랜치 전략
 
 ### 브랜치 구조
-
-- main → 배포
-
-- develop → 테스트용, 개발 
-
-- **개별 브랜치**
-<br>
+- `main`: 배포용 브랜치
+- `develop`: 테스트 및 개발 브랜치
+- 개별 브랜치: 기능별로 생성
 
 ### 브랜치 네이밍 규칙
 
-- feature/기능명
-
-- fix/
+- **기능 개발**: `feature/기능명`
+- **버그 수정**: `fix/버그명`
 <br>
+
+### readme 수정
+- `main` branch에서 바로 commit 
 
 ## 📐 코딩 컨벤션
 
-### **코드 스타일**
-
-- 변수: camelCase
-
-- DB칼럼: camelCase
-
-- 정적파일: snake_case ← public
-<br>
+### 코드 스타일
+- **변수명**: `camelCase`
+- **DB 칼럼명**: `camelCase`
+- **정적 파일명**: `snake_case` (예: `public` 디렉토리 내 파일)
 
 ### 커밋 스타일
+- `feat`: 기능 추가
+- `fix`: 버그 수정, 비정상 동작 수정
+- `refac`: 오타 수정, 디렉토리 변경 등 소규모 수정
+- `chore`: 코드 변경 없는 환경설정 등 수정 (예: setup)
+- `docs`: 문서 작업 
+- `deploy`: 배포 관련 작업
 
-- feat → 기능
-- fix → 버그수정, 안되는 걸 고침
-- refac → 오타 수정이나 디렉토리 변경 작은 수정
-- chore → 코드 수정 없는 수정 (????????) - setup
-- docs → readme 관리
-- deploy → 배포 관련으로
-- examples:
-  feat: add kakao login
-  deploy: update client id
-<br>
+#### 예시
+- `feat: add kakao login`
+- `deploy: update client id`
 
 ## 📝 PR 템플릿
 ### 📝 작업 내용 요약
