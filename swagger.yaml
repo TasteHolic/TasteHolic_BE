@@ -1,18 +1,18 @@
 openapi: 3.0.0
 info:
-    title: TasteHolic API
-    description: TasteHolic API 서버 문서
-    version: 1.0.0
+  title: TasteHolic API
+  description: TasteHolic API 서버 문서
+  version: 1.0.0
 servers:
-    - url: http://localhost:3000 # 추후 수정 필요
-      description: Local server
+  - url: http://localhost:3000 # 추후 수정 필요
+    description: Local server
 # 예시
 paths:
   /api/v1/users/my-bar/post:
     post:
       summary: 마이바에 술 추가
       security:
-        - bearerAuth: []  # 이 경로는 인증이 필요함
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 술 종류와 이름으로 술 등록.
       requestBody:
         required: true
@@ -97,7 +97,7 @@ paths:
     get:
       summary: 마이바 조회
       security:
-        - bearerAuth: []  # 이 경로는 인증이 필요함
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
       tags:
         - MyBar
@@ -151,7 +151,7 @@ paths:
     delete:
       summary: 마이바의 특정 술 삭제
       security:
-        - bearerAuth: []  # 이 경로는 인증이 필요함
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 삭제한 술 정보를 반환.
       parameters:
         - in: path
@@ -228,7 +228,7 @@ paths:
     get:
       summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
       security:
-        - bearerAuth: []  # 이 경로는 인증이 필요함
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 해당하는 칵테일과 유저 레시피를 반환.
       tags:
         - MyBar
@@ -1982,67 +1982,63 @@ paths:
                     example: "카카오 인증 실패"
         500:
           description: 서버 오류
-
-          
-/api/v1/users/google-login:
-  post:
-    summary: 구글 소셜 로그인
-    description: 구글 API를 통한 소셜 로그인.
-    tags:
-      - User
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              accessToken:
-                type: string
-                example: "your_google_access_token"
-    responses:
-      200:
-        description: 구글 로그인 성공
+  /api/v1/users/google-login:
+    post:
+      summary: 구글 소셜 로그인
+      description: 구글 API를 통한 소셜 로그인.
+      tags:
+        - User
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                message:
+                accessToken:
                   type: string
-                  example: "구글 로그인 성공"
-      400:
-        description: 액세스 토큰 누락
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: "액세스 토큰이 필요합니다."
-      401:
-        description: 인증 실패
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: "구글 인증 실패"
-      500:
-        description: 서버 오류
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                error:
-                  type: string
-                  example: "서버 오류가 발생했습니다. 다시 시도해주세요."
-
-
+                  example: "your_google_access_token"
+      responses:
+        200:
+          description: 구글 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "구글 로그인 성공"
+        400:
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        401:
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "구글 인증 실패"
+        500:
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "서버 오류가 발생했습니다. 다시 시도해주세요."
 
   /api/v1/users/search/category:
     post:
@@ -2059,7 +2055,8 @@ paths:
               properties:
                 category:
                   type: string
-                  enum: ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
+                  enum:
+                    ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
                   example: "Whiskey"
                 minAbv:
                   type: integer
@@ -2075,13 +2072,37 @@ paths:
                   type: array
                   items:
                     type: string
-                    enum: ["전체 선택", "라임", "시트러스", "아몬드", "바닐라", "민트", "베리", "오크", "커피", "오렌지"]
+                    enum:
+                      [
+                        "전체 선택",
+                        "라임",
+                        "시트러스",
+                        "아몬드",
+                        "바닐라",
+                        "민트",
+                        "베리",
+                        "오크",
+                        "커피",
+                        "오렌지",
+                      ]
                   example: ["바닐라", "오크"]
                 taste:
                   type: array
                   items:
                     type: string
-                    enum: ["전체 선택", "달콤함", "시트러스", "상쾌함", "드라이함", "강렬함", "부드러움", "프루티", "허브", "짭짤함"]
+                    enum:
+                      [
+                        "전체 선택",
+                        "달콤함",
+                        "시트러스",
+                        "상쾌함",
+                        "드라이함",
+                        "강렬함",
+                        "부드러움",
+                        "프루티",
+                        "허브",
+                        "짭짤함",
+                      ]
                   example: ["달콤함", "부드러움"]
       responses:
         200:
