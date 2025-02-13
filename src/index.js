@@ -49,6 +49,7 @@ import {
   handleGetTastingNote
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
   return Number(this);
@@ -106,10 +107,10 @@ const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
-app.get("/api/v1/users/my-bar/search", handleMyBarSearch);
-app.post("/api/v1/users/my-bar/post", handleMyBarPost);
-app.get("/api/v1/users/my-bar/view", handleMyBarGet);
-app.delete("/api/v1/users/my-bar/delete/:barId", handleMyBarDelete);
+app.get("/api/v1/users/my-bar/search", authenticateToken, handleMyBarSearch);
+app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
+app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
+app.delete("/api/v1/users/my-bar/delete/:barId", authenticateToken, handleMyBarDelete);
 
 app.post("/api/v1/recipes", createRecipe);
 app.get("/api/v1/recipes", getRecipeList);
