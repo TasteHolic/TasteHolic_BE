@@ -1874,6 +1874,8 @@ paths:
   /api/v1/users/logout:
     post:
       summary: 로그아웃
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 인증 토큰을 삭제하여 로그아웃 처리.
       tags:
         - User
@@ -1894,6 +1896,8 @@ paths:
   /api/v1/users/delete-user:
     delete:
       summary: 회원 탈퇴
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 인증된 사용자가 회원 탈퇴 요청.
       tags:
         - User

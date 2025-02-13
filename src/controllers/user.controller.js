@@ -62,14 +62,9 @@ export const handleLogoutUser = async (req, res, next) => {
 
 export const handleDeleteUser = async (req, res, next) => {
   try {
-    const user = await authenticateToken(req);
-    if (!user?.id) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: "사용자 인증 실패" });
-    }
 
-    const result = await userService.deleteUser(user.id);
+    const userId = req.user.id;
+    const result = await userService.deleteUser(userId);
     res
       .status(StatusCodes.OK)
       .success({ message: "회원 삭제 완료", result });

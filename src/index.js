@@ -128,8 +128,8 @@ app.get("/api/v1/users/tasting-note/:noteId", handleGetTastingNote);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
-app.post("/api/v1/users/logout", handleLogoutUser);
-app.delete("/api/v1/users/delete-user", handleDeleteUser);
+app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
+app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
 
 app.post("/api/v1/users/search/category", handleSearch);
