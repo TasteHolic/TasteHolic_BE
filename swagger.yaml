@@ -11,6 +11,8 @@ paths:
   /api/v1/users/my-bar/post:
     post:
       summary: 마이바에 술 추가
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 술 종류와 이름으로 술 등록.
       requestBody:
         required: true
@@ -94,6 +96,8 @@ paths:
   /api/v1/users/my-bar/view:
     get:
       summary: 마이바 조회
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
       tags:
         - MyBar
@@ -146,6 +150,8 @@ paths:
   /api/v1/users/my-bar/delete/{barId}:
     delete:
       summary: 마이바의 특정 술 삭제
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 삭제한 술 정보를 반환.
       parameters:
         - in: path
@@ -221,6 +227,8 @@ paths:
   /api/v1/users/my-bar/search:
     get:
       summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 해당하는 칵테일과 유저 레시피를 반환.
       tags:
         - MyBar
@@ -2154,3 +2162,10 @@ paths:
                   message:
                     type: string
                     example: "검색 중 오류가 발생했습니다."
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
