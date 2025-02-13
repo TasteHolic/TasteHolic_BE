@@ -26,7 +26,7 @@ export const handleMyBarGet = async (req, res, next) => {
     const userId = req.user.id;
 
     const bar = await myBarGet(userId); // repository에서 user.id로 조회
-    res.status(StatusCodes.OK).json({ success: bar });
+    res.status(StatusCodes.OK).success(bar);
   } catch (err) {
     next(err);
   }
@@ -51,7 +51,7 @@ export const handleMyBarSearch = async (req, res, next) => {
     const userId = req.user.id;
 
     const bar = await myBarSearch(userId); // repository에서 user.id로 조회
-    res.status(StatusCodes.OK).json({ success: bar });
+    res.status(StatusCodes.OK).success(bar);
   } catch (err) {
     next(err); // 에러가 발생하면 next로 넘겨서 에러 미들웨어로 전달
   }
