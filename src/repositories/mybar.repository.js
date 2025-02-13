@@ -1,6 +1,5 @@
 import { prisma } from "../../db.config.js";
 import { Prisma } from "@prisma/client";
-import { authenticateUser } from "../controllers/user.controller.js";
 
 export const getBar = async (barId) => {
   const bar = await prisma.MyBars.findFirst({

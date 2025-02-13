@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { validateRegister, validateLogin } from "../dtos/user.dto.js";
 import * as userService from "../services/user.service.js";
 import jwt from "jsonwebtoken";
+import { authenticateToken } from "../middleware/auth.middleware.js";
 
 export const authenticateUser = (req) => {
   try {
@@ -43,7 +44,6 @@ export const handleLoginUser = async (req, res, next) => {
     const result = await userService.loginUser(req.body);
     res
       .status(StatusCodes.OK)
-      .cookie("token", result.token, { httpOnly: true })
       .success({ message: "로그인 성공", token: result.token });
   } catch (err) {
     res
@@ -54,9 +54,7 @@ export const handleLoginUser = async (req, res, next) => {
 
 export const handleLogoutUser = async (req, res, next) => {
   try {
-    res
-      .clearCookie("token", { httpOnly: true })
-      .success({ message: "로그아웃 성공" });
+    res.status(StatusCodes.OK).json({ message: "로그아웃 성공" });
   } catch (err) {
     next(err);
   }
@@ -64,7 +62,7 @@ export const handleLogoutUser = async (req, res, next) => {
 
 export const handleDeleteUser = async (req, res, next) => {
   try {
-    const user = authenticateUser(req);
+    const user = await authenticateToken(req);
     if (!user?.id) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
@@ -84,11 +82,12 @@ export const handleDeleteUser = async (req, res, next) => {
 
 export const handleSocialLogin = async (req, res, next) => {
   try {
+    // 클라이언트로부터 받은 accessToken을 사용하여 소셜 로그인 처리
     const result = await userService.socialLogin(req.body.accessToken);
-    res.status(StatusCodes.OK).success(result);
+
+    // 결과로 받은 사용자 정보를 토대로 JWT 토큰을 생성하여 반환
+    res.status(StatusCodes.OK).success({ message: "소셜 로그인 성공", token: result.token });
   } catch (err) {
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: err.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
   }
 };
