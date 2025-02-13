@@ -1798,9 +1798,21 @@ paths:
                 password:
                   type: string
                   example: "password123"
+                passwordConfirm:
+                  type: string
+                  example: "password123"
                 nickname:
                   type: string
                   example: "TasteLover"
+                termsAgreement:
+                  type: boolean
+                  example: true
+                privacyAgreement:
+                  type: boolean
+                  example: true
+                ageAgreement:
+                  type: boolean
+                  example: true
       responses:
         201:
           description: 회원가입 성공
@@ -1970,6 +1982,68 @@ paths:
                     example: "카카오 인증 실패"
         500:
           description: 서버 오류
+
+          
+/api/v1/users/google-login:
+  post:
+    summary: 구글 소셜 로그인
+    description: 구글 API를 통한 소셜 로그인.
+    tags:
+      - User
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+                example: "your_google_access_token"
+    responses:
+      200:
+        description: 구글 로그인 성공
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "구글 로그인 성공"
+      400:
+        description: 액세스 토큰 누락
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "액세스 토큰이 필요합니다."
+      401:
+        description: 인증 실패
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "구글 인증 실패"
+      500:
+        description: 서버 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "서버 오류가 발생했습니다. 다시 시도해주세요."
+
+
+
   /api/v1/users/search/category:
     post:
       summary: 술과 칵테일 검색

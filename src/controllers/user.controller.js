@@ -4,6 +4,7 @@ import * as userService from "../services/user.service.js";
 import jwt from "jsonwebtoken";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 
+// ✅ 인증된 사용자 가져오기
 export const authenticateUser = (req) => {
   try {
     const token = req.cookies?.token;
@@ -17,49 +18,68 @@ export const authenticateUser = (req) => {
   }
 };
 
-export const handleRegisterUser = async (req, res, next) => {
-  const { error } = validateRegister(req.body);
-  if (error) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: error.details[0].message });
-  }
+// ✅ 이메일 중복 확인 API
+export const handleCheckEmailDuplicate = async (req, res, next) => {
   try {
-    const result = await userService.registerUser(req.body);
-    res.status(StatusCodes.CREATED).success(result);
+    const { email } = req.query;
+    if (!email) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "이메일을 입력하세요." });
+    }
+
+    const existingUser = await userService.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(StatusCodes.CONFLICT).json({ error: "이미 존재하는 이메일입니다." });
+    }
+
+    res.status(StatusCodes.OK).json({ message: "사용 가능한 이메일입니다." });
   } catch (err) {
     next(err);
   }
 };
 
+// ✅ 회원가입 API
+export const handleRegisterUser = async (req, res, next) => {
+  const { error } = validateRegister(req.body);
+  if (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: error.details[0].message });
+  }
+
+  try {
+    const result = await userService.registerUser(req.body);
+    res.status(StatusCodes.CREATED).json({ message: "회원가입 성공", user: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ✅ 로그인 API
 export const handleLoginUser = async (req, res, next) => {
   const { error } = validateLogin(req.body);
   if (error) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: error.details[0].message });
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: error.details[0].message });
   }
 
   try {
     const result = await userService.loginUser(req.body);
-    res
-      .status(StatusCodes.OK)
-      .success({ message: "로그인 성공", token: result.token });
+
+    res.cookie("token", result.token, { httpOnly: true, secure: true, sameSite: "Strict" });
+    res.status(StatusCodes.OK).json({ message: "로그인 성공" });
   } catch (err) {
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ error: err.message });
+    res.status(StatusCodes.UNAUTHORIZED).json({ error: err.message });
   }
 };
 
+// ✅ 로그아웃 API
 export const handleLogoutUser = async (req, res, next) => {
   try {
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "Strict" });
     res.status(StatusCodes.OK).json({ message: "로그아웃 성공" });
   } catch (err) {
     next(err);
   }
 };
 
+// ✅ 회원탈퇴 API
 export const handleDeleteUser = async (req, res, next) => {
   try {
     const user = await authenticateToken(req);
@@ -80,13 +100,32 @@ export const handleDeleteUser = async (req, res, next) => {
   }
 };
 
+
+
+
+// ✅ 소셜 로그인 API (카카오)
 export const handleSocialLogin = async (req, res, next) => {
   try {
-    // 클라이언트로부터 받은 accessToken을 사용하여 소셜 로그인 처리
-    const result = await userService.socialLogin(req.body.accessToken);
+    const { provider, accessToken } = req.body;
+    if (!provider || !accessToken) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "provider와 accessToken을 입력하세요." });
+    }
 
-    // 결과로 받은 사용자 정보를 토대로 JWT 토큰을 생성하여 반환
-    res.status(StatusCodes.OK).success({ message: "소셜 로그인 성공", token: result.token });
+    const result = await userService.socialLogin({ provider, accessToken });
+
+    res.cookie("token", result.token, { httpOnly: true, secure: true, sameSite: "Strict" });
+    res.status(StatusCodes.OK).json({ message: `${provider} 로그인 성공` });
+  } catch (err) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+  }
+};
+
+// ✅ 구글 로그인 API
+export const handleGoogleLogin = async (req, res, next) => {
+  try {
+    const result = await userService.googleLogin(req.body.accessToken);
+
+    res.status(StatusCodes.OK).json({ message: "구글 로그인 성공", token: result.token });
   } catch (err) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
   }

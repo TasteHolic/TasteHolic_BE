@@ -11,11 +11,13 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
 import {
+  handleCheckEmailDuplicate,
   handleRegisterUser,
   handleLoginUser,
   handleLogoutUser,
   handleDeleteUser,
   handleSocialLogin,
+  handleGoogleLogin, 
 } from "./controllers/user.controller.js";
 
 import {
@@ -107,6 +109,7 @@ const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
+app.get("/api/v1/users/check-email", handleCheckEmailDuplicate);
 app.get("/api/v1/users/my-bar/search", authenticateToken, handleMyBarSearch);
 app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
 app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
@@ -131,6 +134,7 @@ app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", handleLogoutUser);
 app.delete("/api/v1/users/delete-user", handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+app.post("/api/v1/users/google-login", handleGoogleLogin);
 
 app.post("/api/v1/users/search/category", handleSearch);
 
@@ -173,3 +177,4 @@ try {
 app.listen(port, "0.0.0.0", () => {
   console.log(`Example app listening on port ${port}`);
 });
+
