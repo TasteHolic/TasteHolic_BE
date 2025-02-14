@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { bodyToCocktailTastingNote, bodyToAlcoholTastingNote, updateTastingNoteDto } from "../dtos/tastingnote.dto.js";
-import { userTastingNote, searchDrinks, updateTastingNote, getTastingNoteById, deleteTastingNote, tastingNoteDetail} from "../services/tastingnote.service.js";
-import { authenticateUser } from "./user.controller.js";
+import { userTastingNote, searchDrinks, updateTastingNote, getTastingNoteById, deleteTastingNote, tastingNoteDetail, getAllTastingNotes} from "../services/tastingnote.service.js";
 
 export const handleSearchDrinks = async (req, res, next) => {
     try {
@@ -24,7 +23,6 @@ export const handleSearchDrinks = async (req, res, next) => {
       res.status(StatusCodes.OK).success(results);
     } catch (error) {
       console.error("검색 오류 발생:", error.message);
-      next(err);
     }
 };
 
@@ -35,17 +33,19 @@ export const handleUserTastingNote = async (req, res, next) => {
 
     const {type} =req.query;
     let tastingnote;
-    const user = authenticateUser(req);
-    if (!user?.id) {
-        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    const userId = req.user.id;
+    if (!userId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ success: false, message: "사용자 인증 실패" });
     }
 
     if (type === "cocktail") {
       // Cocktail 타입일 경우
-      tastingnote = await userTastingNote(user.id, bodyToCocktailTastingNote(req.body, user.id), "cocktail");
+      tastingnote = await userTastingNote(userId, bodyToCocktailTastingNote(req.body, userId), "cocktail");
     } else {
       // Alcohol 타입일 경우
-      tastingnote = await userTastingNote(user.id, bodyToAlcoholTastingNote(req.body, user.id), "alcohol");
+      tastingnote = await userTastingNote(userId, bodyToAlcoholTastingNote(req.body, userId), "alcohol");
     }
 
     res.status(StatusCodes.OK).success(tastingnote);
@@ -60,9 +60,11 @@ export const handleUpdateTastingNote = async (req, res, next) => {
   try {
     const { noteId } = req.params; // 수정할 테이스팅 노트 ID
     const { type } = req.query;
-    const user = authenticateUser(req);
-    if (!user?.id) {
-        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    const userId = req.user.id;
+    if (!userId) {
+      return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ success: false, message: "사용자 인증 실패" });
     }
 
     console.log(`테이스팅 노트 ID: ${noteId} 수정 요청`);
@@ -76,7 +78,7 @@ export const handleUpdateTastingNote = async (req, res, next) => {
     }
 
     // 사용자 권한 확인
-    if (Number(existingNote.userId) !== Number(user.id)) {
+    if (Number(existingNote.userId) !== Number(userId)) {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ success: false, message: "수정 권한이 없습니다." });
@@ -113,9 +115,11 @@ export const handleDeleteTastingNote = async (req, res, next) => {
   try {
     const { noteId } = req.params; // 삭제할 테이스팅 노트 ID
     const { type } = req.query;
-    const user = authenticateUser(req);
-    if (!user?.id) {
-        return jsonErrorResponse(res, StatusCodes.UNAUTHORIZED, "auth_error", "사용자 인증 실패");
+    const userId = req.user.id;
+    if (!userId) {
+      return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ success: false, message: "사용자 인증 실패" });
     }
 
     console.log(`테이스팅 노트 ID: ${noteId} 삭제 요청`);
@@ -129,7 +133,7 @@ export const handleDeleteTastingNote = async (req, res, next) => {
     }
 
     // 사용자 권한 확인
-    if (Number(existingNote.userId) !== Number(user.id)) {
+    if (Number(existingNote.userId) !== Number(userId)) {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ success: false, message: "삭제 권한이 없습니다." });
@@ -154,13 +158,13 @@ export const handleGetTastingNote = async (req, res, next) => {
     try {
       const { noteId } = req.params; // 조회할 테이스팅 노트 ID
       const { type } = req.query; 
-      const user = authenticateUser(req);
-      if (!user?.id) {
+      const userId = req.user.id;
+      if (!userId) {
         return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, message: " 권한이 없습니다." });
+        .json({ success: false, message: "사용자 인증 실패" });
       }  
-      
+
       const result = await tastingNoteDetail(type, noteId);
         res.status(200).json(result);
     } catch (error) {
@@ -168,4 +172,35 @@ export const handleGetTastingNote = async (req, res, next) => {
     }
   };
 
+// 테이스팅 노트 전체 조회
+export const handleGetAllTastingNotes = async (req, res, next) => {
+  console.log("Request received for /api/v1/users/tasting-note/list"); // 이 로그가 콘솔에 출력되는지 확인
+
+  try {
+    const { type } = req.query; // 타입 쿼리 파라미터 (cocktail, whiskey, gin, rum, tequila, wine, beer, other)
+    console.log(type);
+    const userId = req.user.id;
+    
+    if (!userId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ success: false, message: "사용자 인증 실패" });
+    }
+
+    let tastingNotes;
+
+    console.log("시작");
+    tastingNotes = await getAllTastingNotes(userId,type);
+
+    // 테이스팅 노트가 없으면 빈 배열로 응답
+    if (!tastingNotes) {
+      return res.status(200).json({ tastingNotes: [] });
+    }
+
+    return res.status(200).json({ tastingNotes });
+  } catch (error) {
+    console.error("오류 발생:", error.message);
+    return res.status(500).json({ error: "서버 오류" });
+  }
+};
 

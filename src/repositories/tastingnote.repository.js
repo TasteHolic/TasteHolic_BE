@@ -13,7 +13,7 @@ export const searchDrinksInDB = async (query, type) => {
         [results] = await conn.query(
           `SELECT id, nameEng, nameKor, 'cocktail' AS type
            FROM Cocktails
-           WHERE nameEng LIKE ? OR nameKor LIKE ?;`,
+           WHERE nameEng LIKE ? OR nameKor COLLATE utf8mb4_general_ci LIKE ?;`,
           [`%${query}%`, `%${query}%`]
         );
       } else {
@@ -21,7 +21,7 @@ export const searchDrinksInDB = async (query, type) => {
         [results] = await conn.query(
           `SELECT id, nameEng, nameKor, ? AS type
            FROM Alcohols
-           WHERE nameEng LIKE ? OR nameKor LIKE ?;`,
+           WHERE nameEng LIKE ? OR nameKor COLLATE utf8mb4_general_ci LIKE ?;`,
           [type, `%${query}%`, `%${query}%`]
         );
       }
@@ -253,5 +253,29 @@ export const removeTastingNote = async (noteId, type) => {
             },
           });
     }
-    
   };
+
+
+// 주류 테이스팅 노트 전체 조회 (카테고리별)
+export const listTastingNotes = async (userId, type) => {
+  console.log(userId);
+  if (type === "cocktail") {
+    return await prisma.cocktailTastingNotes.findMany({
+      where: { userId: userId } // userId는 BigInt가 아닌 그대로 사용할 수 있음
+    });
+  } else {
+    return await prisma.alcoholTastingNotes.findMany({
+      where: {
+        userId: userId,
+        category: {
+          contains: type, // Category 필드 값이 type 문자열을 포함하는지 확인
+          lte: 'insensitive' // 대소문자 구분 없이 비교
+        }
+      }
+    });
+    
+    
+  }
+};
+
+
