@@ -1303,6 +1303,8 @@ paths:
   /api/v1/users/tasting-note:
     post:
       summary: 사용자 테이스팅 노트 작성
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 작성합니다.
       tags:
         - TastingNote
@@ -1443,6 +1445,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "500":
           description: "서버 오류"
           content:
@@ -1456,6 +1468,8 @@ paths:
   /api/v1/users/tasting-note/{noteId}:
     patch:
       summary: 사용자 테이스팅 노트 수정
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 수정합니다.
       tags:
         - TastingNote
@@ -1594,6 +1608,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트를 찾을 수 없음"
           content:
@@ -1626,6 +1650,8 @@ paths:
                     description: "오류 메시지"
     delete:
       summary: 사용자 테이스팅 노트 삭제
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 사용자가 작성한 칵테일 또는 주류의 테이스팅 노트를 삭제합니다.
       tags:
         - TastingNote
@@ -1664,6 +1690,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트가 존재하지 않음"
           content:
@@ -1686,6 +1722,8 @@ paths:
                     description: "오류 메시지"
     get:
       summary: 사용자 테이스팅 노트 조회
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 사용자가 작성한 테이스팅 노트를 조회합니다.
       tags:
         - TastingNote
@@ -1757,6 +1795,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트를 찾을 수 없음"
           content:
@@ -1780,6 +1828,8 @@ paths:
   /api/v1/users/tasting-notes:
     get:
       summary: 특정 카테고리에 대한 모든 테이스팅 노트 조회
+      security:
+        - bearerAuth: []  # 이 경로는 인증이 필요함
       description: 주어진 type(카테고리)에 해당하는 모든 테이스팅 노트를 조회합니다. 
       tags:
         - TastingNote
@@ -1834,16 +1884,16 @@ paths:
                   message:
                     type: string
                     example: "type 파라미터가 필요합니다."
-        '401':
-          description: 인증되지 않은 사용자 (로그인 필요)
+        "401":
+          description: 액세스 토큰 누락
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "권한이 없습니다."
+                    example: "액세스 토큰이 필요합니다."
         '500':
           description: 서버 오류
           content:

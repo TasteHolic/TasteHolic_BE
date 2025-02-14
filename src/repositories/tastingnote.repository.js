@@ -13,7 +13,7 @@ export const searchDrinksInDB = async (query, type) => {
         [results] = await conn.query(
           `SELECT id, nameEng, nameKor, 'cocktail' AS type
            FROM Cocktails
-           WHERE nameEng LIKE ? OR nameKor LIKE ?;`,
+           WHERE nameEng LIKE ? OR nameKor COLLATE utf8mb4_general_ci LIKE ?;`,
           [`%${query}%`, `%${query}%`]
         );
       } else {
@@ -21,7 +21,7 @@ export const searchDrinksInDB = async (query, type) => {
         [results] = await conn.query(
           `SELECT id, nameEng, nameKor, ? AS type
            FROM Alcohols
-           WHERE nameEng LIKE ? OR nameKor LIKE ?;`,
+           WHERE nameEng LIKE ? OR nameKor COLLATE utf8mb4_general_ci LIKE ?;`,
           [type, `%${query}%`, `%${query}%`]
         );
       }
