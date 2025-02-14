@@ -33,6 +33,7 @@ import {
   updateRecipeLike,
   updateCancelRecipeLike,
   getMyRecipes,
+  getFavRecipes,
 } from "./controllers/recipe.controller.js";
 import {
   registerUser,
@@ -46,9 +47,11 @@ import {
   handleSearchDrinks,
   handleUpdateTastingNote,
   handleDeleteTastingNote,
-  handleGetTastingNote
+  handleGetTastingNote,
+  handleGetAllTastingNotes
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
   return Number(this);
@@ -106,29 +109,33 @@ const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
-app.get("/api/v1/users/my-bar/search", handleMyBarSearch);
-app.post("/api/v1/users/my-bar/post", handleMyBarPost);
-app.get("/api/v1/users/my-bar/view", handleMyBarGet);
-app.delete("/api/v1/users/my-bar/delete/:barId", handleMyBarDelete);
+app.get("/api/v1/users/my-bar/search", authenticateToken, handleMyBarSearch);
+app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
+app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
+app.delete("/api/v1/users/my-bar/delete/:barId", authenticateToken, handleMyBarDelete);
 
-app.post("/api/v1/recipes", createRecipe);
+app.post("/api/v1/recipes", authenticateToken, createRecipe);
 app.get("/api/v1/recipes", getRecipeList);
-app.patch("/api/v1/recipes/:recipeId", updateRecipe);
-app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
+app.patch("/api/v1/recipes/:recipeId", authenticateToken, updateRecipe);
+app.delete("/api/v1/recipes/:recipeId", authenticateToken, deleteRecipe);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
-app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
-app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
+app.patch("/api/v1/recipes/:recipeId/like",authenticateToken, updateRecipeLike);
+app.patch("/api/v1/recipes/:recipeId/like/cancel", authenticateToken, updateCancelRecipeLike);
+app.get("/api/v1/users/recipes", authenticateToken, getMyRecipes);
+app.get("/api/v1/users/recipes/fav", authenticateToken, getFavRecipes);
+
 
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
-app.post("/api/v1/users/tasting-note", handleUserTastingNote);
-app.patch("/api/v1/users/tasting-note/:noteId", handleUpdateTastingNote);
-app.delete("/api/v1/users/tasting-note/:noteId", handleDeleteTastingNote);
-app.get("/api/v1/users/tasting-note/:noteId", handleGetTastingNote);
+app.post("/api/v1/users/tasting-note", authenticateToken, handleUserTastingNote);
+app.patch("/api/v1/users/tasting-note/:noteId", authenticateToken, handleUpdateTastingNote);
+app.delete("/api/v1/users/tasting-note/:noteId", authenticateToken, handleDeleteTastingNote);
+app.get("/api/v1/users/tasting-note/:noteId", authenticateToken, handleGetTastingNote);
+app.get("/api/v1/users/tasting-notes", authenticateToken, handleGetAllTastingNotes);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
-app.post("/api/v1/users/logout", handleLogoutUser);
-app.delete("/api/v1/users/delete-user", handleDeleteUser);
+app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
+app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
 
 app.post("/api/v1/users/search/category", handleSearch);

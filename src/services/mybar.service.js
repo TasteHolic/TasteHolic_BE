@@ -33,7 +33,7 @@ export const myBarGet = async (userId) => {
   const bar = await viewBar(userId);
 
   if (!bar) {
-    return null;
+    return responseFromMyBar([]);
   }
 
   return responseFromMyBar(bar);
@@ -51,10 +51,6 @@ export const myBarDelete = async (barId) => {
 
 export const myBarSearch = async (userId) => {
   const bar = await searchBar(userId);
-
-  if (!bar) {
-    return null;
-  }
 
   return responseFromMyBar(bar);
 };

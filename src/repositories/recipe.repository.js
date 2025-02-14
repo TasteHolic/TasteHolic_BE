@@ -431,6 +431,58 @@ export const getUnder2RecipesFromDB = async (cursor, limit) => {
   }
 };
 
+export const getFavRecipesFromDB = async (userId, cursor, limit) => {
+  try {
+    let values = [];
+    let query = `
+      SELECT ur.id, ur.name, ur.ingredients, ur.likes, ur.views, 'user' as type
+      FROM UserRecipeFavorites uf
+      JOIN UserRecipes ur ON uf.recipeId = ur.id
+      WHERE uf.userId = ?
+    `;
+
+    values.push(userId);
+
+    if (cursor) {
+      query += ` AND ur.id < ? `;
+      values.push(cursor);
+    }
+
+    query += `
+      UNION ALL
+      SELECT c.id, c.nameKor AS name, c.ingredientsEng AS ingredients, c.likes, c.views, 'cocktail' as type
+      FROM CocktailFavorites cf
+      JOIN Cocktails c ON cf.cocktailId = c.id
+      WHERE cf.userId = ?
+    `;
+
+    values.push(userId);
+
+    if (cursor) {
+      query += ` AND c.id < ? `;
+      values.push(cursor);
+    }
+
+    query += `
+      ORDER BY id DESC
+      LIMIT ?
+    `;
+    values.push(limit);
+
+    // Prisma raw query 실행
+    const recipes = await prisma.$queryRawUnsafe(query, ...values);
+
+    // `nextCursor` 설정 (가장 마지막 항목의 ID)
+    const nextCursor =
+      recipes.length === limit ? recipes[recipes.length - 1].id : null;
+
+    return { recipes, nextCursor };
+  } catch (err) {
+    console.error("❌ 좋아요한 레시피 조회 실패:", err.message || err);
+    throw err;
+  }
+};
+
 export const getMyRecipesFromDB = async (id) => {
   console.log(id);
   return await prisma.userRecipes.findMany({

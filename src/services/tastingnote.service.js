@@ -7,7 +7,8 @@ import {
   findTastingNoteById,
   removeTastingNote,
   getUserTastingNote,
-  getExpertTastingNote
+  getExpertTastingNote,
+  listTastingNotes
 } from "../repositories/tastingnote.repository.js";
 
 export const searchDrinks = async (query, type) => {
@@ -64,10 +65,16 @@ if (id) {
   experttastingnote = await getExpertTastingNote(type, id);
 }
 
-// experttastingnote가 null일 경우, 프론트에서 띄울 수 있도록 처리
 const expertTastingNote = experttastingnote ? toExpertTastingNoteDTO(experttastingnote, type) : null;
 
 return { userTastingNote, expertTastingNote };
 
 };
+
+// 테이스팅 노트 전체 조회
+export const getAllTastingNotes = async (userId, type) => {
+  console.log(userId);
+  return await listTastingNotes(userId, type);
+};
+
 

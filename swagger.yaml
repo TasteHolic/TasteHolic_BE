@@ -11,6 +11,8 @@ paths:
   /api/v1/users/my-bar/post:
     post:
       summary: 마이바에 술 추가
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 술 종류와 이름으로 술 등록.
       requestBody:
         required: true
@@ -94,6 +96,8 @@ paths:
   /api/v1/users/my-bar/view:
     get:
       summary: 마이바 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
       tags:
         - MyBar
@@ -146,6 +150,8 @@ paths:
   /api/v1/users/my-bar/delete/{barId}:
     delete:
       summary: 마이바의 특정 술 삭제
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 삭제한 술 정보를 반환.
       parameters:
         - in: path
@@ -221,6 +227,8 @@ paths:
   /api/v1/users/my-bar/search:
     get:
       summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 해당하는 칵테일과 유저 레시피를 반환.
       tags:
         - MyBar
@@ -312,6 +320,8 @@ paths:
       operationId: createUserRecipe
       tags:
         - Recipes
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -554,6 +564,8 @@ paths:
       description: 기존 레시피를 수정합니다. 레시피 소유자만 수정할 수 있습니다.
       tags:
         - Recipes
+      security:
+        - bearerAuth: []
       parameters:
         - name: recipeId
           in: path
@@ -1024,6 +1036,8 @@ paths:
       summary: 레시피 삭제
       description: 특정 레시피를 삭제합니다.
       operationId: deleteRecipe
+      security:
+        - bearerAuth: []
       tags:
         - Recipes
       parameters:
@@ -1106,6 +1120,8 @@ paths:
       description: "레시피에 좋아요를 추가합니다."
       tags:
         - Recipes
+      security:
+        - bearerAuth: []
       parameters:
         - name: recipeId
           in: path
@@ -1202,6 +1218,8 @@ paths:
       description: "레시피에 좋아요를 취소합니다."
       tags:
         - Recipes
+      security:
+        - bearerAuth: []
       parameters:
         - name: recipeId
           in: path
@@ -1292,9 +1310,128 @@ paths:
                   success:
                     type: "null"
                     example: null
+  /api/v1/users/recipes:
+    get:
+      summary: 내가 쓴 레시피
+      description: 카테고리, 도수 범위, 향, 맛을 기준으로 술과 칵테일을 검색합니다.
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "성공적으로 레시피를 가져왔습니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 29
+                            name:
+                              type: string
+                              example: "냠냠냠ㄴ냠"
+                            ingredients:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              example:
+                                "소다수": "적당량"
+                                "민트 잎": "7개"
+                                "라이트 럼": "2 온스"
+                                "라임 웨지": "3개"
+                                "심플 시럽": "3/4 온스"
+                            abv:
+                              type: string
+                              enum: ["high", "medium", "low", "non-alcohol"]
+                              example: "high"
+  /users/recipes/fav:
+    get:
+      tags:
+        - Recipes
+      summary: "사용자가 좋아요한 레시피 목록 조회"
+      description: "사용자가 좋아요한 레시피 목록을 페이징 방식으로 가져옵니다."
+      operationId: getFavRecipes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: "이전 요청에서 받은 nextCursor 값을 사용하여 페이지네이션"
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: "가져올 레시피 개수 (기본값: 10)"
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: "사용자가 좋아요한 레시피 목록을 반환합니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 20
+                        name:
+                          type: string
+                          example: "SampleDrink2"
+                        ingredients:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            "소다수": "적당량"
+                            "민트 잎": "7개"
+                            "라이트 럼": "2 온스"
+                            "라임 웨지": "3개"
+                            "심플 시럽": "3/4 온스"
+                        likes:
+                          type: integer
+                          example: 1
+                        views:
+                          type: integer
+                          example: 0
+                        type:
+                          type: string
+                          enum: ["user", "cocktail"]
+                          example: "user"
+                  nextCursor:
+                    type: integer
+                    nullable: true
+                    example: null
   /api/v1/users/tasting-note:
     post:
       summary: 사용자 테이스팅 노트 작성
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 작성합니다.
       tags:
         - TastingNote
@@ -1435,6 +1572,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "500":
           description: "서버 오류"
           content:
@@ -1448,6 +1595,8 @@ paths:
   /api/v1/users/tasting-note/{noteId}:
     patch:
       summary: 사용자 테이스팅 노트 수정
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 수정합니다.
       tags:
         - TastingNote
@@ -1586,6 +1735,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트를 찾을 수 없음"
           content:
@@ -1618,6 +1777,8 @@ paths:
                     description: "오류 메시지"
     delete:
       summary: 사용자 테이스팅 노트 삭제
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 사용자가 작성한 칵테일 또는 주류의 테이스팅 노트를 삭제합니다.
       tags:
         - TastingNote
@@ -1656,6 +1817,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트가 존재하지 않음"
           content:
@@ -1678,6 +1849,8 @@ paths:
                     description: "오류 메시지"
     get:
       summary: 사용자 테이스팅 노트 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 사용자가 작성한 테이스팅 노트를 조회합니다.
       tags:
         - TastingNote
@@ -1749,6 +1922,16 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
         "404":
           description: "테이스팅 노트를 찾을 수 없음"
           content:
@@ -1769,6 +1952,85 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+  /api/v1/users/tasting-notes:
+    get:
+      summary: 특정 카테고리에 대한 모든 테이스팅 노트 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 주어진 type(카테고리)에 해당하는 모든 테이스팅 노트를 조회합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: 조회할 테이스팅 노트의 카테고리
+          schema:
+            type: string
+            example: whiskey
+      responses:
+        "200":
+          description: 테이스팅 노트를 성공적으로 조회함
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tastingNotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        userId:
+                          type: integer
+                          example: 10
+                        Category:
+                          type: string
+                          example: "Bourbon Whiskey"
+                        notes:
+                          type: string
+                          example: "바닐라와 오크의 힌트가 있는 부드러운 맛."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+        "400":
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "type 파라미터가 필요합니다."
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "500":
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "서버 오류가 발생했습니다."
 
   paths:
   /api/v1/users/register:
@@ -1866,6 +2128,8 @@ paths:
   /api/v1/users/logout:
     post:
       summary: 로그아웃
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 인증 토큰을 삭제하여 로그아웃 처리.
       tags:
         - User
@@ -1882,10 +2146,11 @@ paths:
                     example: "로그아웃이 완료되었습니다."
         500:
           description: 서버 오류
-
   /api/v1/users/delete-user:
     delete:
       summary: 회원 탈퇴
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
       description: 인증된 사용자가 회원 탈퇴 요청.
       tags:
         - User
@@ -1912,7 +2177,6 @@ paths:
                     example: "인증 실패"
         500:
           description: 서버 오류
-
   /api/v1/users/social-login:
     post:
       summary: 카카오 소셜 로그인
@@ -1977,7 +2241,8 @@ paths:
               properties:
                 category:
                   type: string
-                  enum: ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
+                  enum:
+                    ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
                   example: "Whiskey"
                 minAbv:
                   type: integer
@@ -1993,13 +2258,37 @@ paths:
                   type: array
                   items:
                     type: string
-                    enum: ["전체 선택", "라임", "시트러스", "아몬드", "바닐라", "민트", "베리", "오크", "커피", "오렌지"]
+                    enum:
+                      [
+                        "전체 선택",
+                        "라임",
+                        "시트러스",
+                        "아몬드",
+                        "바닐라",
+                        "민트",
+                        "베리",
+                        "오크",
+                        "커피",
+                        "오렌지",
+                      ]
                   example: ["바닐라", "오크"]
                 taste:
                   type: array
                   items:
                     type: string
-                    enum: ["전체 선택", "달콤함", "시트러스", "상쾌함", "드라이함", "강렬함", "부드러움", "프루티", "허브", "짭짤함"]
+                    enum:
+                      [
+                        "전체 선택",
+                        "달콤함",
+                        "시트러스",
+                        "상쾌함",
+                        "드라이함",
+                        "강렬함",
+                        "부드러움",
+                        "프루티",
+                        "허브",
+                        "짭짤함",
+                      ]
                   example: ["달콤함", "부드러움"]
       responses:
         200:
@@ -2077,3 +2366,10 @@ paths:
                   message:
                     type: string
                     example: "검색 중 오류가 발생했습니다."
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

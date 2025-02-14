@@ -35,3 +35,24 @@ export const parseRecipeDetail = (recipe, type) => {
     type: type, // `user` 또는 `cocktail` 구분
   };
 };
+
+export const parseMyrecipes = (recipes) => {
+  if (!recipes) return null;
+
+  return recipes.map((recipe) => {
+    return {
+      id: recipe.id,
+      name: recipe.name,
+      ingredients: recipe.ingredients,
+      abv: recipe.abv
+        ? parseFloat(recipe.abv) === 0
+          ? "non-alcohol"
+          : parseFloat(recipe.abv) >= 40
+          ? "high"
+          : parseFloat(recipe.abv) >= 20
+          ? "medium"
+          : "low"
+        : "non-alcohol",
+    };
+  });
+};
