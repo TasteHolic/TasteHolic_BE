@@ -11,24 +11,24 @@ import {
   updateCocktailLikeCancelService,
   updateUserRecipeLikeCancelService,
   getMyRecipesService,
+  getFavRecipesService,
 } from "../services/recipe.service.js";
-import { parseRecipeList, parseRecipeDetail } from "../dtos/recipe.dto.js";
-import { authenticateUser } from "./user.controller.js";
-import { NoQuery, NoParameter, UnavailableType } from "../error.js";
+import {
+  parseRecipeList,
+  parseRecipeDetail,
+  parseMyrecipes,
+} from "../dtos/recipe.dto.js";
+import {
+  NoQuery,
+  NoParameter,
+  UnavailableType,
+  TokenExpiredError,
+} from "../error.js";
 
 export const createRecipe = async (req, res, next) => {
   console.log("레시피 생성 요청!");
   try {
-    const user = authenticateUser(req);
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
 
     const userRecipeDTO = {
       ...req.body,
@@ -47,16 +47,7 @@ export const updateRecipe = async (req, res, next) => {
   console.log("레시피 수정 요청!");
   console.log("body:", req.body);
   try {
-    const user = authenticateUser(req);
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
 
     const { recipeId } = req.params;
 
@@ -76,16 +67,7 @@ export const deleteRecipe = async (req, res, next) => {
   console.log("레시피 삭제 요청!");
   console.log("body:", req.body);
   try {
-    const user = authenticateUser(req);
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
 
     const { recipeId } = req.params;
 
@@ -110,15 +92,9 @@ export const getRecipeList = async (req, res, next) => {
 
     if (!type) {
       throw new NoQuery(
-        "입력된 타입이 없습니다. (user/zero/high/fruity/under2/my)"
+        "입력된 타입이 없습니다. (user/zero/high/fruity/under2)"
       );
     }
-
-    if (type === "my") {
-      await getMyRecipes(req, res, next);
-      return;
-    }
-
     const { recipes, nextCursor } = await getRecipeListService(
       type,
       cursor,
@@ -127,6 +103,38 @@ export const getRecipeList = async (req, res, next) => {
     const parsedRecipes = parseRecipeList(recipes);
 
     res.status(StatusCodes.OK).success({
+      recipes: parsedRecipes,
+      nextCursor,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getFavRecipes = async (req, res, next) => {
+  console.log("⭐ 좋아요한 레시피 목록 조회 요청!");
+
+  try {
+    const { cursor, limit = 10 } = req.query;
+
+    // 인증된 사용자만 가능
+    if (!req.user || !req.user.id) {
+      throw new TokenExpiredError("로그인 하지 않은 사용자입니다.");
+    }
+
+    const userId = req.user.id;
+
+    // 서비스 호출
+    const { recipes, nextCursor } = await getFavRecipesService(
+      userId,
+      cursor,
+      parseInt(limit)
+    );
+
+    // 결과 파싱
+    const parsedRecipes = parseRecipeList(recipes);
+
+    res.status(StatusCodes.OK).json({
       recipes: parsedRecipes,
       nextCursor,
     });
@@ -170,17 +178,8 @@ export const getRecipe = async (req, res, next) => {
 export const updateRecipeLike = async (req, res, next) => {
   console.log("특정 레시피 찜 요청!");
   try {
-    const user = authenticateUser(req);
-
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
+    console.log(userId);
 
     const { type } = req.query;
     const { recipeId } = req.params;
@@ -214,16 +213,7 @@ export const updateRecipeLike = async (req, res, next) => {
 export const updateCancelRecipeLike = async (req, res, next) => {
   console.log("특정 레시피 찜 취소 요청!");
   try {
-    const user = authenticateUser(req);
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
 
     const { type } = req.query;
     const { recipeId } = req.params;
@@ -261,19 +251,10 @@ export const updateCancelRecipeLike = async (req, res, next) => {
 export const getMyRecipes = async (req, res, next) => {
   console.log("내가 등록한 레시피 리스트 조회 요청!");
   try {
-    const user = authenticateUser(req);
-    if (!user?.id) {
-      return jsonErrorResponse(
-        res,
-        StatusCodes.UNAUTHORIZED,
-        "auth_error",
-        "사용자 인증 실패"
-      );
-    }
-    const userId = user.id;
+    const userId = req.user.id;
+
     const recipes = await getMyRecipesService(userId);
-    console.log(recipes);
-    const parsedRecipes = parseRecipeList(recipes);
+    const parsedRecipes = parseMyrecipes(recipes);
 
     res.status(StatusCodes.OK).success({
       recipes: parsedRecipes,
