@@ -4,8 +4,8 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://localhost:3000 # 추후 수정 필요
-    description: Local server
+  - url: http://54.180.45.230:3000/
+    description: TasteHolic Server URL
 # 예시
 paths:
   /api/v1/users/my-bar/post:
