@@ -14,12 +14,14 @@ import {
   getFruityRecipesFromDB,
   getUnder2RecipesFromDB,
   getMyRecipesFromDB,
+  getFavRecipesFromDB,
 } from "../repositories/recipe.repository.js";
 import {
   NoRecipeError,
   NoPermission,
   ExistingFavError,
   UnavailableType,
+  TokenExpiredError,
 } from "../error.js";
 import { getMyRecipes } from "../controllers/recipe.controller.js";
 
@@ -130,7 +132,7 @@ export const updateCocktailLikeCancelService = async (cocktailId, userId) => {
   }
 };
 
-export const getRecipeListService = async (type, cursor, limit) => {
+export const getRecipeListService = async (type, cursor, limit, userId) => {
   try {
     let recipes = null;
     let nextCursor = null;
@@ -155,14 +157,13 @@ export const getRecipeListService = async (type, cursor, limit) => {
         break;
       case "fruity":
         ({ recipes, nextCursor } = await getFruityRecipesFromDB(cursor, limit));
-
         break;
       case "under2":
         ({ recipes, nextCursor } = await getUnder2RecipesFromDB(cursor, limit));
         break;
       default:
         throw new UnavailableType(
-          "타입 값이 잘못되었습니다. (user, zero, high, fruity, under2만 가능)"
+          "타입 값이 잘못되었습니다. (user, zero, high, fruity, under2 가능)"
         );
     }
     return { recipes, nextCursor };
@@ -172,7 +173,6 @@ export const getRecipeListService = async (type, cursor, limit) => {
   }
 };
 
-
 export const getMyRecipesService = async (id) => {
   try {
     const recipes = getMyRecipesFromDB(id);
@@ -181,4 +181,14 @@ export const getMyRecipesService = async (id) => {
     console.error("리스트 조회 중 오류 발생:", err.message || err);
     throw err;
   }
-}
+};
+
+
+export const getFavRecipesService = async (userId, cursor, limit) => {
+  try {
+    return await getFavRecipesFromDB(userId, cursor, limit);
+  } catch (err) {
+    console.error("❌ 좋아요한 레시피 서비스 오류:", err.message || err);
+    throw err;
+  }
+};

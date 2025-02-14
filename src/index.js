@@ -33,6 +33,7 @@ import {
   updateRecipeLike,
   updateCancelRecipeLike,
   getMyRecipes,
+  getFavRecipes,
 } from "./controllers/recipe.controller.js";
 import {
   registerUser,
@@ -113,13 +114,16 @@ app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
 app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
 app.delete("/api/v1/users/my-bar/delete/:barId", authenticateToken, handleMyBarDelete);
 
-app.post("/api/v1/recipes", createRecipe);
+app.post("/api/v1/recipes", authenticateToken, createRecipe);
 app.get("/api/v1/recipes", getRecipeList);
-app.patch("/api/v1/recipes/:recipeId", updateRecipe);
-app.delete("/api/v1/recipes/:recipeId", deleteRecipe);
+app.patch("/api/v1/recipes/:recipeId", authenticateToken, updateRecipe);
+app.delete("/api/v1/recipes/:recipeId", authenticateToken, deleteRecipe);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
-app.patch("/api/v1/recipes/:recipeId/like", updateRecipeLike);
-app.patch("/api/v1/recipes/:recipeId/like/cancel", updateCancelRecipeLike);
+app.patch("/api/v1/recipes/:recipeId/like",authenticateToken, updateRecipeLike);
+app.patch("/api/v1/recipes/:recipeId/like/cancel", authenticateToken, updateCancelRecipeLike);
+app.get("/api/v1/users/recipes", authenticateToken, getMyRecipes);
+app.get("/api/v1/users/recipes/fav", authenticateToken, getFavRecipes);
+
 
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
 app.post("/api/v1/users/tasting-note", authenticateToken, handleUserTastingNote);
