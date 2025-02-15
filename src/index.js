@@ -15,7 +15,11 @@ import {
   handleLoginUser,
   handleLogoutUser,
   handleDeleteUser,
-  handleSocialLogin,
+  handleKakaoLogin, 
+  handleGoogleLogin,
+ 
+  handleVerifyPassword, 
+  handleCheckEmail,
 } from "./controllers/user.controller.js";
 
 import {
@@ -40,7 +44,7 @@ import {
   loginUser,
   logoutUser,
   deleteUser,
-  socialLogin,
+
 } from "./services/user.service.js";
 import {
   handleUserTastingNote,
@@ -136,7 +140,16 @@ app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
 app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
-app.post("/api/v1/users/social-login", handleSocialLogin);
+
+app.post("/api/v1/users/verify-password", authenticateToken, handleVerifyPassword);
+app.post("/api/v1/users/check-email", handleCheckEmail);
+// 카카오 로그인 API
+app.post("/api/v1/users/kakao-login", handleKakaoLogin);
+// 구글 로그인 API
+app.post("/api/v1/users/google-login", handleGoogleLogin);
+
+
+
 
 app.post("/api/v1/users/search/category", handleSearch);
 

@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { getUserByEmail, createUser, deleteUserById } from "../repositories/user.repository.js";
+import axios from 'axios';
+import { getUserByEmail, getUserById , createUser, deleteUserById } from "../repositories/user.repository.js";
 
 dotenv.config();
 
@@ -13,6 +14,15 @@ const generateToken = (userId) => {
   }
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
+
+
+
+export const checkEmailDuplicate = async (email) => {
+  const existingUser = await getUserByEmail(email);
+  return !!existingUser; // 존재하면 true, 없으면 false 반환
+};
+
+
 
 export const registerUser = async ({ email, password, nickname }) => {
   if (!email || !password || !nickname) {
@@ -57,6 +67,19 @@ export const loginUser = async ({ email, password }) => {
   return { message: "로그인 성공", token };
 };
 
+
+
+export const verifyUserPassword = async (userId, password) => {
+  const user = await getUserById(userId); // 여기서 호출
+
+  if (!user) {
+    throw new Error("사용자를 찾을 수 없습니다.");
+  }
+
+  return bcrypt.compare(password, user.password);
+};
+
+
 export const deleteUser = async (userId) => {
   if (!userId) {
     throw new Error("유효하지 않은 유저 ID입니다.");
@@ -65,15 +88,82 @@ export const deleteUser = async (userId) => {
   await deleteUserById(userId);
   return { message: "회원 탈퇴 성공" };
 };
-
-export const socialLogin = async (accessToken) => {
+// 카카오 로그인
+export const kakaoLogin = async (accessToken) => {
   if (!accessToken) {
     throw new Error("액세스 토큰이 필요합니다.");
   }
 
-  const kakaoUser = { id: 12345 }; // 예시 데이터
-  const token = generateToken(kakaoUser.id);
-  return { message: "카카오 로그인 성공", token };
+  try {
+    const response = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const userInfo = response.data;
+
+    if (!userInfo?.id) {
+      throw new Error("카카오 사용자 정보를 가져오는 데 실패했습니다.");
+    }
+
+    let user = await getUserByEmail(userInfo.kakao_account?.email);
+    if (!user) {
+      user = await createUser({
+        email: userInfo.kakao_account?.email || "",
+        name: userInfo.properties?.nickname || "사용자 이름 미제공",
+        gender: "",
+        birth: null,
+        address: "",
+        detailAddress: "",
+        phoneNumber: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    const token = generateToken(user.id);
+    return { message: "카카오 로그인 성공", token };
+  } catch (error) {
+    console.error("카카오 로그인 오류:", error.response?.data || error.message);
+    throw new Error("카카오 인증 실패");
+  }
+};
+
+// 구글 로그인
+export const googleLogin = async (accessToken) => {
+  if (!accessToken) {
+    throw new Error("액세스 토큰이 필요합니다.");
+  }
+
+  try {
+    const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const userInfo = response.data;
+
+    if (!userInfo?.id) {
+      throw new Error("구글 사용자 정보를 가져오는 데 실패했습니다.");
+    }
+
+    let user = await getUserByEmail(userInfo.email);
+    if (!user) {
+      user = await createUser({
+        email: userInfo.email || "",
+        name: userInfo.name || "사용자 이름 미제공",
+        gender: "",
+        birth: null,
+        address: "",
+        detailAddress: "",
+        phoneNumber: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    const token = generateToken(user.id);
+    return { message: "구글 로그인 성공", token };
+  } catch (error) {
+    console.error("구글 로그인 오류:", error.response?.data || error.message);
+    throw new Error("구글 인증 실패");
+  }
 };
 
 export const logoutUser = async () => {
