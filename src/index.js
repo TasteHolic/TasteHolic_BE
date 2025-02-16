@@ -52,6 +52,7 @@ import {
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
   return Number(this);
@@ -139,6 +140,8 @@ app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
 
 app.post("/api/v1/users/search/category", handleSearch);
+
+app.get("/api/v1/best-taste", handleGetBestTaste);
 
 // app.js
 app.use((err, req, res, next) => {
