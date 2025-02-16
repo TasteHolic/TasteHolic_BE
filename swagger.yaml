@@ -2366,6 +2366,85 @@ paths:
                   message:
                     type: string
                     example: "검색 중 오류가 발생했습니다."
+  /api/v1/users/home/recommend:
+    get:
+      summary: "검색어 기반 칵테일 추천"
+      description: "사용자 검색어 기반 칵테일 3개를 반환하는 API"
+      tags:
+        - Home
+      responses:
+        200:
+          description: "추천된 칵테일 리스트"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  success:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 3
+                        nameEng:
+                          type: String
+                          example: "Godfather"
+                        images:
+                          type: String
+                          example: "null"
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example: ["시트러스", "라임"]
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example: ["달콤함", "상쾌함"]
+                        timing:
+                          type: array
+                          items:
+                            type: string
+                          example: ["여름", "파티"]
+                        ingredientsKor:
+                          type: array
+                          items:
+                            type: string
+                          example: ["진", "토닉워터", "라임"]
+                        abv:
+                          type: number
+                          format: float
+                          example: 40.0
+        500:
+          description: "서버 내부 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "INTERNAL_SERVER_ERROR"
+                      message:
+                        type: string
+                        example: "Database connection failed"
+                      data:
+                        type: object
+                        nullable: true
+                        example: null
+
 
 components:
   securitySchemes:
