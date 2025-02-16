@@ -135,6 +135,8 @@ app.delete("/api/v1/users/tasting-note/:noteId", authenticateToken, handleDelete
 app.get("/api/v1/users/tasting-note/:noteId", authenticateToken, handleGetTastingNote);
 app.get("/api/v1/users/tasting-notes", authenticateToken, handleGetAllTastingNotes);
 
+app.get("/api/v1/best-taste", handleGetBestTaste);
+
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
@@ -143,7 +145,6 @@ app.post("/api/v1/users/social-login", handleSocialLogin);
 
 app.post("/api/v1/users/search/category", handleSearch);
 
-app.get("/api/v1/best-taste", handleGetBestTaste);
 app.get("/api/v1/users/home/recommend", handleGetRandomCocktails);
 
 // app.js
