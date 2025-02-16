@@ -2394,6 +2394,9 @@ paths:
                         nameEng:
                           type: String
                           example: "Godfather"
+                        images:
+                          type: String
+                          example: "null"
                         aromas:
                           type: array
                           items:

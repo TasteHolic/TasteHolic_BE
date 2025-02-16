@@ -15,11 +15,12 @@ export const fetchRandomCocktails = async () => {
     randomIds.push(...idList.splice(randIndex, 1)); // 중복 없이 선택
   }
 
-  return await prisma.cocktails.findMany({
+  const cocktails = await prisma.cocktails.findMany({
     where: { id: { in: randomIds } },
     select: {
       id: true,
       nameEng: true,
+      images: true, // null이면 그대로 반환
       aromas: true,
       tastes: true,
       timing: true,
@@ -27,4 +28,9 @@ export const fetchRandomCocktails = async () => {
       abv: true,
     },
   });
+
+  return cocktails.map((c) => ({
+    ...c,
+    images: c.images ?? null, // undefined 방지, null이면 그대로 반환
+  }));
 };
