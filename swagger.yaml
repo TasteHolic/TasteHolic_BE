@@ -2391,6 +2391,9 @@ paths:
                         id:
                           type: integer
                           example: 3
+                        nameEng:
+                          type: String
+                          example: "Godfather"
                         aromas:
                           type: array
                           items:

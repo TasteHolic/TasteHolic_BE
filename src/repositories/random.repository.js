@@ -19,6 +19,7 @@ export const fetchRandomCocktails = async () => {
     where: { id: { in: randomIds } },
     select: {
       id: true,
+      nameEng: true,
       aromas: true,
       tastes: true,
       timing: true,

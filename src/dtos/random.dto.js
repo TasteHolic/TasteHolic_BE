@@ -1,5 +1,6 @@
 export const formatCocktailResponse = (cocktail) => ({
     id: cocktail.id,
+    nameEng: cocktail.nameEng,
     aromas: cocktail.aromas,
     tastes: cocktail.tastes,
     timing: cocktail.timing,
