@@ -52,6 +52,7 @@ import {
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
 import { handleGetRandomCocktails } from "./controllers/random.controller.js";
 
 // BigInt 변환 설정
@@ -133,6 +134,8 @@ app.patch("/api/v1/users/tasting-note/:noteId", authenticateToken, handleUpdateT
 app.delete("/api/v1/users/tasting-note/:noteId", authenticateToken, handleDeleteTastingNote);
 app.get("/api/v1/users/tasting-note/:noteId", authenticateToken, handleGetTastingNote);
 app.get("/api/v1/users/tasting-notes", authenticateToken, handleGetAllTastingNotes);
+
+app.get("/api/v1/best-taste", handleGetBestTaste);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);

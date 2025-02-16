@@ -4,7 +4,7 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://54.180.45.230:3000/
+  - url: http://localhost:3000/
     description: TasteHolic Server URL
 # 예시
 paths:
@@ -2031,8 +2031,103 @@ paths:
                   error:
                     type: string
                     example: "서버 오류가 발생했습니다."
-
-  paths:
+  /api/v1/best-taste:
+    get:
+      summary: 가장 인기 있는 칵테일 리스트 조회
+      description: 좋아요 수를 기준으로 가장 인기 있는 칵테일을 조회합니다.
+      tags:
+        - Best Taste
+      responses:
+        "200":
+          description: Best Taste 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tastingNotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 2
+                        nameEng:
+                          type: string
+                          example: "Amaretto Stinger"
+                        nameKor:
+                          type: string
+                          example: "아마레토 스팅거"
+                        ingredientsEng:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            Amaretto: "1 1/2 oz"
+                            "White Crème de Menthe": "3/4 oz"
+                        recipe:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "얼음과 함께 흔든 후, 차갑게 식힌 칵테일 글라스에 붓습니다."
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "달콤함"
+                            - "상쾌함"
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "아몬드"
+                            - "민트"
+                        abv:
+                          type: string
+                          example: "25"
+                        timing:
+                          type: string
+                          example: ""
+                        color:
+                          type: string
+                          example: ""
+                        glass:
+                          type: string
+                          example: "칵테일 글라스"
+                        ingredientsKor:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            아마레토: "1 1/2 온스"
+                            "화이트 크렘 드 멘트": "3/4 온스"
+                        views:
+                          type: integer
+                          example: 6
+                        likes:
+                          type: integer
+                          example: 10
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-06T11:17:22.000Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-06T11:17:22.000Z"
+        "500":
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   /api/v1/users/register:
     post:
       summary: 회원가입
