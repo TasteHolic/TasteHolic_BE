@@ -10,13 +10,18 @@ import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 
+import session from 'express-session';
+import passport from './config/passport.js';
+import { googleAuth, googleAuthCallback } from './controllers/user.controller.js';
+
+
 import {
   handleRegisterUser,
   handleLoginUser,
   handleLogoutUser,
   handleDeleteUser,
   handleKakaoLogin, 
-  handleGoogleLogin,
+  
  
   handleVerifyPassword, 
   handleCheckEmail,
@@ -70,6 +75,10 @@ dotenv.config();
 app.use(cors()); // CORS 설정
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   res.success = function (data) {
@@ -145,11 +154,9 @@ app.post("/api/v1/users/verify-password", authenticateToken, handleVerifyPasswor
 app.post("/api/v1/users/check-email", handleCheckEmail);
 // 카카오 로그인 API
 app.post("/api/v1/users/kakao-login", handleKakaoLogin);
-// 구글 로그인 API
-app.post("/api/v1/users/google-login", handleGoogleLogin);
 
-
-
+app.get('/auth/google', googleAuth);
+app.get('/auth/google/callback', googleAuthCallback);
 
 app.post("/api/v1/users/search/category", handleSearch);
 

@@ -6,6 +6,8 @@ import { getUserByEmail, getUserById , createUser, deleteUserById } from "../rep
 
 dotenv.config();
 
+import { userRepository } from '../repositories/user.repository.js';
+
 const SALT_ROUNDS = 12;
 
 const generateToken = (userId) => {
@@ -168,4 +170,20 @@ export const googleLogin = async (accessToken) => {
 
 export const logoutUser = async () => {
   return { message: "로그아웃 성공" };
+};
+
+
+export const authService = {
+  async findOrCreateUser(profile) {
+    let user = await userRepository.findByGoogleId(profile.id);
+    if (!user) {
+      user = await userRepository.create({
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        name: profile.displayName,
+        avatar: profile.photos[0].value,
+      });
+    }
+    return user;
+  },
 };

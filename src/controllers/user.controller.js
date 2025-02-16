@@ -6,6 +6,9 @@ import jwt from "jsonwebtoken";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import axios from 'axios';
 
+import passport from '../config/passport.js';
+
+
 export const authenticateUser = (req) => {
   try {
     const token = req.cookies?.token;
@@ -152,21 +155,7 @@ const getKakaoUserInfo = async (accessToken) => {
   }
 };
 
-// 구글 로그인
-export const handleGoogleLogin = async (req, res, next) => {
-  const { accessToken } = req.body;
 
-  if (!accessToken) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ error: "액세스 토큰이 필요합니다." });
-  }
-
-  try {
-    const result = await userService.googleLogin(accessToken); // 서비스 함수 호출
-    return res.status(StatusCodes.OK).json(result); // 성공 응답
-  } catch (error) {
-    next(error);
-  }
-};
 
 // 카카오 액세스 토큰을 받아오기 위한 요청
 const getKakaoAccessToken = async (code) => {
@@ -185,4 +174,18 @@ const getKakaoAccessToken = async (code) => {
   } catch (error) {
     throw new Error("액세스 토큰 요청에 실패했습니다.");
   }
+};
+
+export const googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
+
+export const googleAuthCallback = (req, res, next) => {
+  passport.authenticate('google', (err, user) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ message: 'Authentication failed' });
+
+    req.login(user, (loginErr) => {
+      if (loginErr) return next(loginErr);
+      return res.json({ message: 'Login successful', user });
+    });
+  })(req, res, next);
 };

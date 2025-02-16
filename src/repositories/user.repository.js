@@ -44,3 +44,14 @@ export const deleteUserById = async (userId) => {
 
   return { ...user, id: user.id.toString() };
 };
+
+export const userRepository = {
+  findByGoogleId: async (googleId) => prisma.user.findUnique({ where: { googleId } }),
+  findById: async (id) => prisma.user.findUnique({ where: { id } }),
+  create: async (userData) => prisma.user.create({ data: userData }),
+};
+export const findByGoogleId = async (googleId) => {
+  return prisma.user.findFirst({
+    where: { googleId },
+  });
+};
