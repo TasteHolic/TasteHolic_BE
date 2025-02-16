@@ -146,6 +146,7 @@ model Users {
   deletedAt            DateTime?              @db.DateTime(0)
   agreement            Json?
   imageUrl             String?                @db.Text
+  message              String?                @db.VarChar(200)
   AlcoholTastingNotes  AlcoholTastingNotes[]
   CocktailFavorites    CocktailFavorites[]
   CocktailTastingNotes CocktailTastingNotes[]
