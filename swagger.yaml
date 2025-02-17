@@ -2321,6 +2321,85 @@ paths:
                     example: "카카오 인증 실패"
         500:
           description: 서버 오류
+  /api/v1/users/profile/change:
+    patch:
+      summary: 프로필 수정
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 프로필 이미지, 닉네임, 상태메시지, 비밀번호 변경 가능.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:  # 이미지 업로드를 위해 multipart/form-data 사용
+            schema:
+              type: object
+              properties:
+                image:           # 이미지 파일 필드
+                  type: string
+                  format: binary  # 파일 타입은 binary로 설정
+                nickname:
+                  type: string
+                  example: "닉네임"
+                message:
+                  type: string
+                  example: "상태 메시지입니다."
+                password:
+                  type: string
+                  example: "password321"
+      responses:
+        200:
+          description: 프로필 바꾸기 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "프로필 업데이트 성공"
+        500:
+          description: 서버 오류
+  /api/v1/users/info:
+    get:
+      summary: 회원 정보
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 회원 정보 (프로필 이미지, 닉네임, 메시지, 이메일) 조회.
+      tags:
+        - User
+      responses:
+        200:
+          description: 프로필 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          imageUrl:
+                            type: string
+                          nickname:
+                            type: string
+                          message:
+                            type: string
+                          email:
+                            type: string
+        500:
+          description: 서버 오류
   /api/v1/users/search/category:
     post:
       summary: 술과 칵테일 검색

@@ -54,6 +54,8 @@ import {handleSearch} from "./controllers/search.controller.js";
 import { authenticateToken } from "./middleware/auth.middleware.js";
 import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
 import { handleGetRandomCocktails } from "./controllers/random.controller.js";
+import { handleProfileChange, handleUserInfo } from "./controllers/profile.controller.js";
+import { upload } from "./middleware/imageUpload.middleware.js";
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -142,6 +144,8 @@ app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
 app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+app.get("/api/v1/users/info", authenticateToken, handleUserInfo);
+app.patch("/api/v1/users/profile/change", authenticateToken, upload.single('image'), handleProfileChange);
 
 app.post("/api/v1/users/search/category", handleSearch);
 
