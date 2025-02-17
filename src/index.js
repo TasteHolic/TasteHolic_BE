@@ -26,6 +26,7 @@ import {
   handleMyBarGet,
   handleMyBarDelete,
   handleMyBarSearch,
+  handleGetAlcoholsByCategory 
 } from "./controllers/mybar.controller.js";
 import {
   createRecipe,
@@ -75,6 +76,7 @@ app.use(cors()); // CORS 설정
 app.use(express.json());
 app.use(cookieParser());
 
+
 app.use((req, res, next) => {
   res.success = function (data) {
     // BigInt를 처리하는 방법
@@ -121,6 +123,7 @@ app.get("/api/v1/users/my-bar/search", authenticateToken, handleMyBarSearch);
 app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
 app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
 app.delete("/api/v1/users/my-bar/delete/:barId", authenticateToken, handleMyBarDelete);
+app.post("/api/v1/users/my-bar/show-alcohols", authenticateToken, handleGetAlcoholsByCategory );
 
 app.post("/api/v1/recipes", authenticateToken, createRecipe);
 app.get("/api/v1/recipes", getRecipeList);

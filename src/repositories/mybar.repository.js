@@ -125,3 +125,21 @@ export const searchBar = async (userId) => {
     recipes,
   };
 };
+
+
+
+export const findAlcoholsByCategory = async (category) => {
+  return await prisma.alcohols.findMany({
+    where: {
+      OR: [
+        { categoryEng: category },
+        { categoryKor: category },
+      ],
+    },
+    select: {
+      id: true,
+      nameEng: true,
+      nameKor: true,
+    },
+  });
+};
