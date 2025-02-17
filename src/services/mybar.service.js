@@ -4,9 +4,11 @@ import {
   viewBar,
   deleteBar,
   searchBar,
+  findAlcoholsByCategory,
 } from "../repositories/mybar.repository.js";
 import { responseFromMyBar } from "../dtos/mybar.dto.js";
 import { DuplicateAlcoholError, NoAlcoholError } from "../error.js";
+import { prisma } from "../../db.config.js";
 
 export const myBarPost = async (data) => {
   const barId = await addBar({
@@ -53,4 +55,39 @@ export const myBarSearch = async (userId) => {
   const bar = await searchBar(userId);
 
   return responseFromMyBar(bar);
+};
+
+export const handleGetAlcoholsByCategoryService = async (category) => {
+  try {
+    if (!category) {
+      throw new Error("Category is required");
+    }
+
+    const alcohols = await prisma.alcohols.findMany({
+      where: {
+        OR: [
+          { categoryEng: category },
+          { categoryKor: category },
+          { Category: category },
+        ],
+      },
+      select: {
+        id: true,
+        nameEng: true,  
+        id: true,
+        nameKor: true,
+      },
+    });
+
+    return {
+      resultType: "SUCCESS",
+      error: null,
+      success: {
+        alcohols,
+      },
+    };
+  } catch (error) {
+    console.error("Error in handleGetAlcoholsByCategoryService:", error);
+    throw error;
+  }
 };
