@@ -86,3 +86,45 @@ export const handleSocialLogin = async (req, res, next) => {
     res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
   }
 };
+
+
+export const handleVerifyPassword = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "비밀번호를 입력하세요." });
+    }
+
+    const userId = req.user.id;
+    const isValid = await userService.verifyUserPassword(userId, password);
+
+    if (!isValid) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: "비밀번호가 올바르지 않습니다." });
+    }
+
+    res.status(StatusCodes.OK).json({ message: "비밀번호 확인 성공" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+export const handleCheckEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "이메일을 입력하세요." });
+    }
+
+    const isDuplicate = await userService.checkEmailDuplicate(email);
+
+    if (isDuplicate) {
+      return res.status(StatusCodes.CONFLICT).json({ error: "이미 사용 중인 이메일입니다." });
+    }
+
+    res.status(StatusCodes.OK).json({ message: "사용 가능한 이메일입니다." });
+  } catch (err) {
+    next(err);
+  }
+};
