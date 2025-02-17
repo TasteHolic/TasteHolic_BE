@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { getUserByEmail, createUser, deleteUserById } from "../repositories/user.repository.js";
+import { getUserByEmail, getUserById, createUser, deleteUserById } from "../repositories/user.repository.js";
 
 dotenv.config();
 
@@ -78,4 +78,21 @@ export const socialLogin = async (accessToken) => {
 
 export const logoutUser = async () => {
   return { message: "로그아웃 성공" };
+};
+
+
+export const checkEmailDuplicate = async (email) => {
+  const existingUser = await getUserByEmail(email);
+  return !!existingUser; // 존재하면 true, 없으면 false 반환
+};
+
+
+export const verifyUserPassword = async (userId, password) => {
+  const user = await getUserById(userId); // 여기서 호출
+
+  if (!user) {
+    throw new Error("사용자를 찾을 수 없습니다.");
+  }
+
+  return bcrypt.compare(password, user.password);
 };

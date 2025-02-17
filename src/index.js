@@ -16,6 +16,9 @@ import {
   handleLogoutUser,
   handleDeleteUser,
   handleSocialLogin,
+
+  handleVerifyPassword, 
+  handleCheckEmail,
 } from "./controllers/user.controller.js";
 
 import {
@@ -146,6 +149,12 @@ app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
 app.get("/api/v1/users/info", authenticateToken, handleUserInfo);
 app.patch("/api/v1/users/profile/change", authenticateToken, upload.single('image'), handleProfileChange);
+
+app.post("/api/v1/users/verify-password", authenticateToken, handleVerifyPassword);
+app.post("/api/v1/users/check-email", handleCheckEmail);
+
+
+
 
 app.post("/api/v1/users/search/category", handleSearch);
 

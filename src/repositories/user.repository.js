@@ -37,3 +37,11 @@ export const deleteUserById = async (userId) => {
 
   return { ...user, id: user.id.toString() };
 };
+
+
+export const getUserById = async (userId) => {
+  const user = await prisma.users.findUnique({
+    where: { id: userId },
+  });
+  return user ? { ...user, id: user.id.toString() } : null;
+};

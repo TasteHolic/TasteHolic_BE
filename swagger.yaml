@@ -2272,6 +2272,111 @@ paths:
                     example: "인증 실패"
         500:
           description: 서버 오류
+
+
+  /api/v1/users/check-email:
+    post:
+      summary: 이메일 중복 확인
+      description: 회원가입 시 이메일이 이미 사용 중인지 확인.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "test@example.com"
+      responses:
+        200:
+          description: 사용 가능한 이메일
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "사용 가능한 이메일입니다."
+        400:
+          description: 요청 오류 (이메일 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일을 입력하세요."
+        409:
+          description: 이메일 중복 (이미 사용 중)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이미 사용 중인 이메일입니다."
+        500:
+          description: 서버 오류
+
+  /api/v1/users/verify-password:
+    post:
+      summary: 비밀번호 확인
+      security:
+        - bearerAuth: [] # 인증 필요
+      description: 사용자의 비밀번호가 올바른지 검증.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: 비밀번호 확인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "비밀번호 확인 성공"
+        400:
+          description: 요청 오류 (비밀번호 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호를 입력하세요."
+        401:
+          description: 인증 실패 (잘못된 비밀번호)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호가 올바르지 않습니다."
+        500:
+          description: 서버 오류
+
+
   /api/v1/users/social-login:
     post:
       summary: 카카오 소셜 로그인
