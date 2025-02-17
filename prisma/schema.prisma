@@ -42,6 +42,7 @@ model Alcohols {
   createdAt           DateTime              @default(now()) @db.DateTime(0)
   updatedAt           DateTime              @default(now()) @db.DateTime(0)
   Category            String?               @db.VarChar(255)
+  imageUrl            String?               @db.Text
   AlcoholTastingNotes AlcoholTastingNotes[]
   MyBars              MyBars[]
 }
@@ -73,6 +74,7 @@ model Cocktails {
   color                Json?
   createdAt            DateTime               @default(now()) @db.DateTime(0)
   updatedAt            DateTime               @default(now()) @db.DateTime(0)
+  imageUrl             String?                @db.Text
   glass                String?                @db.VarChar(255)
   ingredientsKor       Json?
   views                Int?                   @default(0)
