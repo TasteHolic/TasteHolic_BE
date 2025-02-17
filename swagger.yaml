@@ -4,7 +4,7 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://54.180.45.230:3000/
+  - url: http://localhost:3000/
     description: TasteHolic Server URL
 # 예시
 paths:
@@ -2031,8 +2031,103 @@ paths:
                   error:
                     type: string
                     example: "서버 오류가 발생했습니다."
-
-  paths:
+  /api/v1/best-taste:
+    get:
+      summary: 가장 인기 있는 칵테일 리스트 조회
+      description: 좋아요 수를 기준으로 가장 인기 있는 칵테일을 조회합니다.
+      tags:
+        - Best Taste
+      responses:
+        "200":
+          description: Best Taste 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tastingNotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 2
+                        nameEng:
+                          type: string
+                          example: "Amaretto Stinger"
+                        nameKor:
+                          type: string
+                          example: "아마레토 스팅거"
+                        ingredientsEng:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            Amaretto: "1 1/2 oz"
+                            "White Crème de Menthe": "3/4 oz"
+                        recipe:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "얼음과 함께 흔든 후, 차갑게 식힌 칵테일 글라스에 붓습니다."
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "달콤함"
+                            - "상쾌함"
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "아몬드"
+                            - "민트"
+                        abv:
+                          type: string
+                          example: "25"
+                        timing:
+                          type: string
+                          example: ""
+                        color:
+                          type: string
+                          example: ""
+                        glass:
+                          type: string
+                          example: "칵테일 글라스"
+                        ingredientsKor:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            아마레토: "1 1/2 온스"
+                            "화이트 크렘 드 멘트": "3/4 온스"
+                        views:
+                          type: integer
+                          example: 6
+                        likes:
+                          type: integer
+                          example: 10
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-06T11:17:22.000Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-06T11:17:22.000Z"
+        "500":
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   /api/v1/users/register:
     post:
       summary: 회원가입
@@ -2177,6 +2272,111 @@ paths:
                     example: "인증 실패"
         500:
           description: 서버 오류
+
+
+  /api/v1/users/check-email:
+    post:
+      summary: 이메일 중복 확인
+      description: 회원가입 시 이메일이 이미 사용 중인지 확인.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "test@example.com"
+      responses:
+        200:
+          description: 사용 가능한 이메일
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "사용 가능한 이메일입니다."
+        400:
+          description: 요청 오류 (이메일 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일을 입력하세요."
+        409:
+          description: 이메일 중복 (이미 사용 중)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이미 사용 중인 이메일입니다."
+        500:
+          description: 서버 오류
+
+  /api/v1/users/verify-password:
+    post:
+      summary: 비밀번호 확인
+      security:
+        - bearerAuth: [] # 인증 필요
+      description: 사용자의 비밀번호가 올바른지 검증.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: 비밀번호 확인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "비밀번호 확인 성공"
+        400:
+          description: 요청 오류 (비밀번호 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호를 입력하세요."
+        401:
+          description: 인증 실패 (잘못된 비밀번호)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호가 올바르지 않습니다."
+        500:
+          description: 서버 오류
+
+
   /api/v1/users/social-login:
     post:
       summary: 카카오 소셜 로그인
@@ -2224,6 +2424,85 @@ paths:
                   error:
                     type: string
                     example: "카카오 인증 실패"
+        500:
+          description: 서버 오류
+  /api/v1/users/profile/change:
+    patch:
+      summary: 프로필 수정
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 프로필 이미지, 닉네임, 상태메시지, 비밀번호 변경 가능.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:  # 이미지 업로드를 위해 multipart/form-data 사용
+            schema:
+              type: object
+              properties:
+                image:           # 이미지 파일 필드
+                  type: string
+                  format: binary  # 파일 타입은 binary로 설정
+                nickname:
+                  type: string
+                  example: "닉네임"
+                message:
+                  type: string
+                  example: "상태 메시지입니다."
+                password:
+                  type: string
+                  example: "password321"
+      responses:
+        200:
+          description: 프로필 바꾸기 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "프로필 업데이트 성공"
+        500:
+          description: 서버 오류
+  /api/v1/users/info:
+    get:
+      summary: 회원 정보
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 회원 정보 (프로필 이미지, 닉네임, 메시지, 이메일) 조회.
+      tags:
+        - User
+      responses:
+        200:
+          description: 프로필 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          imageUrl:
+                            type: string
+                          nickname:
+                            type: string
+                          message:
+                            type: string
+                          email:
+                            type: string
         500:
           description: 서버 오류
   /api/v1/users/search/category:
@@ -2366,6 +2645,85 @@ paths:
                   message:
                     type: string
                     example: "검색 중 오류가 발생했습니다."
+  /api/v1/users/home/recommend:
+    get:
+      summary: "검색어 기반 칵테일 추천"
+      description: "사용자 검색어 기반 칵테일 3개를 반환하는 API"
+      tags:
+        - Home
+      responses:
+        200:
+          description: "추천된 칵테일 리스트"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  success:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 3
+                        nameEng:
+                          type: String
+                          example: "Godfather"
+                        images:
+                          type: String
+                          example: "null"
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example: ["시트러스", "라임"]
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example: ["달콤함", "상쾌함"]
+                        timing:
+                          type: array
+                          items:
+                            type: string
+                          example: ["여름", "파티"]
+                        ingredientsKor:
+                          type: array
+                          items:
+                            type: string
+                          example: ["진", "토닉워터", "라임"]
+                        abv:
+                          type: number
+                          format: float
+                          example: 40.0
+        500:
+          description: "서버 내부 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "INTERNAL_SERVER_ERROR"
+                      message:
+                        type: string
+                        example: "Database connection failed"
+                      data:
+                        type: object
+                        nullable: true
+                        example: null
+
 
 components:
   securitySchemes:

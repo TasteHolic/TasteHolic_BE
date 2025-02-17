@@ -16,6 +16,9 @@ import {
   handleLogoutUser,
   handleDeleteUser,
   handleSocialLogin,
+
+  handleVerifyPassword, 
+  handleCheckEmail,
 } from "./controllers/user.controller.js";
 
 import {
@@ -52,6 +55,11 @@ import {
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
+import { handleGetRandomCocktails } from "./controllers/random.controller.js";
+import { handleProfileChange, handleUserInfo } from "./controllers/profile.controller.js";
+import { upload } from "./middleware/imageUpload.middleware.js";
+
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
   return Number(this);
@@ -132,13 +140,25 @@ app.delete("/api/v1/users/tasting-note/:noteId", authenticateToken, handleDelete
 app.get("/api/v1/users/tasting-note/:noteId", authenticateToken, handleGetTastingNote);
 app.get("/api/v1/users/tasting-notes", authenticateToken, handleGetAllTastingNotes);
 
+app.get("/api/v1/best-taste", handleGetBestTaste);
+
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
 app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
+app.get("/api/v1/users/info", authenticateToken, handleUserInfo);
+app.patch("/api/v1/users/profile/change", authenticateToken, upload.single('image'), handleProfileChange);
+
+app.post("/api/v1/users/verify-password", authenticateToken, handleVerifyPassword);
+app.post("/api/v1/users/check-email", handleCheckEmail);
+
+
+
 
 app.post("/api/v1/users/search/category", handleSearch);
+
+app.get("/api/v1/users/home/recommend", handleGetRandomCocktails);
 
 // app.js
 app.use((err, req, res, next) => {
