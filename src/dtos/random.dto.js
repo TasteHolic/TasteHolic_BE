@@ -6,5 +6,6 @@ export const formatCocktailResponse = (cocktail) => ({
   tastes: cocktail.tastes,
   timing: cocktail.timing,
   ingredientsKor: cocktail.ingredientsKor,
+  intro: cocktail.intro,
   abv: cocktail.abv,
 });

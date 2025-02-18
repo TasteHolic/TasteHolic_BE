@@ -43,6 +43,7 @@ model Alcohols {
   updatedAt           DateTime              @default(now()) @db.DateTime(0)
   Category            String?               @db.VarChar(255)
   imageUrl            String?               @db.Text
+  intro               String?               @db.Text
   AlcoholTastingNotes AlcoholTastingNotes[]
   MyBars              MyBars[]
 }
@@ -79,7 +80,7 @@ model Cocktails {
   ingredientsKor       Json?
   views                Int?                   @default(0)
   likes                Int?                   @default(0)
-  images               Json?
+  intro                String?                @db.Text
   CocktailFavorites    CocktailFavorites[]
   CocktailTastingNotes CocktailTastingNotes[]
 }
