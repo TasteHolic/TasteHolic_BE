@@ -116,7 +116,7 @@ export const addTastingNote = async (data, type) => {
 
         if (alcoholId) {
             // 주류 ID가 있는 경우
-            query = `INSERT INTO ${tableName} (userId, alcoholId, name, category, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
+            query = `INSERT INTO ${tableName} (userId, alcoholId, name, category, tasteRating, aromaRating, finishRating, abv, description, createdAt, updatedAt) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
             values = [
                 data.userId,
@@ -126,12 +126,12 @@ export const addTastingNote = async (data, type) => {
                 JSON.stringify(data.tasteRating),
                 JSON.stringify(data.aromaRating),
                 JSON.stringify(data.finishRating),
-                data.abvRating,
+                data.abv,
                 data.description
             ];
         } else {
             // 주류 ID가 없는 경우 (alcoholId 없이 INSERT)
-            query = `INSERT INTO ${tableName} (userId, name, category, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
+            query = `INSERT INTO ${tableName} (userId, name, category, tasteRating, aromaRating, finishRating, abv, description, createdAt, updatedAt) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
             values = [
                 data.userId,
@@ -140,7 +140,7 @@ export const addTastingNote = async (data, type) => {
                 JSON.stringify(data.tasteRating),
                 JSON.stringify(data.aromaRating),
                 JSON.stringify(data.finishRating),
-                data.abvRating,
+                data.abv,
                 data.description
             ];
         }
