@@ -92,7 +92,7 @@ export const getRecipeList = async (req, res, next) => {
 
     if (!type) {
       throw new NoQuery(
-        "입력된 타입이 없습니다. (user/zero/high/fruity/under2)"
+        "입력된 타입이 없습니다. (user/zero/high/fruity/under2/fav)"
       );
     }
     const { recipes, nextCursor } = await getRecipeListService(
@@ -100,6 +100,8 @@ export const getRecipeList = async (req, res, next) => {
       cursor,
       parseInt(limit)
     );
+
+    console.log(recipes);
     const parsedRecipes = parseRecipeList(recipes);
 
     res.status(StatusCodes.OK).success({

@@ -476,8 +476,8 @@ paths:
           required: true
           schema:
             type: string
-            enum: [user, zero, high, fruity, under2, my]
-          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하, my: 내가 등록한 레시피)"
+            enum: [user, zero, high, fruity, under2, fav]
+          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하, fav: 내가 좋아요한한 레시피)"
         - name: cursor
           in: query
           required: false
@@ -508,6 +508,9 @@ paths:
                         id:
                           type: integer
                           example: 5
+                        imageUrl:
+                          type: string
+                          example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_vodka_stinger-1.png"
                         nameKor:
                           type: string
                           example: "보드카 스팅거"
@@ -2343,7 +2346,6 @@ paths:
         500:
           description: 서버 오류
 
-
   /api/v1/users/check-email:
     post:
       summary: 이메일 중복 확인
@@ -2446,7 +2448,6 @@ paths:
         500:
           description: 서버 오류
 
-
   /api/v1/users/social-login:
     post:
       summary: 카카오 소셜 로그인
@@ -2507,13 +2508,13 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:  # 이미지 업로드를 위해 multipart/form-data 사용
+          multipart/form-data: # 이미지 업로드를 위해 multipart/form-data 사용
             schema:
               type: object
               properties:
-                image:           # 이미지 파일 필드
+                image: # 이미지 파일 필드
                   type: string
-                  format: binary  # 파일 타입은 binary로 설정
+                  format: binary # 파일 타입은 binary로 설정
                 nickname:
                   type: string
                   example: "닉네임"
@@ -2873,9 +2874,6 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
-
-
-
 
 components:
   securitySchemes:

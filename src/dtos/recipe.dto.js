@@ -5,7 +5,8 @@ export const parseRecipeList = (recipes) => {
       name: recipe.nameKor || recipe.name || {},
       nameKor: undefined,
       ingredients: recipe.ingredientsEng || recipe.ingredients || {}, // `ingredientsEng` → `ingredients`로 변환
-      ingredientsEng: undefined, // 기존 `ingredientsEng` 제거
+      ingredientsEng: undefined, // 기존 `ingredientsEng` 제거,
+      imageUrl: recipe.imageUrl || null,
     };
   });
 };
