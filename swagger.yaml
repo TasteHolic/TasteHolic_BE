@@ -2763,10 +2763,10 @@ paths:
                   message:
                     type: string
                     example: "검색 중 오류가 발생했습니다."
-  /api/v1/users/home/recommend:
+  /api/v1/home/pick:
     get:
-      summary: "검색어 기반 칵테일 추천"
-      description: "사용자 검색어 기반 칵테일 3개를 반환하는 API"
+      summary: 칵테일 추천
+      description: "추천 칵테일 3개를 반환하는 API"
       tags:
         - Home
       responses:
@@ -2791,9 +2791,9 @@ paths:
                         nameEng:
                           type: String
                           example: "Godfather"
-                        images:
+                        imageUrl:
                           type: String
-                          example: "null"
+                          example: "example.com/example.png"
                         aromas:
                           type: array
                           items:
