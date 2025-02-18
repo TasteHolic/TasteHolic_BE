@@ -1,3 +1,4 @@
+
 import { StatusCodes } from "http-status-codes";
 import { bodyToBar } from "../dtos/mybar.dto.js";
 import {
@@ -5,6 +6,7 @@ import {
   myBarGet,
   myBarDelete,
   myBarSearch,
+  handleGetAlcoholsByCategoryService,
 } from "../services/mybar.service.js";
 
 export const handleMyBarPost = async (req, res, next) => {
@@ -54,5 +56,24 @@ export const handleMyBarSearch = async (req, res, next) => {
     res.status(StatusCodes.OK).success(bar);
   } catch (err) {
     next(err); // 에러가 발생하면 next로 넘겨서 에러 미들웨어로 전달
+  }
+};
+
+
+export const handleGetAlcoholsByCategory = async (req, res, next) => {
+  try {
+    const { category } = req.body || req.query;
+    if (!category) {
+      return res.status(400).json({
+        resultType: "ERROR",
+        error: "Category is required",
+        success: null,
+      });
+    }
+
+    const response = await handleGetAlcoholsByCategoryService(category);
+    return res.status(200).json(response);
+  } catch (error) {
+    next(error);
   }
 };

@@ -16,3 +16,29 @@ export const bodyToBar = (body, userId) => {
       data: bar,
     };
   };
+
+  export const findAlcoholsByCategory = async (category) => {
+    try {
+      const alcohols = await prisma.alcohols.findMany({
+        where: {
+          OR: [
+            { categoryEng: category },
+            { categoryKor: category },
+            { Category: category },
+          ],
+        },
+        select: {
+          id: true,
+          nameEng: true,  
+          id: true,
+          nameKor: true,
+        },
+      });
+      return alcohols;
+    } catch (error) {
+      console.error('Error fetching alcohols by category:', error);
+      throw error;
+    }
+  };
+  
+  

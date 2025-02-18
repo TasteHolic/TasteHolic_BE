@@ -29,16 +29,22 @@ export const addBar = async (data) => {
   const alcohol = await prisma.Alcohols.findFirst({
     where: { nameKor: data.name },
   });
-  const alcoholId = alcohol ? alcohol.id : null;
+
+  let id = null;
+  let image = null;
+
+  if (alcohol != null){
+    id = alcohol.id;
+    image = alcohol.imageUrl;
+  }
 
   const result = await prisma.MyBars.create({
     data: {
       userId: data.userId,
-      alcoholId: alcoholId,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
+      alcoholId: id,
       name: data.name,
       category: data.category,
+      imageUrl: image,
     },
   });
 
@@ -48,6 +54,13 @@ export const addBar = async (data) => {
 export const viewBar = async (userId) => {
   const bar = await prisma.MyBars.findMany({
     where: { userId: userId },
+    select: { 
+              id: true,
+              alcoholId: true,
+              name: true,
+              category: true,
+              imageUrl: true
+            },
   });
 
   if (!bar || bar.length === 0) {
@@ -124,4 +137,22 @@ export const searchBar = async (userId) => {
     cocktails,
     recipes,
   };
+};
+
+
+
+export const findAlcoholsByCategory = async (category) => {
+  return await prisma.alcohols.findMany({
+    where: {
+      OR: [
+        { categoryEng: category },
+        { categoryKor: category },
+      ],
+    },
+    select: {
+      id: true,
+      nameEng: true,
+      nameKor: true,
+    },
+  });
 };
