@@ -79,6 +79,7 @@ model Cocktails {
   ingredientsKor       Json?
   views                Int?                   @default(0)
   likes                Int?                   @default(0)
+  images               Json?
   CocktailFavorites    CocktailFavorites[]
   CocktailTastingNotes CocktailTastingNotes[]
 }
