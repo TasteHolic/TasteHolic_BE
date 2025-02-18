@@ -70,6 +70,8 @@ paths:
                         type: string
                       category:
                         type: string
+                      imageUrl:
+                        type: string
         400:
           description: 잘못된 요청 (이미 마이바에 추가된 술)
           content:
@@ -132,20 +134,14 @@ paths:
                           properties:
                             id:
                               type: integer
-                            userId:
-                              type: integer
                             alcoholId:
                               type: string
                               nullable: true
-                            createdAt:
-                              type: string
-                              format: date-time
-                            updatedAt:
-                              type: string
-                              format: date-time
                             name:
                               type: string
                             category:
+                              type: string
+                            imageUrl:
                               type: string
   /api/v1/users/my-bar/delete/{barId}:
     delete:
