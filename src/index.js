@@ -186,7 +186,6 @@ app.get(
   handleGetAllTastingNotes
 );
 
-app.get("/api/v1/best-taste", handleGetBestTaste);
 
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
@@ -210,7 +209,8 @@ app.post("/api/v1/users/check-email", handleCheckEmail);
 
 app.post("/api/v1/users/search/category", handleSearch);
 
-app.get("/api/v1/users/home/recommend", handleGetRandomCocktails);
+app.get("/api/v1/home/best", handleGetBestTaste);
+app.get("/api/v1/home/pick", handleGetRandomCocktails);
 
 // app.js
 app.use((err, req, res, next) => {

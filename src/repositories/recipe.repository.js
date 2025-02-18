@@ -276,13 +276,13 @@ export const getFilteredRecipesFromDB = async (filter, cursor, limit) => {
     // 필터별 SQL 쿼리 설정 (최신순 적용)
     if (filter === "zero") {
       query = `
-        SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+        SELECT id, nameKor, ingredientsEng, likes, views, imageUrl, 'cocktail' as type
         FROM Cocktails
         WHERE abv = 0
       `;
     } else {
       query = `
-        SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+        SELECT id, nameKor, ingredientsEng, likes, views, imageUrl, 'cocktail' as type
         FROM Cocktails
         WHERE abv > 30
       `;
@@ -296,7 +296,7 @@ export const getFilteredRecipesFromDB = async (filter, cursor, limit) => {
     // UNION ALL 추가 (userRecipes 포함)
     query += `
       UNION ALL
-      SELECT id, name, ingredients, likes, views, 'user' as type
+      SELECT id, name, ingredients, likes, views, imageUrl, 'user' as type
       FROM UserRecipes
     `;
 
@@ -334,7 +334,7 @@ export const getFilteredRecipesFromDB = async (filter, cursor, limit) => {
 export const getFruityRecipesFromDB = async (cursor, limit) => {
   try {
     let query = `
-      SELECT id, name, ingredients, likes, views, 'user' as type
+      SELECT id, name, ingredients, likes, views, imageUrl, 'user' as type
       FROM UserRecipes
       WHERE JSON_CONTAINS(tastes, '["프루티"]') 
         OR JSON_CONTAINS(aromas, '["프루티"]') 
@@ -351,7 +351,7 @@ export const getFruityRecipesFromDB = async (cursor, limit) => {
 
     query += `
       UNION ALL
-      SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+      SELECT id, nameKor, ingredientsEng, likes, views, imageUrl, 'cocktail' as type
       FROM Cocktails
       WHERE JSON_CONTAINS(tastes, '["프루티"]') 
         OR JSON_CONTAINS(aromas, '["프루티"]') 
@@ -387,7 +387,7 @@ export const getFruityRecipesFromDB = async (cursor, limit) => {
 export const getUnder2RecipesFromDB = async (cursor, limit) => {
   try {
     let query = `
-      SELECT id, name, ingredients, likes, views, 'user' as type
+      SELECT id, name, ingredients, likes, views, imageUrl, 'user' as type
       FROM UserRecipes
       WHERE JSON_LENGTH(ingredients) <= 2
     `;
@@ -401,7 +401,7 @@ export const getUnder2RecipesFromDB = async (cursor, limit) => {
 
     query += `
       UNION ALL
-      SELECT id, nameKor, ingredientsEng, likes, views, 'cocktail' as type
+      SELECT id, nameKor, ingredientsEng, likes, views, imageUrl, 'cocktail' as type
       FROM Cocktails
       WHERE JSON_LENGTH(ingredientsEng) <= 2
     `;
@@ -435,7 +435,7 @@ export const getFavRecipesFromDB = async (userId, cursor, limit) => {
   try {
     let values = [];
     let query = `
-      SELECT ur.id, ur.name, ur.ingredients, ur.likes, ur.views, 'user' as type
+      SELECT ur.id, ur.name, ur.ingredients, ur.likes, ur.views, ur.imageUrl, 'user' as type
       FROM UserRecipeFavorites uf
       JOIN UserRecipes ur ON uf.recipeId = ur.id
       WHERE uf.userId = ?
@@ -450,7 +450,7 @@ export const getFavRecipesFromDB = async (userId, cursor, limit) => {
 
     query += `
       UNION ALL
-      SELECT c.id, c.nameKor AS name, c.ingredientsEng AS ingredients, c.likes, c.views, 'cocktail' as type
+      SELECT c.id, c.nameKor AS name, c.ingredientsEng AS ingredients, c.likes, c.views, c.imageUrl, 'cocktail' as type
       FROM CocktailFavorites cf
       JOIN Cocktails c ON cf.cocktailId = c.id
       WHERE cf.userId = ?

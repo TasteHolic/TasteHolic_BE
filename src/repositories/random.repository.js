@@ -20,17 +20,16 @@ export const fetchRandomCocktails = async () => {
     select: {
       id: true,
       nameEng: true,
-      images: true, // null이면 그대로 반환
+      nameKor: true,
+      imageUrl: true,
       aromas: true,
       tastes: true,
       timing: true,
       ingredientsKor: true,
       abv: true,
+      intro: true,
     },
   });
 
-  return cocktails.map((c) => ({
-    ...c,
-    images: c.images ?? null, // undefined 방지, null이면 그대로 반환
-  }));
+  return cocktails;
 };

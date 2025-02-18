@@ -45,7 +45,7 @@ export const handleUserTastingNote = async (req, res, next) => {
       tastingnote = await userTastingNote(userId, bodyToCocktailTastingNote(req.body, userId), "cocktail");
     } else {
       // Alcohol 타입일 경우
-      tastingnote = await userTastingNote(userId, bodyToAlcoholTastingNote(req.body, userId), "alcohol");
+      tastingnote = await userTastingNote(userId, bodyToAlcoholTastingNote(req.body, userId), type);
     }
 
     res.status(StatusCodes.OK).success(tastingnote);

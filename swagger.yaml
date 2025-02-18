@@ -1,90 +1,2953 @@
-name: deploy-main
+openapi: 3.0.0
+info:
+  title: TasteHolic API
+  description: TasteHolic API 서버 문서
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/
+    description: TasteHolic Server URL
+# 예시
+paths:
+  /api/v1/users/my-bar/post:
+    post:
+      summary: 마이바에 술 추가
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 술 종류와 이름으로 술 등록.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "까베르네 쇼비뇽"
+                category:
+                  type: string
+                  example: "Wine"
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 등록한 술 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      userId:
+                        type: integer
+                      alcoholId:
+                        type: integer
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      name:
+                        type: string
+                      category:
+                        type: string
+                      imageUrl:
+                        type: string
+        400:
+          description: 잘못된 요청 (이미 마이바에 추가된 술)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "이미 마이바에 추가되어 있는 술입니다."
+                  success:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/users/my-bar/view:
+    get:
+      summary: 마이바 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 특정 사용자의 마이바에 있는 술 리스트를 반환.
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 사용자의 마이바 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            alcoholId:
+                              type: string
+                              nullable: true
+                            name:
+                              type: string
+                            category:
+                              type: string
+                            imageUrl:
+                              type: string
+  /api/v1/users/my-bar/delete/{barId}:
+    delete:
+      summary: 마이바의 특정 술 삭제
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 삭제한 술 정보를 반환.
+      parameters:
+        - in: path
+          name: barId
+          schema:
+            type: integer
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 삭제한 술 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      userId:
+                        type: integer
+                      alcoholId:
+                        type: string
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      name:
+                        type: string
+                      category:
+                        type: string
+        400:
+          description: 잘못된 요청 (마이바에 없는 술)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U002"
+                      message:
+                        type: string
+                        example: "마이바에 존재하지 않는 술입니다."
+                  success:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/users/my-bar/search:
+    get:
+      summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 해당하는 칵테일과 유저 레시피를 반환.
+      tags:
+        - MyBar
+      responses:
+        200:
+          description: 칵테일과 유저 레시피 정보
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          cocktails:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                nameEng:
+                                  type: string
+                                nameKor:
+                                  type: string
+                                ingredientsEng:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                                recipe:
+                                  type: array
+                                  items:
+                                    type: string
+                                aromas:
+                                  type: array
+                                  items:
+                                    type: string
+                                tastes:
+                                  type: array
+                                  items:
+                                    type: string
+                                abv:
+                                  type: string
+                                glass:
+                                  type: string
+                                ingredientsKor:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                          recipes:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                userId:
+                                  type: integer
+                                name:
+                                  type: string
+                                ingredients:
+                                  type: object
+                                  additionalProperties:
+                                    type: string
+                                status:
+                                  type: string
+                                likes:
+                                  type: integer
+  /api/v1/recipes:
+    post:
+      summary: 유저 레시피 등록
+      description: 새로운 유저 레시피를 등록합니다.
+      operationId: createUserRecipe
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - ingredients
+                - recipe
+                - glassType
+                - status
+                - abv
+              properties:
+                name:
+                  type: string
+                  example: "SampleDrink"
+                ingredients:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    "라임 웨지": "3개"
+                    "민트 잎": "7개"
+                    "심플 시럽": "3/4 온스"
+                    "라이트 럼": "2 온스"
+                    "소다수": "적당량"
+                recipe:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "재료들을 함께 넣고 섞는다"
+                    - "차갑게 마신다"
+                glassType:
+                  type: string
+                  example: "Martini"
+                status:
+                  type: string
+                  enum: [published, draft]
+                  example: "published"
+                tastes:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Sweet", "Sour"]
+                aromas:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Citrus"]
+                colors:
+                  type: array
+                  items:
+                    type: string
+                  example: ["#FFFFFF"]
+                abv:
+                  type: number
+                  example: 12
+      responses:
+        "200":
+          description: 레시피 등록 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 11
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "SampleDrink"
+                      imageUrl:
+                        type: string
+                        nullable: true
+                        example: "example/test.jpg"
+                      ingredients:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        example:
+                          "소다수": "적당량"
+                          "민트 잎": "5개"
+                          "라이트 럼": "3 온스"
+                          "라임 웨지": "2개"
+                          "심플 시럽": "1 온스"
+                      recipe:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "재료들을 함께 넣고 흔든다"
+                          - "얼음과 함께 차갑게 마신다"
+                      glassType:
+                        type: string
+                        example: "Old Fashioned"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T14:00:50.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T15:30:20.000Z"
+                      status:
+                        type: string
+                        enum: [published, draft]
+                        example: "published"
+                      tastes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Sweet", "Bitter"]
+                      aromas:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Woody"]
+                      colors:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        example: ["#FFFFFF"]
+                      likes:
+                        type: integer
+                        example: 0
+                      abv:
+                        type: number
+                        example: 15
+                      views:
+                        type: integer
+                        example: 10
+    get:
+      summary: 레시피 리스트 조회
+      description: 레시피 목록을 조회하는 API입니다.
+      operationId: getRecipeList
+      tags:
+        - Recipes
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [user, zero, high, fruity, under2, fav]
+          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하, fav: 내가 좋아요한한 레시피)"
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+          description: "페이지네이션을 위한 커서 (이전 응답의 nextCursor 값) / 내가 등록한 레시피 제외"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: "가져올 레시피 개수 (기본값: 10) / 내가 등록한 레시피 제외"
+      responses:
+        "200":
+          description: 레시피 리스트 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 5
+                        imageUrl:
+                          type: string
+                          example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_vodka_stinger-1.png"
+                        nameKor:
+                          type: string
+                          example: "보드카 스팅거"
+                        ingredients:
+                          type: object
+                          example:
+                            "Vodka": "1 oz"
+                            "White Crème de Menthe": "1 oz"
+                        likes:
+                          type: integer
+                          example: 10
+                        views:
+                          type: integer
+                          example: 100
+                        type:
+                          type: string
+                          example: "cocktail"
+                  nextCursor:
+                    type: integer
+                    nullable: true
+                    example: 4
+        "400":
+          description: 잘못된 요청 (잘못된 타입 입력)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R103"
+                      reason:
+                        type: string
+                        example: "타입 값이 잘못되었습니다. (user, zero, high, fruity, under2만 가능)"
+                      data:
+                        nullable: true
+                        example: null
+                  success:
+                    nullable: true
+                    example: null
+  /api/v1/recipes/{recipeId}:
+    patch:
+      summary: 레시피 수정
+      description: 기존 레시피를 수정합니다. 레시피 소유자만 수정할 수 있습니다.
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 수정할 레시피 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Updated SampleDrink"
+                ingredients:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    "라임 웨지": "2개"
+                    "민트 잎": "5개"
+                    "심플 시럽": "1 온스"
+                    "라이트 럼": "3 온스"
+                    "소다수": "적당량"
+                recipe:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "재료들을 함께 넣고 흔든다"
+                    - "얼음과 함께 차갑게 마신다"
+                glassType:
+                  type: string
+                  example: "Old Fashioned"
+                status:
+                  type: string
+                  enum: [published, draft]
+                  example: "published"
+                tastes:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Sweet", "Bitter"]
+                aromas:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Woody"]
+                colors:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  example: ["#FFFFFF"]
+                abv:
+                  type: number
+                  example: 15
+      responses:
+        "200":
+          description: 레시피 수정 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 11
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Updated SampleDrink"
+                      imageUrl:
+                        type: string
+                        nullable: true
+                        example: "example/test.jpg"
+                      ingredients:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        example:
+                          "소다수": "적당량"
+                          "민트 잎": "5개"
+                          "라이트 럼": "3 온스"
+                          "라임 웨지": "2개"
+                          "심플 시럽": "1 온스"
+                      recipe:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "재료들을 함께 넣고 흔든다"
+                          - "얼음과 함께 차갑게 마신다"
+                      glassType:
+                        type: string
+                        example: "Old Fashioned"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T14:00:50.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-02-02T15:30:20.000Z"
+                      status:
+                        type: string
+                        enum: [published, draft]
+                        example: "published"
+                      tastes:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Sweet", "Bitter"]
+                      aromas:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Woody"]
+                      colors:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        example: ["#FFFFFF"]
+                      likes:
+                        type: integer
+                        example: 0
+                      abv:
+                        type: number
+                        example: 15
+                      views:
+                        type: integer
+                        example: 10
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "R001"
+                      message:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                  success:
+                    type: "null"
+                    example: null
+        "403":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "수정 권한이 없습니다."
+                  success:
+                    type: "null"
+                    example: null
+    get:
+      summary: 레시피 상세 조회
+      description: 특정 레시피의 상세 정보를 조회하는 API입니다.
+      operationId: getRecipeDetail
+      tags:
+        - Recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "조회할 레시피의 ID"
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [cocktail, user]
+          description: "레시피 타입 (cocktail: 칵테일 레시피, user: 유저가 만든 레시피)"
+      responses:
+        "200 (기존 칵테일)":
+          description: 레시피 상세 조회 성공 (기존 칵테일)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipe:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 6
+                          name:
+                            type: string
+                            example: "화이트 러시안"
+                          userId:
+                            type: integer
+                            example: 0
+                          nameEng:
+                            type: string
+                            nullable: true
+                            example: "White Russian"
+                          imageUrl:
+                            type: string
+                            nullable: true
+                            example: null
+                          ingredients:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            example:
+                              "Milk": "to top"
+                              "Vodka": "2 oz"
+                              "Coffee Liqueur": "1 oz"
+                          ingredientsKor:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            nullable: true
+                            example:
+                              "우유": "적당량"
+                              "보드카": "2 온스"
+                              "커피 리큐어": "1 온스"
+                          recipe:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - "보드카와 커피 리큐어를 얼음이 채워진 올드패션드 글라스에 붓습니다."
+                              - "우유나 하프앤하프로 채웁니다."
+                          glassType:
+                            type: string
+                            example: "온더락 글라스"
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-06T11:17:22.000Z"
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-06T11:17:22.000Z"
+                          status:
+                            type: string
+                            example: "from dataset"
+                          tastes:
+                            type: array
+                            items:
+                              type: string
+                            example: ["커피", "크림", "바닐라"]
+                          aromas:
+                            type: array
+                            items:
+                              type: string
+                            example: ["달콤함", "부드러움"]
+                          colors:
+                            type: array
+                            items:
+                              type: string
+                            nullable: true
+                            example: null
+                          likes:
+                            type: integer
+                            example: 0
+                          abv:
+                            type: number
+                            example: 20
+                          views:
+                            type: integer
+                            example: 1
+                          type:
+                            type: string
+                            example: "cocktail"
+        "200 (유저)":
+          description: 레시피 상세 조회 성공 (유저)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipe:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 18
+                          userId:
+                            type: integer
+                            example: 28
+                          name:
+                            type: string
+                            example: "UpdatedDrink"
+                          nameEng:
+                            type: string
+                            nullable: true
+                            example: null
+                          imageUrl:
+                            type: string
+                            nullable: true
+                            example: null
+                          ingredients:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            example:
+                              "소다수": "적당량"
+                              "민트 잎": "7개"
+                              "라이트 럼": "2 온스"
+                              "라임 웨지": "3개"
+                              "심플 시럽": "3/4 온스"
+                          ingredientsKor:
+                            type: object
+                            additionalProperties:
+                              type: string
+                            nullable: true
+                            example: null
+                          recipe:
+                            type: array
+                            items:
+                              type: string
+                            example:
+                              - "재료들을 함께 넣고 섞는다"
+                              - "차갑게 마신다"
+                          glassType:
+                            type: string
+                            example: "Martini"
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-08T12:44:59.000Z"
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: "2025-02-08T12:44:59.000Z"
+                          status:
+                            type: string
+                            example: "published"
+                          tastes:
+                            type: array
+                            items:
+                              type: string
+                            example: ["Sweet", "Sour"]
+                          aromas:
+                            type: array
+                            items:
+                              type: string
+                            example: ["Citrus"]
+                          colors:
+                            type: array
+                            items:
+                              type: string
+                            nullable: true
+                            example: null
+                          likes:
+                            type: integer
+                            example: 1
+                          abv:
+                            type: number
+                            example: 12
+                          views:
+                            type: integer
+                            example: 9
+                          type:
+                            type: string
+                            example: "user"
+        "400":
+          description: 잘못된 요청 (쿼리 파라미터 오류)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R101"
+                      reason:
+                        type: string
+                        example: "입력된 타입이 없습니다. (user/cocktail)"
+                      data:
+                        nullable: true
+                        example: null
+                  success:
+                    nullable: true
+                    example: null
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R001"
+                      reason:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                      data:
+                        nullable: true
+                        example: null
+                  success:
+                    nullable: true
+                    example: null
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    delete:
+      summary: 레시피 삭제
+      description: 특정 레시피를 삭제합니다.
+      operationId: deleteRecipe
+      security:
+        - bearerAuth: []
+      tags:
+        - Recipes
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 삭제할 레시피 ID
+      responses:
+        "200":
+          description: 삭제 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "404":
+          description: 존재하지 않는 레시피
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R001"
+                      reason:
+                        type: string
+                        example: "해당 레시피를 찾을 수 없습니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+        "403":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "U001"
+                      message:
+                        type: string
+                        example: "수정 권한이 없습니다."
+                  success:
+                    type: "null"
+                    example: null
+  /api/v1/recipes/{recipeId}/like:
+    patch:
+      summary: "레시피 좋아요 추가"
+      description: "레시피에 좋아요를 추가합니다."
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "좋아요할 레시피의 ID"
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [cocktail, user]
+          description: "레시피 타입 (cocktail: 칵테일 레시피, user: 유저가 만든 레시피)"
+      responses:
+        "200":
+          description: "좋아요 추가 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [SUCCESS]
+                    example: SUCCESS
+                  error:
+                    type: "null"
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipeId:
+                        type: integer
+                        example: 6
+                      likes:
+                        type: integer
+                        example: 10
+        "400":
+          description: "잘못된 요청"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [FAIL]
+                    example: FAIL
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R001"
+                      reason:
+                        type: string
+                        example: "존재하지 않는 레시피입니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+        "409":
+          description: "이미 좋아요를 누른 경우"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [FAIL]
+                    example: FAIL
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R002"
+                      reason:
+                        type: string
+                        example: "이미 좋아요를 눌렀습니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+  /api/v1/recipes/{recipeId}/like/cancel:
+    patch:
+      summary: "레시피 좋아요 취소"
+      description: "레시피에 좋아요를 취소합니다."
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "좋아요 취소할 레시피의 ID"
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [cocktail, user]
+          description: "레시피 타입 (cocktail: 칵테일 레시피, user: 유저가 만든 레시피)"
+      responses:
+        "200":
+          description: "좋아요 취소 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [SUCCESS]
+                    example: SUCCESS
+                  error:
+                    type: "null"
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipeId:
+                        type: integer
+                        example: 6
+                      likes:
+                        type: integer
+                        example: 10
+        "400":
+          description: "잘못된 요청"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [FAIL]
+                    example: FAIL
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R001"
+                      reason:
+                        type: string
+                        example: "존재하지 않는 레시피입니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+        "409":
+          description: "좋아요 기록이 없는 경우"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    enum: [FAIL]
+                    example: FAIL
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "R003"
+                      reason:
+                        type: string
+                        example: "좋아요 기록이 없습니다."
+                      data:
+                        type: "null"
+                        example: null
+                  success:
+                    type: "null"
+                    example: null
+  /api/v1/users/recipes:
+    get:
+      summary: 내가 쓴 레시피
+      description: 카테고리, 도수 범위, 향, 맛을 기준으로 술과 칵테일을 검색합니다.
+      tags:
+        - Recipes
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "성공적으로 레시피를 가져왔습니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      recipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 29
+                            name:
+                              type: string
+                              example: "냠냠냠ㄴ냠"
+                            ingredients:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              example:
+                                "소다수": "적당량"
+                                "민트 잎": "7개"
+                                "라이트 럼": "2 온스"
+                                "라임 웨지": "3개"
+                                "심플 시럽": "3/4 온스"
+                            abv:
+                              type: string
+                              enum: ["high", "medium", "low", "non-alcohol"]
+                              example: "high"
+  /users/recipes/fav:
+    get:
+      tags:
+        - Recipes
+      summary: "사용자가 좋아요한 레시피 목록 조회"
+      description: "사용자가 좋아요한 레시피 목록을 페이징 방식으로 가져옵니다."
+      operationId: getFavRecipes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          description: "이전 요청에서 받은 nextCursor 값을 사용하여 페이지네이션"
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: "가져올 레시피 개수 (기본값: 10)"
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: "사용자가 좋아요한 레시피 목록을 반환합니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 20
+                        name:
+                          type: string
+                          example: "SampleDrink2"
+                        ingredients:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            "소다수": "적당량"
+                            "민트 잎": "7개"
+                            "라이트 럼": "2 온스"
+                            "라임 웨지": "3개"
+                            "심플 시럽": "3/4 온스"
+                        likes:
+                          type: integer
+                          example: 1
+                        views:
+                          type: integer
+                          example: 0
+                        type:
+                          type: string
+                          enum: ["user", "cocktail"]
+                          example: "user"
+                  nextCursor:
+                    type: integer
+                    nullable: true
+                    example: null
+  /api/v1/users/tasting-note/search:
+    get:
+      summary: 주류 검색
+      description: 검색어와 타입을 입력하면 해당 주류 정보를 조회합니다.
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 검색할 주류의 이름 (영문 또는 한글)
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, beer, other]
+          description: 검색할 주류의 타입
+      responses:
+        "200":
+          description: 성공적으로 검색된 주류 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        nameEng:
+                          type: string
+                          example: Margarita
+                        nameKor:
+                          type: string
+                          example: 마가리타
+                        type:
+                          type: string
+                          example: cocktail
+        "400":
+          description: 잘못된 요청 (검색어 또는 타입이 누락됨)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "검색어를 입력하세요"
+        "500":
+          description: 서버 오류 (검색 중 오류 발생)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "검색 실패: [오류 메시지]"
+  /api/v1/users/tasting-note:
+    post:
+      summary: 사용자 테이스팅 노트 작성
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 작성합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: "타입"
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, beer, other]
+      requestBody:
+        description: "사용자가 작성한 테이스팅 노트"
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "테이스팅한 칵테일의 이름"
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abv:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (칵테일)"
+                    color:
+                      type: array
+                      items:
+                        type: string
+                      description: "색상 평가"
+                    description:
+                      type: string
+                      description: "칵테일에 대한 설명"
+                  required:
+                    - name
+                    - tasteRating
+                    - aromaRating
+                    - abv
+                    - color
+                    - description
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "테이스팅한 알코올의 이름"
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abvRating:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (알코올)"
+                    finishRating:
+                      type: number
+                      format: float
+                      description: "마지막 맛 평가"
+                    description:
+                      type: string
+                      description: "알코올에 대한 설명"
+                  required:
+                    - name
+                    - tasteRating
+                    - aromaRating
+                    - abvRating
+                    - finishRating
+                    - description
+      responses:
+        "200(칵테일)":
+          description: "테이스팅 노트 작성 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      user_id:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      abv:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (칵테일)"
+                      color:
+                        type: string
+                        nullable: true
+                        description: "후미 평가 (선택 사항)"
+                      description:
+                        type: string
+                        description: "칵테일에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        "200(알코올)":
+          description: "테이스팅 노트 작성 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      user_id:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      finishRating:
+                        type: string
+                        nullable: true
+                        description: "마지막 맛 평가"
+                      description:
+                        type: string
+                        description: "테이스팅 노트에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+  /api/v1/users/tasting-note/{noteId}:
+    patch:
+      summary: 사용자 테이스팅 노트 수정
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 사용자가 칵테일 또는 주류에 대한 테이스팅 노트를 수정합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "수정할 테이스팅 노트의 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입"
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
+      requestBody:
+        description: "사용자가 수정한 테이스팅 노트"
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abv:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (칵테일)"
+                    color:
+                      type: array
+                      items:
+                        type: string
+                      description: "색상 평가"
+                    description:
+                      type: string
+                      description: "칵테일에 대한 설명"
+                  required:
+                    - tasteRating
+                    - aromaRating
+                    - abv
+                    - color
+                    - description
 
-      - name: Check prisma has changes
-        uses: dorny/paths-filter@v3
-        id: paths-filter
-        with:
-          filters: |
-            prisma: ["prisma/**"]
+                - type: object
+                  properties:
+                    tasteRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "맛 평가"
+                    aromaRating:
+                      type: array
+                      items:
+                        type: string
+                      description: "향 평가"
+                    abvRating:
+                      type: number
+                      format: float
+                      description: "알콜 도수 (알코올)"
+                    finishRating:
+                      type: number
+                      format: float
+                      description: "마지막 맛 평가"
+                    description:
+                      type: string
+                      description: "알코올에 대한 설명"
+                  required:
+                    - tasteRating
+                    - aromaRating
+                    - abvRating
+                    - finishRating
+                    - description
+      responses:
+        "200(칵테일)":
+          description: "테이스팅 노트 수정 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      abv:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (칵테일)"
+                      color:
+                        type: array
+                        items:
+                          type: string
+                        description: "색상 평가"
+                      description:
+                        type: string
+                        description: "칵테일에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        responses:
+        "200(알코올)":
+          description: "테이스팅 노트 수정 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      abvRating:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (알코올)"
+                      finishRating:
+                        type: string
+                        nullable: true
+                        description: "마지막 맛 평가"
+                      description:
+                        type: string
+                        description: "알코올에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "404":
+          description: "테이스팅 노트를 찾을 수 없음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "403":
+          description: "수정 권한이 없음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+    delete:
+      summary: 사용자 테이스팅 노트 삭제
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 사용자가 작성한 칵테일 또는 주류의 테이스팅 노트를 삭제합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "삭제할 테이스팅 노트 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입 (cocktail 또는 alcohol)"
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
+      responses:
+        "200":
+          description: "테이스팅 노트 삭제 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "삭제 완료 메시지"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "404":
+          description: "테이스팅 노트가 존재하지 않음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+    get:
+      summary: 사용자 테이스팅 노트 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 사용자가 작성한 테이스팅 노트를 조회합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: noteId
+          in: path
+          required: true
+          description: "조회할 테이스팅 노트의 ID"
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: true
+          description: "타입"
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
+      responses:
+        "200":
+          description: "테이스팅 노트 조회 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      finishRating:
+                        type: string
+                        nullable: true
+                        description: "후미 평가 (선택 사항)"
+                      description:
+                        type: string
+                        description: "테이스팅 노트에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "404":
+          description: "테이스팅 노트를 찾을 수 없음"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+  /api/v1/users/tasting-notes:
+    get:
+      summary: 특정 카테고리에 대한 모든 테이스팅 노트 조회
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 주어진 type(카테고리)에 해당하는 모든 테이스팅 노트를 조회합니다.
+      tags:
+        - TastingNote
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: 조회할 테이스팅 노트의 카테고리
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin&rum&tequila, wine, other]
+      responses:
+        "200":
+          description: 테이스팅 노트를 성공적으로 조회함
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tastingNotes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        userId:
+                          type: integer
+                          example: 10
+                        Category:
+                          type: string
+                          example: "Bourbon Whiskey"
+                        notes:
+                          type: string
+                          example: "바닐라와 오크의 힌트가 있는 부드러운 맛."
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-09T12:34:56Z"
+        "400":
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "type 파라미터가 필요합니다."
+        "401":
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "500":
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "서버 오류가 발생했습니다."
+  /api/v1/home/best:
+    get:
+      summary: 인기 있는 술과 칵테일 리스트 8개 조회
+      description: 인기 있는 술과 칵테일 리스트 조회
+      tags:
+        - Home
+      responses:
+        "200":
+          description: Best Taste 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 14
+                        nameKor:
+                          type: string
+                          example: "조니 워커 블랙"
+                        imageUrl:
+                          type: string
+                          example: "http://54.180.45.230:3000/uploads/alcohol/Johnnie Walker Black.png"
+                        category:
+                          type: string
+                          example: "Whiskey"
+                        intro:
+                          type: string
+                          example: "스모키한 깊이, 균형 잡힌 위스키"
+        "500":
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /api/v1/users/register:
+    post:
+      summary: 회원가입
+      description: 이메일, 비밀번호, 닉네임을 통해 회원가입.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "test@example.com"
+                password:
+                  type: string
+                  example: "password123"
+                nickname:
+                  type: string
+                  example: "TasteLover"
+      responses:
+        201:
+          description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "회원가입이 완료되었습니다."
+        400:
+          description: 잘못된 요청 데이터
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일 형식이 잘못되었습니다."
+        500:
+          description: 서버 오류
 
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "$EC2_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+  /api/v1/users/login:
+    post:
+      summary: 로그인
+      description: 이메일과 비밀번호로 로그인.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "test@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그인 성공"
+                  token:
+                    type: string
+                    example: "jwt_token_here"
+        401:
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일 또는 비밀번호가 잘못되었습니다."
+        500:
+          description: 서버 오류
 
-          cat >>~/.ssh/config <<END
-          Host tasteholic-server
-            HostName $EC2_HOST
-            User $EC2_USER
-            IdentityFile ~/.ssh/id_rsa
-            StrictHostKeyChecking no
-          END
-        env:
-          EC2_USER: ubuntu
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+  /api/v1/users/logout:
+    post:
+      summary: 로그아웃
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 인증 토큰을 삭제하여 로그아웃 처리.
+      tags:
+        - User
+      responses:
+        200:
+          description: 로그아웃 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그아웃이 완료되었습니다."
+        500:
+          description: 서버 오류
+  /api/v1/users/delete-user:
+    delete:
+      summary: 회원 탈퇴
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 인증된 사용자가 회원 탈퇴 요청.
+      tags:
+        - User
+      responses:
+        200:
+          description: 회원 탈퇴 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "회원 탈퇴가 완료되었습니다."
+        401:
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "인증 실패"
+        500:
+          description: 서버 오류
 
-      - name: Install Node.js 20.x
-        run: |
-          ssh tasteholic-server 'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -'
-          ssh tasteholic-server 'sudo apt-get install -y nodejs'
+  /api/v1/users/check-email:
+    post:
+      summary: 이메일 중복 확인
+      description: 회원가입 시 이메일이 이미 사용 중인지 확인.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "test@example.com"
+      responses:
+        200:
+          description: 사용 가능한 이메일
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "사용 가능한 이메일입니다."
+        400:
+          description: 요청 오류 (이메일 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이메일을 입력하세요."
+        409:
+          description: 이메일 중복 (이미 사용 중)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "이미 사용 중인 이메일입니다."
+        500:
+          description: 서버 오류
 
-      - name: Copy Workspace
-        run: |
-          ssh tasteholic-server 'sudo mkdir -p /opt/app'
-          ssh tasteholic-server 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* tasteholic-server:/opt/app
+  /api/v1/users/verify-password:
+    post:
+      summary: 비밀번호 확인
+      security:
+        - bearerAuth: [] # 인증 필요
+      description: 사용자의 비밀번호가 올바른지 검증.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: 비밀번호 확인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "비밀번호 확인 성공"
+        400:
+          description: 요청 오류 (비밀번호 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호를 입력하세요."
+        401:
+          description: 인증 실패 (잘못된 비밀번호)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "비밀번호가 올바르지 않습니다."
+        500:
+          description: 서버 오류
 
-      - name: Install dependencies
-        run: |
-          ssh tasteholic-server 'cd /opt/app; npm install'
+  /api/v1/users/social-login:
+    post:
+      summary: 카카오 소셜 로그인
+      description: 카카오 API를 통한 소셜 로그인.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: "your_kakao_access_token"
+      responses:
+        200:
+          description: 카카오 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "소셜 로그인 성공"
+        400:
+          description: 액세스 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        401:
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "카카오 인증 실패"
+        500:
+          description: 서버 오류
+  /api/v1/users/profile/change:
+    patch:
+      summary: 프로필 수정
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 프로필 이미지, 닉네임, 상태메시지, 비밀번호 변경 가능.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # 이미지 업로드를 위해 multipart/form-data 사용
+            schema:
+              type: object
+              properties:
+                image: # 이미지 파일 필드
+                  type: string
+                  format: binary # 파일 타입은 binary로 설정
+                nickname:
+                  type: string
+                  example: "닉네임"
+                message:
+                  type: string
+                  example: "상태 메시지입니다."
+                password:
+                  type: string
+                  example: "password321"
+      responses:
+        200:
+          description: 프로필 바꾸기 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "프로필 업데이트 성공"
+        500:
+          description: 서버 오류
+  /api/v1/users/info:
+    get:
+      summary: 회원 정보
+      security:
+        - bearerAuth: [] # 이 경로는 인증이 필요함
+      description: 회원 정보 (프로필 이미지, 닉네임, 메시지, 이메일) 조회.
+      tags:
+        - User
+      responses:
+        200:
+          description: 프로필 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          imageUrl:
+                            type: string
+                          nickname:
+                            type: string
+                          message:
+                            type: string
+                          email:
+                            type: string
+        500:
+          description: 서버 오류
+  /api/v1/users/search/category:
+    post:
+      summary: 술과 칵테일 검색(필터)
+      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술과 칵테일을 검색합니다.
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum: ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
+                  example: "Cocktail"
+                minAbv:
+                  type: number
+                  format: float
+                  minimum: 0
+                  maximum: 100
+                  example: 10
+                maxAbv:
+                  type: number
+                  format: float
+                  minimum: 0
+                  maximum: 100
+                  example: 40
+                aroma:
+                  type: array
+                  items:
+                    type: string
+                  example: ["라임", "시트러스"]
+                taste:
+                  type: array
+                  items:
+                    type: string
+                  example: ["달콤함", "상쾌함", "드라이함"]
+                timing:
+                  type: array
+                  items:
+                    type: string
+                  example: ["취하고 싶은 날"]
+      responses:
+        200:
+          description: 검색 결과 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: object
+                    nullable: true
+                    properties:
+                      code:
+                        type: string
+                        example: null
+                      message:
+                        type: string
+                        example: null
+                  success:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            nameEng:
+                              type: string
+                            nameKor:
+                              type: string
+                            abv:
+                              type: number
+                              format: float
+                            aromas:
+                              type: array
+                              items:
+                                type: string
+                            tastes:
+                              type: array
+                              items:
+                                type: string
+                            categoryEng:
+                              type: string
+                              nullable: true
+                            categoryKor:
+                              type: string
+                              nullable: true
+                            recipe:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                            timing:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+        400:
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAILURE"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "S002"
+                      message:
+                        type: string
+                        example: "유효한 카테고리를 선택해야 합니다."
+      500:
+        description: 서버 오류
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resultType:
+                  type: string
+                  example: "FAILURE"
+                error:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: "UNKNOWN"
+                    message:
+                      type: string
+                      example: "서버 내부 오류가 발생했습니다."
 
-      - name: Generate Prisma Client
-        if: steps.paths-filter.outputs.prisma == 'true'
-        run: |
-          ssh tasteholic-server 'cd /opt/app; npm exec prisma generate'
-      
-      - name: Apply prisma migrations
-        if: steps.paths-filter.outputs.prisma == 'true'
-        run: |
-          ssh tasteholic-server 'cd /opt/app; npm exec prisma migrate deploy'
+  /api/v1/home/pick:
+    get:
+      summary: 칵테일 추천
+      description: "추천 칵테일 3개를 반환하는 API"
+      tags:
+        - Home
+      responses:
+        200:
+          description: "추천된 칵테일 리스트"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 3
+                        nameEng:
+                          type: string
+                          example: "Amaretto Sour"
+                        imageUrl:
+                          type: string
+                          example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example: ["아몬드", "민트"]
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example: ["복숭아", "체리"]
+                        timing:
+                          type: array
+                          items:
+                            type: string
+                          nullable: true
+                          example: ["홈바(혼술)"]
+                        ingredientsKor:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            "아마레토": "1 1/2 온스"
+                            "레몬 주스": "3/4 온스"
+                            "심플 시럽": "1/2 온스"
+                            "오렌지 슬라이스": "1"
+                        intro:
+                          type: string
+                          example: "새콤달콤한 아마레토의 부드러운 반전"
+                        abv:
+                          type: string
+                          example: "14"
 
-      - name: Copy systemd service file
-        run: |
-          ssh tasteholic-server '
-            echo "[Unit]
-            Description=TasteHolic Server
-            After=network.target
+        500:
+          description: "서버 내부 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "INTERNAL_SERVER_ERROR"
+                      message:
+                        type: string
+                        example: "Database connection failed"
+                      data:
+                        type: object
+                        nullable: true
+                        example: null
 
-            [Service]
-            User=${USER}
-            ExecStart=/usr/bin/npm run start --prefix /opt/app/
-            Restart=always
+  /api/v1/users/my-bar/show-alcohols:
+    post:
+      summary: 특정 카테고리의 술 목록 조회
+      description: 사용자가 지정한 카테고리에 속하는 술의 이름과 ID를 반환합니다.
+      tags:
+        - MyBar
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: "조회할 술의 카테고리"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  example: "Whiskey"
+      responses:
+        "200":
+          description: "성공적으로 술 목록을 가져왔습니다."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      alcohols:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              nullable: true
+                              example: "잭 다니엘"
+        "400":
+          description: "잘못된 요청 (필수 매개변수 누락)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
+        "401":
+          description: "액세스 토큰 누락"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "액세스 토큰이 필요합니다."
+        "500":
+          description: "서버 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "오류 메시지"
 
-            [Install]
-            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
-          '
-
-      - name: Enable systemd service
-        run: |
-          ssh tasteholic-server 'sudo systemctl daemon-reload'
-          ssh tasteholic-server 'sudo systemctl enable app'
-
-      - name: Restart systemd service
-        run: |
-          ssh tasteholic-server 'sudo systemctl restart app'
-
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
