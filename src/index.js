@@ -16,8 +16,7 @@ import {
   handleLogoutUser,
   handleDeleteUser,
   handleSocialLogin,
-
-  handleVerifyPassword, 
+  handleVerifyPassword,
   handleCheckEmail,
 } from "./controllers/user.controller.js";
 
@@ -26,7 +25,7 @@ import {
   handleMyBarGet,
   handleMyBarDelete,
   handleMyBarSearch,
-  handleGetAlcoholsByCategory 
+  handleGetAlcoholsByCategory,
 } from "./controllers/mybar.controller.js";
 import {
   createRecipe,
@@ -52,14 +51,26 @@ import {
   handleUpdateTastingNote,
   handleDeleteTastingNote,
   handleGetTastingNote,
-  handleGetAllTastingNotes
+  handleGetAllTastingNotes,
 } from "./controllers/tastingnote.controller.js";
 import {handleSearch} from "./controllers/search.controller.js";
-import { authenticateToken } from "./middleware/auth.middleware.js";
+import {
+  authenticateToken,
+  optionalAuthenticateToken,
+} from "./middleware/auth.middleware.js";
 import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
 import { handleGetRandomCocktails } from "./controllers/random.controller.js";
-import { handleProfileChange, handleUserInfo } from "./controllers/profile.controller.js";
+import {
+  handleProfileChange,
+  handleUserInfo,
+} from "./controllers/profile.controller.js";
 import { upload } from "./middleware/imageUpload.middleware.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadsPath = path.join(__dirname, "public/uploads");
+console.log("🚀 정적 파일 실제 제공 경로:", uploadsPath);
 
 // BigInt 변환 설정
 BigInt.prototype.toJSON = function () {
@@ -76,6 +87,7 @@ app.use(cors()); // CORS 설정
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/uploads", express.static(uploadsPath));
 
 app.use((req, res, next) => {
   res.success = function (data) {
@@ -107,41 +119,75 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-    res.send("TasteHolic Server");
+  res.send("TasteHolic Server");
 });
-
 
 // Swagger
 // YAML 파일 로드
-const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
+const swaggerDocument = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
 
 // Swagger UI 설정
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
 app.get("/api/v1/users/my-bar/search", authenticateToken, handleMyBarSearch);
 app.post("/api/v1/users/my-bar/post", authenticateToken, handleMyBarPost);
 app.get("/api/v1/users/my-bar/view", authenticateToken, handleMyBarGet);
-app.delete("/api/v1/users/my-bar/delete/:barId", authenticateToken, handleMyBarDelete);
-app.post("/api/v1/users/my-bar/show-alcohols", authenticateToken, handleGetAlcoholsByCategory );
+app.delete(
+  "/api/v1/users/my-bar/delete/:barId",
+  authenticateToken,
+  handleMyBarDelete
+);
+app.post(
+  "/api/v1/users/my-bar/show-alcohols",
+  authenticateToken,
+  handleGetAlcoholsByCategory
+);
 
 app.post("/api/v1/recipes", authenticateToken, createRecipe);
-app.get("/api/v1/recipes", getRecipeList);
+app.get("/api/v1/recipes", optionalAuthenticateToken, getRecipeList);
 app.patch("/api/v1/recipes/:recipeId", authenticateToken, updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", authenticateToken, deleteRecipe);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
-app.patch("/api/v1/recipes/:recipeId/like",authenticateToken, updateRecipeLike);
-app.patch("/api/v1/recipes/:recipeId/like/cancel", authenticateToken, updateCancelRecipeLike);
+app.patch(
+  "/api/v1/recipes/:recipeId/like",
+  authenticateToken,
+  updateRecipeLike
+);
+app.patch(
+  "/api/v1/recipes/:recipeId/like/cancel",
+  authenticateToken,
+  updateCancelRecipeLike
+);
 app.get("/api/v1/users/recipes", authenticateToken, getMyRecipes);
 app.get("/api/v1/users/recipes/fav", authenticateToken, getFavRecipes);
 
-
 app.get("/api/v1/users/tasting-note/search", handleSearchDrinks);
-app.post("/api/v1/users/tasting-note", authenticateToken, handleUserTastingNote);
-app.patch("/api/v1/users/tasting-note/:noteId", authenticateToken, handleUpdateTastingNote);
-app.delete("/api/v1/users/tasting-note/:noteId", authenticateToken, handleDeleteTastingNote);
-app.get("/api/v1/users/tasting-note/:noteId", authenticateToken, handleGetTastingNote);
-app.get("/api/v1/users/tasting-notes", authenticateToken, handleGetAllTastingNotes);
+app.post(
+  "/api/v1/users/tasting-note",
+  authenticateToken,
+  handleUserTastingNote
+);
+app.patch(
+  "/api/v1/users/tasting-note/:noteId",
+  authenticateToken,
+  handleUpdateTastingNote
+);
+app.delete(
+  "/api/v1/users/tasting-note/:noteId",
+  authenticateToken,
+  handleDeleteTastingNote
+);
+app.get(
+  "/api/v1/users/tasting-note/:noteId",
+  authenticateToken,
+  handleGetTastingNote
+);
+app.get(
+  "/api/v1/users/tasting-notes",
+  authenticateToken,
+  handleGetAllTastingNotes
+);
 
 
 app.post("/api/v1/users/register", handleRegisterUser);
@@ -150,13 +196,19 @@ app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
 app.delete("/api/v1/users/delete-user", authenticateToken, handleDeleteUser);
 app.post("/api/v1/users/social-login", handleSocialLogin);
 app.get("/api/v1/users/info", authenticateToken, handleUserInfo);
-app.patch("/api/v1/users/profile/change", authenticateToken, upload.single('image'), handleProfileChange);
+app.patch(
+  "/api/v1/users/profile/change",
+  authenticateToken,
+  upload.single("image"),
+  handleProfileChange
+);
 
-app.post("/api/v1/users/verify-password", authenticateToken, handleVerifyPassword);
+app.post(
+  "/api/v1/users/verify-password",
+  authenticateToken,
+  handleVerifyPassword
+);
 app.post("/api/v1/users/check-email", handleCheckEmail);
-
-
-
 
 app.post("/api/v1/users/search/category", handleSearch);
 
@@ -182,9 +234,6 @@ app.use((err, req, res, next) => {
     success: null,
   });
 });
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Swagger 설정
 try {

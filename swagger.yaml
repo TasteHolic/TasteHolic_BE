@@ -4,7 +4,7 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://localhost:3000/
+  - url: http://localhost:3000
     description: TasteHolic Server URL
 # 예시
 paths:
@@ -2597,7 +2597,8 @@ paths:
               properties:
                 category:
                   type: string
-                  enum: ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
+                  enum:
+                    ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
                   example: "Cocktail"
                 minAbv:
                   type: number
