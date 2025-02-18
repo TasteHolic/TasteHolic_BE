@@ -24,6 +24,7 @@ import {
   UnavailableType,
   TokenExpiredError,
 } from "../error.js";
+import { applyMyBarFilter } from "../utils/applyMyBarFilter.js";
 
 export const createRecipe = async (req, res, next) => {
   console.log("레시피 생성 요청!");
@@ -89,23 +90,35 @@ export const getRecipeList = async (req, res, next) => {
 
   try {
     const { type, cursor, limit = 10 } = req.query;
+    const userId = req.user ? req.user.id : null; // 로그인 여부 확인
 
     if (!type) {
       throw new NoQuery(
         "입력된 타입이 없습니다. (user/zero/high/fruity/under2/fav)"
       );
     }
+
     const { recipes, nextCursor } = await getRecipeListService(
       type,
       cursor,
       parseInt(limit)
     );
 
-    console.log(recipes);
+    console.log("원본 레시피 목록:", recipes);
+
+    // 기존 레시피 리스트를 파싱
     const parsedRecipes = parseRecipeList(recipes);
 
+    // 로그인한 경우만 `myBar` 값을 계산
+    const recipesWithMyBar = await Promise.all(
+      parsedRecipes.map(async (recipe) => ({
+        ...recipe,
+        myBar: await applyMyBarFilter(userId, recipe),
+      }))
+    );
+
     res.status(StatusCodes.OK).success({
-      recipes: parsedRecipes,
+      recipes: recipesWithMyBar,
       nextCursor,
     });
   } catch (err) {
