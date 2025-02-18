@@ -110,6 +110,8 @@ export const addTastingNote = async (data, type) => {
         }
         if (categoryRows.length > 0) {
             category = categoryRows[0].categoryEng; // 주류 Category가 존재하면 할당
+        }else{
+          category=type;
         }
 
         if (alcoholId) {
@@ -129,11 +131,12 @@ export const addTastingNote = async (data, type) => {
             ];
         } else {
             // 주류 ID가 없는 경우 (alcoholId 없이 INSERT)
-            query = `INSERT INTO ${tableName} (userId, name, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
+            query = `INSERT INTO ${tableName} (userId, name, category, tasteRating, aromaRating, finishRating, abvRating, description, createdAt, updatedAt) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
             values = [
                 data.userId,
                 data.name,
+                category,
                 JSON.stringify(data.tasteRating),
                 JSON.stringify(data.aromaRating),
                 JSON.stringify(data.finishRating),
