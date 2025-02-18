@@ -53,8 +53,11 @@ import {
   handleGetTastingNote,
   handleGetAllTastingNotes,
 } from "./controllers/tastingnote.controller.js";
-import { handleSearch } from "./controllers/search.controller.js";
-import { authenticateToken } from "./middleware/auth.middleware.js";
+import {handleSearch} from "./controllers/search.controller.js";
+import {
+  authenticateToken,
+  optionalAuthenticateToken,
+} from "./middleware/auth.middleware.js";
 import { handleGetBestTaste } from "./controllers/besttaste.controller.js";
 import { handleGetRandomCocktails } from "./controllers/random.controller.js";
 import {
@@ -142,7 +145,7 @@ app.post(
 );
 
 app.post("/api/v1/recipes", authenticateToken, createRecipe);
-app.get("/api/v1/recipes", getRecipeList);
+app.get("/api/v1/recipes", optionalAuthenticateToken, getRecipeList);
 app.patch("/api/v1/recipes/:recipeId", authenticateToken, updateRecipe);
 app.delete("/api/v1/recipes/:recipeId", authenticateToken, deleteRecipe);
 app.get("/api/v1/recipes/:recipeId", getRecipe);
