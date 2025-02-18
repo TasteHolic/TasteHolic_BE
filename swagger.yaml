@@ -1509,10 +1509,10 @@ paths:
         - name: type
           in: query
           required: true
-          description: "타입 (cocktail 또는 alcohol)"
+          description: "타입"
           schema:
             type: string
-            enum: [cocktail, alcohol]
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, beer, other]
       requestBody:
         description: "사용자가 작성한 테이스팅 노트"
         required: true
