@@ -14,7 +14,7 @@ model AlcoholTastingNotes {
   tasteRating  Json?
   aromaRating  Json?
   finishRating Json?
-  abvRating    Decimal?  @db.Decimal(5, 2)
+  abv          Decimal?  @db.Decimal(5, 2)
   description  String?   @db.Text
   createdAt    DateTime  @default(now()) @db.DateTime(0)
   updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)

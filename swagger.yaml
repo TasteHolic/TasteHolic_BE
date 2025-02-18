@@ -1522,8 +1522,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
+                  type: object
                   properties:
                     name:
                       type: string
@@ -1546,7 +1545,14 @@ paths:
                       type: array
                       items:
                         type: string
+                      nullable: true
                       description: "색상 평가"
+                    finishRating:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        description: "마지막 맛 평가"
                     description:
                       type: string
                       description: "칵테일에 대한 설명"
@@ -1555,41 +1561,6 @@ paths:
                     - tasteRating
                     - aromaRating
                     - abv
-                    - color
-                    - description
-
-                - type: object
-                  properties:
-                    name:
-                      type: string
-                      description: "테이스팅한 알코올의 이름"
-                    tasteRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "맛 평가"
-                    aromaRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "향 평가"
-                    abvRating:
-                      type: number
-                      format: float
-                      description: "알콜 도수 (알코올)"
-                    finishRating:
-                      type: number
-                      format: float
-                      description: "마지막 맛 평가"
-                    description:
-                      type: string
-                      description: "알코올에 대한 설명"
-                  required:
-                    - name
-                    - tasteRating
-                    - aromaRating
-                    - abvRating
-                    - finishRating
                     - description
       responses:
         "200(칵테일)":
@@ -1623,9 +1594,10 @@ paths:
                         format: float
                         description: "알콜 도수 (칵테일)"
                       color:
-                        type: string
-                        nullable: true
-                        description: "후미 평가 (선택 사항)"
+                        type: array
+                        items:
+                          type: string
+                        description: "색상 평가"
                       description:
                         type: string
                         description: "칵테일에 대한 설명"
@@ -1665,13 +1637,18 @@ paths:
                         items:
                           type: string
                         description: "향 평가"
+                      abv:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (알코올)"
                       finishRating:
-                        type: string
-                        nullable: true
-                        description: "마지막 맛 평가"
+                          type: array
+                          items:
+                            type: string
+                          description: "마지막 맛 평가"
                       description:
                         type: string
-                        description: "테이스팅 노트에 대한 설명"
+                        description: "알코올에 대한 설명"
                       createdAt:
                         type: string
                         format: date-time
@@ -1740,8 +1717,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
+                  type: object
                   properties:
                     tasteRating:
                       type: array
@@ -1761,7 +1737,14 @@ paths:
                       type: array
                       items:
                         type: string
+                      nullable: true
                       description: "색상 평가"
+                    finishRating:
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        description: "마지막 맛 평가"
                     description:
                       type: string
                       description: "칵테일에 대한 설명"
@@ -1769,37 +1752,6 @@ paths:
                     - tasteRating
                     - aromaRating
                     - abv
-                    - color
-                    - description
-
-                - type: object
-                  properties:
-                    tasteRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "맛 평가"
-                    aromaRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "향 평가"
-                    abvRating:
-                      type: number
-                      format: float
-                      description: "알콜 도수 (알코올)"
-                    finishRating:
-                      type: number
-                      format: float
-                      description: "마지막 맛 평가"
-                    description:
-                      type: string
-                      description: "알코올에 대한 설명"
-                  required:
-                    - tasteRating
-                    - aromaRating
-                    - abvRating
-                    - finishRating
                     - description
       responses:
         "200(칵테일)":
@@ -1850,7 +1802,6 @@ paths:
                         format: date-time
                         nullable: true
                         description: "수정일"
-        responses:
         "200(알코올)":
           description: "테이스팅 노트 수정 성공"
           content:
@@ -1877,14 +1828,16 @@ paths:
                         items:
                           type: string
                         description: "향 평가"
-                      abvRating:
+                      abv:
                         type: number
                         format: float
                         description: "알콜 도수 (알코올)"
                       finishRating:
-                        type: string
-                        nullable: true
-                        description: "마지막 맛 평가"
+                          type: array
+                          items:
+                            type: string
+                          nullable: true
+                          description: "마지막 맛 평가"
                       description:
                         type: string
                         description: "알코올에 대한 설명"

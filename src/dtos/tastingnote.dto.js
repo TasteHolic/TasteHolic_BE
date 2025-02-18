@@ -19,8 +19,8 @@ export const bodyToCocktailTastingNote = (body,userId) => {
       category: body.category || "",
       tasteRating: body.tasteRating || "",
       aromaRating: body.aromaRating || "",
+      abv: body.abv || "",
       finishRating: body.finishRating || "",
-      abvRating: body.abvRating || "",
       description: body.description || "",
     };
   };
@@ -31,7 +31,7 @@ export const responseFromUser = ({ tastingnote, type }) => {
     if (type === "cocktail") {
       // Cocktail 관련 테이스팅 노트 반환
       return {
-        id: tastingnote.id || null,
+        id: tastingnote.id,
         userId: tastingnote.userId,  // 테이블에 맞춰 'userId'로 수정
         cocktailId: tastingnote.cocktailId,
         tasteRating: tastingnote.tasteRating,
@@ -45,13 +45,13 @@ export const responseFromUser = ({ tastingnote, type }) => {
     } else {
       // 그 외의 Alcohol 관련 테이스팅 노트 반환
       return {
-        id: tastingnote.id || null,
+        id: tastingnote.id,
         user_id: tastingnote.userId,  // 테이블에 맞춰 'userId'로 수정
         alcoholId: tastingnote.alcoholId,
         tasteRating: tastingnote.tasteRating,
         aromaRating: tastingnote.aromaRating,
+        abv: tastingnote.abv,
         finishRating: tastingnote.finishRating || null,
-        abvRating: tastingnote.abvRating,
         description: tastingnote.description || "",
         createdAt: tastingnote.created_at || null,
         updatedAt: tastingnote.updated_at || null,
@@ -74,7 +74,7 @@ export const updateTastingNoteDto = (body, type) => {
         tasteRating: body.tasteRating,
         aromaRating: body.aromaRating,
         finishRating: body.finishRating,
-        abvRating: body.abvRating,
+        abv: body.abv,
         description: body.description,
       };
     }
@@ -108,7 +108,7 @@ export const updateTastingNoteDto = (body, type) => {
         tasteRating: tastingnote.tasteRating,
         aromaRating: tastingnote.aromaRating,
         finishRating: tastingnote.finishRating || null,
-        abvRating: tastingnote.abvRating,
+        abv: tastingnote.abv,
         description: tastingnote.description || "",
         createdAt: tastingnote.createdAt,
         updatedAt: tastingnote.updatedAt

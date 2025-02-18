@@ -23,15 +23,14 @@ export const userTastingNote = async (userId, data, type) => {
     name: data.name,
     tasteRating: data.tasteRating,
     aromaRating: data.aromaRating,
-    finishRating: data.finishRating || null,
     abv: data.abv,
-    abvRating: data.abvRating,
     color: data.color || null,
+    finishRating: data.finishRating || null,
     description: data.description,
   },type);
 
   const tastingnote = await getTastingNote(tastingNoteId, type);
-  return responseFromUser({ tastingnote });
+  return responseFromUser({ tastingnote, type });
 };
 
 // 테이스팅 노트 ID로 조회
