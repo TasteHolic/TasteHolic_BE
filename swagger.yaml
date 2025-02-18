@@ -1423,6 +1423,80 @@ paths:
                     type: integer
                     nullable: true
                     example: null
+  /api/v1/users/tasting-note/search:
+    get:
+      summary: 주류 검색
+      description: 검색어와 타입을 입력하면 해당 주류 정보를 조회합니다.
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 검색할 주류의 이름 (영문 또는 한글)
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, beer, other]
+          description: 검색할 주류의 타입
+      responses:
+        "200":
+          description: 성공적으로 검색된 주류 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        nameEng:
+                          type: string
+                          example: Margarita
+                        nameKor:
+                          type: string
+                          example: 마가리타
+                        type:
+                          type: string
+                          example: cocktail
+        "400":
+          description: 잘못된 요청 (검색어 또는 타입이 누락됨)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "검색어를 입력하세요"
+        "500":
+          description: 서버 오류 (검색 중 오류 발생)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "검색 실패: [오류 메시지]"
   /api/v1/users/tasting-note:
     post:
       summary: 사용자 테이스팅 노트 작성
