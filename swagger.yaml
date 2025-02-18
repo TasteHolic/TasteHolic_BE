@@ -528,6 +528,9 @@ paths:
                         type:
                           type: string
                           example: "cocktail"
+                        myBar:
+                          type: boolean
+                          example: true
                   nextCursor:
                     type: integer
                     nullable: true
