@@ -1733,7 +1733,7 @@ paths:
           description: "타입"
           schema:
             type: string
-            enum: [cocktail, alcohol]
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
       requestBody:
         description: "사용자가 수정한 테이스팅 노트"
         required: true
@@ -1764,7 +1764,7 @@ paths:
                       description: "색상 평가"
                     description:
                       type: string
-                      description: "테이스팅 노트에 대한 설명"
+                      description: "칵테일에 대한 설명"
                   required:
                     - tasteRating
                     - aromaRating
@@ -1794,7 +1794,7 @@ paths:
                       description: "마지막 맛 평가"
                     description:
                       type: string
-                      description: "테이스팅 노트에 대한 설명"
+                      description: "알코올에 대한 설명"
                   required:
                     - tasteRating
                     - aromaRating
@@ -1802,7 +1802,7 @@ paths:
                     - finishRating
                     - description
       responses:
-        "200":
+        "200(칵테일)":
           description: "테이스팅 노트 수정 성공"
           content:
             application/json:
@@ -1828,13 +1828,66 @@ paths:
                         items:
                           type: string
                         description: "향 평가"
+                      abv:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (칵테일)"
+                      color:
+                        type: array
+                        items:
+                          type: string
+                        description: "색상 평가"
+                      description:
+                        type: string
+                        description: "칵테일에 대한 설명"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "생성일"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: "수정일"
+        responses:
+        "200(알코올)":
+          description: "테이스팅 노트 수정 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "테이스팅 노트 ID"
+                      userId:
+                        type: integer
+                        description: "사용자 ID"
+                      tasteRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "맛 평가"
+                      aromaRating:
+                        type: array
+                        items:
+                          type: string
+                        description: "향 평가"
+                      abvRating:
+                        type: number
+                        format: float
+                        description: "알콜 도수 (알코올)"
                       finishRating:
                         type: string
                         nullable: true
-                        description: "후미 평가 (선택 사항)"
+                        description: "마지막 맛 평가"
                       description:
                         type: string
-                        description: "테이스팅 노트에 대한 설명"
+                        description: "알코올에 대한 설명"
                       createdAt:
                         type: string
                         format: date-time
@@ -1915,7 +1968,7 @@ paths:
           description: "타입 (cocktail 또는 alcohol)"
           schema:
             type: string
-            enum: [cocktail, alcohol]
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
       responses:
         "200":
           description: "테이스팅 노트 삭제 성공"
@@ -1984,10 +2037,10 @@ paths:
         - name: type
           in: query
           required: true
-          description: "타입 (cocktail 또는 alcohol)"
+          description: "타입"
           schema:
             type: string
-            enum: [cocktail, alcohol]
+            enum: [cocktail, whiskey, gin, rum, tequila, wine, other]
       responses:
         "200":
           description: "테이스팅 노트 조회 성공"
@@ -2087,7 +2140,7 @@ paths:
           description: 조회할 테이스팅 노트의 카테고리
           schema:
             type: string
-            example: whiskey
+            enum: [cocktail, whiskey, gin&rum&tequila, wine, other]
       responses:
         "200":
           description: 테이스팅 노트를 성공적으로 조회함

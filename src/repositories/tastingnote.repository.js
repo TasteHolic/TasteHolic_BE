@@ -262,22 +262,22 @@ export const removeTastingNote = async (noteId, type) => {
 // 주류 테이스팅 노트 전체 조회 (카테고리별)
 export const listTastingNotes = async (userId, type) => {
   console.log(userId);
+  
   if (type === "cocktail") {
     return await prisma.cocktailTastingNotes.findMany({
-      where: { userId: userId } // userId는 BigInt가 아닌 그대로 사용할 수 있음
+      where: { userId: userId }
     });
   } else {
+    const typeArray = type.split("&"); // 'gin&rum&tequila' → ['gin', 'rum', 'tequila']
+    
     return await prisma.alcoholTastingNotes.findMany({
       where: {
         userId: userId,
         category: {
-          contains: type, // Category 필드 값이 type 문자열을 포함하는지 확인
-          lte: 'insensitive' // 대소문자 구분 없이 비교
+          in: typeArray // category가 배열 안의 값 중 하나일 경우 검색
         }
       }
     });
-    
-    
   }
 };
 
