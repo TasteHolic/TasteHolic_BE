@@ -2204,12 +2204,12 @@ paths:
                   error:
                     type: string
                     example: "서버 오류가 발생했습니다."
-  /api/v1/best-taste:
+  /api/v1/home/best:
     get:
-      summary: 가장 인기 있는 칵테일 리스트 조회
-      description: 좋아요 수를 기준으로 가장 인기 있는 칵테일을 조회합니다.
+      summary: 인기 있는 술과 칵테일 리스트 8개 조회
+      description: 인기 있는 술과 칵테일 리스트 조회
       tags:
-        - Best Taste
+        - Home
       responses:
         "200":
           description: Best Taste 조회 성공
@@ -2218,80 +2218,33 @@ paths:
               schema:
                 type: object
                 properties:
-                  tastingNotes:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
                     type: array
                     items:
                       type: object
                       properties:
                         id:
                           type: integer
-                          example: 2
-                        nameEng:
-                          type: string
-                          example: "Amaretto Stinger"
+                          example: 14
                         nameKor:
                           type: string
-                          example: "아마레토 스팅거"
-                        ingredientsEng:
-                          type: object
-                          additionalProperties:
-                            type: string
-                          example:
-                            Amaretto: "1 1/2 oz"
-                            "White Crème de Menthe": "3/4 oz"
-                        recipe:
-                          type: array
-                          items:
-                            type: string
-                          example:
-                            - "얼음과 함께 흔든 후, 차갑게 식힌 칵테일 글라스에 붓습니다."
-                        aromas:
-                          type: array
-                          items:
-                            type: string
-                          example:
-                            - "달콤함"
-                            - "상쾌함"
-                        tastes:
-                          type: array
-                          items:
-                            type: string
-                          example:
-                            - "아몬드"
-                            - "민트"
-                        abv:
+                          example: "조니 워커 블랙"
+                        imageUrl:
                           type: string
-                          example: "25"
-                        timing:
+                          example: "http://54.180.45.230:3000/uploads/alcohol/Johnnie Walker Black.png"
+                        category:
                           type: string
-                          example: ""
-                        color:
+                          example: "Whiskey"
+                        intro:
                           type: string
-                          example: ""
-                        glass:
-                          type: string
-                          example: "칵테일 글라스"
-                        ingredientsKor:
-                          type: object
-                          additionalProperties:
-                            type: string
-                          example:
-                            아마레토: "1 1/2 온스"
-                            "화이트 크렘 드 멘트": "3/4 온스"
-                        views:
-                          type: integer
-                          example: 6
-                        likes:
-                          type: integer
-                          example: 10
-                        createdAt:
-                          type: string
-                          format: date-time
-                          example: "2025-02-06T11:17:22.000Z"
-                        updatedAt:
-                          type: string
-                          format: date-time
-                          example: "2025-02-06T11:17:22.000Z"
+                          example: "스모키한 깊이, 균형 잡힌 위스키"
         "500":
           description: 서버 오류
           content:
@@ -2838,6 +2791,10 @@ paths:
                   resultType:
                     type: string
                     example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
                   success:
                     type: array
                     items:
@@ -2847,35 +2804,43 @@ paths:
                           type: integer
                           example: 3
                         nameEng:
-                          type: String
-                          example: "Godfather"
+                          type: string
+                          example: "Amaretto Sour"
                         imageUrl:
-                          type: String
-                          example: "example.com/example.png"
+                          type: string
+                          example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
                         aromas:
                           type: array
                           items:
                             type: string
-                          example: ["시트러스", "라임"]
+                          example: ["아몬드", "민트"]
                         tastes:
                           type: array
                           items:
                             type: string
-                          example: ["달콤함", "상쾌함"]
+                          example: ["복숭아", "체리"]
                         timing:
                           type: array
                           items:
                             type: string
-                          example: ["여름", "파티"]
+                          nullable: true
+                          example: ["홈바(혼술)"]
                         ingredientsKor:
-                          type: array
-                          items:
+                          type: object
+                          additionalProperties:
                             type: string
-                          example: ["진", "토닉워터", "라임"]
+                          example:
+                            "아마레토": "1 1/2 온스"
+                            "레몬 주스": "3/4 온스"
+                            "심플 시럽": "1/2 온스"
+                            "오렌지 슬라이스": "1"
+                        intro:
+                          type: string
+                          example: "새콤달콤한 아마레토의 부드러운 반전"
                         abv:
-                          type: number
-                          format: float
-                          example: 40.0
+                          type: string
+                          example: "14"
+
         500:
           description: "서버 내부 오류"
           content:

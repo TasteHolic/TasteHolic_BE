@@ -20,12 +20,14 @@ export const fetchRandomCocktails = async () => {
     select: {
       id: true,
       nameEng: true,
+      nameKor: true,
       imageUrl: true,
       aromas: true,
       tastes: true,
       timing: true,
       ingredientsKor: true,
       abv: true,
+      intro: true,
     },
   });
 
