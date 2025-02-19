@@ -9,6 +9,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
+// Load environment variables
+dotenv.config();
+
+import jwt from "jsonwebtoken";
+import axios from "axios";
+
 
 import {
   handleRegisterUser,
@@ -81,10 +87,9 @@ BigInt.prototype.toJSON = function () {
 const app = express();
 const port = 3000;
 
-// Load environment variables
-dotenv.config();
 
-app.use(cors()); // CORS 설정
+
+app.use(cors());// CORS 설정
 app.use(express.json());
 app.use(cookieParser());
 
@@ -220,7 +225,7 @@ app.get("/api/v1/home/pick", handleGetRandomCocktails);
 // 카카오 설정
 const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
 const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET;
-const REDIRECT_URI = "http://54.180.45.230:3000/api/auth/kakao/callback";
+const REDIRECT_URI = process.env.KAKAO_REDIRECT_URI;
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // JWT 비밀 키
 
 // 🔹 1️⃣ 프론트엔드에서 카카오 로그인 요청 → 카카오 로그인 페이지로 리디렉트 (GET ✅)
@@ -256,7 +261,12 @@ app.post("/api/auth/kakao/callback", async (req, res) => {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
+    //사용자가 id를 반환하지 않는 경우 예외 처리
     const kakaoUser = userResponse.data;
+    if (!kakaoUser.id) {
+      return res.status(400).json({ error: "Invalid Kakao user data" });
+    }
+
 
     // JWT 발급 (7일 동안 유효)
     const token = jwt.sign(
