@@ -10,7 +10,7 @@ export const handleSearch = async (req, res, next) => {
   try {
 
     // 요청 데이터 검증
-    const { category, minAbv, maxAbv, aroma, taste, timing } = toSearchParams(req.body);
+    const { category, minAbv, maxAbv, aroma, taste, timing} = toSearchParams(req.body);
 
     // 검색 실행
     const results = await searchAlcoholsAndCocktails(category, minAbv, maxAbv, aroma, taste, timing);

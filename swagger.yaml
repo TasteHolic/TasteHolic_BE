@@ -2587,8 +2587,8 @@ paths:
           description: 서버 오류
   /api/v1/users/search/category:
     post:
-      summary: 술과 칵테일 검색(필터)
-      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술과 칵테일을 검색합니다.
+      summary: 술, 칵테일, 유저 레시피 검색(필터)
+      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술, 칵테일, 유저 레시피를 검색합니다.
       tags:
         - Search
       requestBody:
@@ -2630,6 +2630,9 @@ paths:
                   items:
                     type: string
                   example: ["취하고 싶은 날"]
+                imageUrl:
+                  type: string
+                  example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
       responses:
         200:
           description: 검색 결과 반환
