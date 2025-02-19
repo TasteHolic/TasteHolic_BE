@@ -2921,7 +2921,7 @@ paths:
                 example: "https://kauth.kakao.com/oauth/authorize?client_id=YOUR_KAKAO_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code"
 
   /api/auth/kakao/callback:
-    get:
+    post:
       summary: 카카오 로그인 콜백 (Authorization Code → Access Token 변환)
       description: 카카오에서 Authorization Code를 받아, Access Token을 요청 후 JWT를 반환.
       tags:
@@ -3009,7 +3009,7 @@ paths:
                     example: "Invalid token"
 
   /api/auth/kakao/logout:
-    get:
+    post:
       summary: 카카오 로그아웃
       description: 카카오 Access Token을 만료시켜 로그아웃 처리.
       tags:
