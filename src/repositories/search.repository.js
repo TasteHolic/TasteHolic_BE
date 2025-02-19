@@ -60,21 +60,20 @@ export const findAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, 
     conditions.AND.push(...taste.map(t => ({ tastes: { array_contains: t } })));
   }
 
-  // timing 필터 (Cocktail 전용)
-  if (timing?.length > 0) {
-    conditions.AND.push(...timing.map(time => ({ timing: { array_contains: time } })));
-  }
-
   let cocktails = [];
   let alcohols = [];
   let userRecipes = await prisma.userRecipes.findMany({ select: selectUserRecipeFields });
 
+  if (timing?.length > 0 || category === "Cocktail") {
+    if (timing?.length > 0) {
+      conditions.AND.push(...timing.map(time => ({ timing: { array_contains: time } })));
+    }
+    cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
+    return cocktails;
+  }
+
   if (category) {
     switch (category) {
-      case "Cocktail":
-        cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
-        break;
-
       case "Whiskey":
         conditions.AND.push({ Category: "Whiskey" });
         alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
