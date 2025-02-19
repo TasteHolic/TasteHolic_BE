@@ -212,7 +212,7 @@ app.post(
 app.post("/api/v1/users/check-email", handleCheckEmail);
 
 app.post("/api/v1/users/search/category", handleSearch);
-app.get("/api/v1/users/search/alltype", handleAllTypeSearch);
+app.get("/api/v1/users/search/alltype", optionalAuthenticateToken, handleAllTypeSearch);
 
 app.get("/api/v1/home/best", handleGetBestTaste);
 app.get("/api/v1/home/pick", handleGetRandomCocktails);
