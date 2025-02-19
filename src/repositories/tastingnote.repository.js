@@ -262,14 +262,28 @@ export const removeTastingNote = async (noteId, type) => {
 // 주류 테이스팅 노트 전체 조회 (카테고리별)
 export const listTastingNotes = async (userId, type) => {
   console.log(userId);
-  
+
   if (type === "cocktail") {
     return await prisma.cocktailTastingNotes.findMany({
       where: { userId: userId }
     });
+  } else if (type === "other") {
+    return await prisma.alcoholTastingNotes.findMany({
+      where: {
+        userId: userId,
+        AND: [
+          {
+            OR: [
+              { category: { equals: null } },
+              { category: { notIn: ["cocktail", "whiskey", "gin", "rum", "tequila", "wine"] } }
+            ]
+          }
+        ]
+      }
+    });
   } else {
     const typeArray = type.split("&"); // 'gin&rum&tequila' → ['gin', 'rum', 'tequila']
-    
+
     return await prisma.alcoholTastingNotes.findMany({
       where: {
         userId: userId,
@@ -280,5 +294,3 @@ export const listTastingNotes = async (userId, type) => {
     });
   }
 };
-
-
