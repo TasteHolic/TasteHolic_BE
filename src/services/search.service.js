@@ -26,9 +26,4 @@ const validateSearchParams = (category, minAbv, maxAbv, timing) => {
     throw new InvalidFilterError("minAbv는 maxAbv보다 작거나 같아야 합니다.");
   }
 
-  // timing 필터와 카테고리 검증
-  if (timing && Array.isArray(timing) && timing.length > 0 && category !== "Cocktail") {
-    throw new InvalidFilterError("Cocktail이 아닌 주종에 timing 필터를 적용할 수 없습니다.");
-  }
-
 };
