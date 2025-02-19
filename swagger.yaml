@@ -2630,6 +2630,9 @@ paths:
                   items:
                     type: string
                   example: ["취하고 싶은 날"]
+                imageUrl:
+                    type: string
+                    example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
       responses:
         200:
           description: 검색 결과 반환
@@ -2692,6 +2695,7 @@ paths:
                               items:
                                 type: string
                               nullable: true
+                            
         400:
           description: 잘못된 요청
           content:
