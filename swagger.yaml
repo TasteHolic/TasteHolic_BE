@@ -2730,7 +2730,199 @@ paths:
                     message:
                       type: string
                       example: "서버 내부 오류가 발생했습니다."
+  /api/v1/users/search/alltype:
+    get:
+      summary: 공식 레시피 및 유저 레시피 검색
+      description: nameEng, nameKor 필드로 칵테일 테이블과 name 필드로 유저 레시피 테이블을 검색하여 해당하는 레시피를 반환합니다.
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: 검색할 키워드
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 검색 결과 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      officialRecipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: 칵테일 ID
+                            nameEng:
+                              type: string
+                              description: 영어 이름
+                            nameKor:
+                              type: string
+                              description: 한국어 이름
+                            ingredientsEng:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 영어로 된 재료 목록
+                            recipe:
+                              type: array
+                              items:
+                                type: string
+                              description: 레시피 단계
+                            aromas:
+                              type: array
+                              items:
+                                type: string
+                              description: 향
+                            tastes:
+                              type: array
+                              items:
+                                type: string
+                              description: 맛
+                            abv:
+                              type: string
+                              description: 알콜 도수
+                            createdAt:
+                              type: string
+                              format: date-time
+                              description: 생성일
+                            updatedAt:
+                              type: string
+                              format: date-time
+                              description: 업데이트일
+                            imageUrl:
+                              type: string
+                              description: 이미지 URL
+                            glass:
+                              type: string
+                              description: 사용할 잔 종류
+                            ingredientsKor:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 한국어로 된 재료 목록
+                            views:
+                              type: integer
+                              description: 조회수
+                            likes:
+                              type: integer
+                              description: 좋아요 수
+                            intro:
+                              type: string
+                              description: 레시피 소개
 
+                      userRecipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: 유저 레시피 ID
+                            userId:
+                              type: integer
+                              description: 유저 ID
+                            name:
+                              type: string
+                              description: 레시피 이름
+                            imageUrl:
+                              type: string
+                              nullable: true
+                              description: 이미지 URL (없을 경우 null)
+                            ingredients:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 유저가 입력한 재료 목록
+                            recipe:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 레시피 단계 (없을 경우 null)
+                            glassType:
+                              type: string
+                              nullable: true
+                              description: 유저가 입력한 잔 종류 (없을 경우 null)
+                            createdAt:
+                              type: string
+                              format: date-time
+                              description: 생성일
+                            updatedAt:
+                              type: string
+                              format: date-time
+                              description: 업데이트일
+                            status:
+                              type: string
+                              description: 레시피 상태
+                            tastes:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 맛 (없을 경우 null)
+                            aromas:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 향 (없을 경우 null)
+                            colors:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 색상 (없을 경우 null)
+                            likes:
+                              type: integer
+                              description: 좋아요 수
+                            abv:
+                              type: string
+                              nullable: true
+                              description: 알콜 도수 (없을 경우 null)
+                            views:
+                              type: integer
+                              description: 조회수
+        '400':
+          description: 검색어를 입력하지 않음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    example: "검색어를 입력하세요"
+        '500':
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    example: "데이터 검색 중 오류가 발생했습니다."
   /api/v1/home/pick:
     get:
       summary: 칵테일 추천
