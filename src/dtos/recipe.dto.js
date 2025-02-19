@@ -7,6 +7,8 @@ export const parseRecipeList = (recipes) => {
       ingredients: recipe.ingredientsEng || recipe.ingredients || {}, // `ingredientsEng` → `ingredients`로 변환
       ingredientsEng: undefined, // 기존 `ingredientsEng` 제거,
       imageUrl: recipe.imageUrl || null,
+      glass: recipe.glass || recipe.glassType || null,
+      glassType: undefined, // 잔 종류 통합
     };
   });
 };
@@ -34,6 +36,7 @@ export const parseRecipeDetail = (recipe, type) => {
     abv: recipe.abv ? parseFloat(recipe.abv) : 0, // ABV(도수) 통일
     views: recipe.views || 0,
     type: type, // `user` 또는 `cocktail` 구분
+    timing: recipe.timing || null,
   };
 };
 

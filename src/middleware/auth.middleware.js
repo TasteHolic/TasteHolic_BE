@@ -24,6 +24,7 @@ export const optionalAuthenticateToken = (req, res, next) => {
 
   if (!token) {
     req.user = null; // 로그인하지 않은 경우도 요청 허용
+    console.log("로그인하지 않은 사용자");
     return next();
   }
 
