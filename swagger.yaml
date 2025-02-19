@@ -2587,8 +2587,8 @@ paths:
           description: 서버 오류
   /api/v1/users/search/category:
     post:
-      summary: 술과 칵테일 검색(필터)
-      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술과 칵테일을 검색합니다.
+      summary: 술, 칵테일, 유저 레시피 검색(필터)
+      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술, 칵테일, 유저 레시피를 검색합니다.
       tags:
         - Search
       requestBody:
@@ -2630,6 +2630,9 @@ paths:
                   items:
                     type: string
                   example: ["취하고 싶은 날"]
+                imageUrl:
+                  type: string
+                  example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
       responses:
         200:
           description: 검색 결과 반환
@@ -2730,7 +2733,199 @@ paths:
                     message:
                       type: string
                       example: "서버 내부 오류가 발생했습니다."
+  /api/v1/users/search/alltype:
+    get:
+      summary: 공식 레시피 및 유저 레시피 검색
+      description: nameEng, nameKor 필드로 칵테일 테이블과 name 필드로 유저 레시피 테이블을 검색하여 해당하는 레시피를 반환합니다.
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: 검색할 키워드
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 검색 결과 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      officialRecipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: 칵테일 ID
+                            nameEng:
+                              type: string
+                              description: 영어 이름
+                            nameKor:
+                              type: string
+                              description: 한국어 이름
+                            ingredientsEng:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 영어로 된 재료 목록
+                            recipe:
+                              type: array
+                              items:
+                                type: string
+                              description: 레시피 단계
+                            aromas:
+                              type: array
+                              items:
+                                type: string
+                              description: 향
+                            tastes:
+                              type: array
+                              items:
+                                type: string
+                              description: 맛
+                            abv:
+                              type: string
+                              description: 알콜 도수
+                            createdAt:
+                              type: string
+                              format: date-time
+                              description: 생성일
+                            updatedAt:
+                              type: string
+                              format: date-time
+                              description: 업데이트일
+                            imageUrl:
+                              type: string
+                              description: 이미지 URL
+                            glass:
+                              type: string
+                              description: 사용할 잔 종류
+                            ingredientsKor:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 한국어로 된 재료 목록
+                            views:
+                              type: integer
+                              description: 조회수
+                            likes:
+                              type: integer
+                              description: 좋아요 수
+                            intro:
+                              type: string
+                              description: 레시피 소개
 
+                      userRecipes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: 유저 레시피 ID
+                            userId:
+                              type: integer
+                              description: 유저 ID
+                            name:
+                              type: string
+                              description: 레시피 이름
+                            imageUrl:
+                              type: string
+                              nullable: true
+                              description: 이미지 URL (없을 경우 null)
+                            ingredients:
+                              type: object
+                              additionalProperties:
+                                type: string
+                              description: 유저가 입력한 재료 목록
+                            recipe:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 레시피 단계 (없을 경우 null)
+                            glassType:
+                              type: string
+                              nullable: true
+                              description: 유저가 입력한 잔 종류 (없을 경우 null)
+                            createdAt:
+                              type: string
+                              format: date-time
+                              description: 생성일
+                            updatedAt:
+                              type: string
+                              format: date-time
+                              description: 업데이트일
+                            status:
+                              type: string
+                              description: 레시피 상태
+                            tastes:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 맛 (없을 경우 null)
+                            aromas:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 향 (없을 경우 null)
+                            colors:
+                              type: array
+                              items:
+                                type: string
+                              nullable: true
+                              description: 유저가 입력한 색상 (없을 경우 null)
+                            likes:
+                              type: integer
+                              description: 좋아요 수
+                            abv:
+                              type: string
+                              nullable: true
+                              description: 알콜 도수 (없을 경우 null)
+                            views:
+                              type: integer
+                              description: 조회수
+        '400':
+          description: 검색어를 입력하지 않음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    example: "검색어를 입력하세요"
+        '500':
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    example: "데이터 검색 중 오류가 발생했습니다."
   /api/v1/home/pick:
     get:
       summary: 칵테일 추천
@@ -2901,6 +3096,154 @@ paths:
                   error:
                     type: string
                     description: "오류 메시지"
+  /api/auth/kakao/login:
+    get:
+      summary: 카카오 로그인 페이지로 리디렉트
+      description: 사용자를 카카오 OAuth 2.0 로그인 페이지로 리디렉트.
+      tags:
+        - Authentication
+      responses:
+        302:
+          description: 카카오 로그인 페이지로 리디렉트
+          headers:
+            Location:
+              description: 카카오 로그인 URL
+              schema:
+                type: string
+                example: "https://kauth.kakao.com/oauth/authorize?client_id=YOUR_KAKAO_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code"
+
+  /api/auth/kakao/callback:
+    post:
+      summary: 카카오 로그인 콜백 (Authorization Code → Access Token 변환)
+      description: 카카오에서 Authorization Code를 받아, Access Token을 요청 후 JWT를 반환.
+      tags:
+        - Authentication
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 카카오에서 받은 Authorization Code
+      responses:
+        200:
+          description: JWT 발급 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그인 성공"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+        400:
+          description: Authorization Code 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Authorization code is missing"
+        500:
+          description: 카카오 API 요청 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to get access token"
+
+  /api/auth/kakao/user:
+    get:
+      summary: 로그인한 사용자 정보 가져오기
+      description: JWT를 이용해 로그인한 카카오 사용자 정보를 조회.
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: [] # JWT 인증 필요
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JWT Access Token
+      responses:
+        200:
+          description: 사용자 정보 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123456789
+                  email:
+                    type: string
+                    example: "user@example.com"
+        401:
+          description: 인증 실패 (잘못된 토큰)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid token"
+
+  /api/auth/kakao/logout:
+    post:
+      summary: 카카오 로그아웃
+      description: 카카오 Access Token을 만료시켜 로그아웃 처리.
+      tags:
+        - Authentication
+      parameters:
+        - name: accessToken
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 카카오 Access Token
+      responses:
+        200:
+          description: 로그아웃 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "로그아웃 완료"
+        401:
+          description: 인증 실패 (토큰 없음)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access Token required"
+        500:
+          description: 카카오 API 요청 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to logout user"
 
 components:
   securitySchemes:
