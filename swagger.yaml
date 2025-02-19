@@ -2876,13 +2876,16 @@ paths:
       description: 카카오에서 Authorization Code를 받아, Access Token을 요청 후 JWT를 반환.
       tags:
         - Authentication
-      parameters:
-        - name: code
-          in: query
-          required: true
-          schema:
-            type: string
-          description: 카카오에서 받은 Authorization Code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 카카오에서 받은 Authorization Code
       responses:
         200:
           description: JWT 발급 성공
@@ -2964,13 +2967,16 @@ paths:
       description: 카카오 Access Token을 만료시켜 로그아웃 처리.
       tags:
         - Authentication
-      parameters:
-        - name: accessToken
-          in: query
-          required: true
-          schema:
-            type: string
-          description: 카카오 Access Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: 카카오 Access Token
       responses:
         200:
           description: 로그아웃 성공
