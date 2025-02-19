@@ -1,4 +1,4 @@
-//repository
+// repository
 
 import { prisma } from "../../db.config.js";
 
@@ -10,7 +10,8 @@ const selectCocktailFields = {
   aromas: true,
   tastes: true,
   recipe: true,
-  timing: true
+  timing: true,
+  imageUrl: true
 };
 
 const selectAlcoholFields = {
@@ -22,6 +23,18 @@ const selectAlcoholFields = {
   tastes: true,
   categoryEng: true,
   categoryKor: true,
+  imageUrl: true
+};
+
+const selectUserRecipeFields = {
+  id: true,
+  name: true,
+  abv: true,
+  aromas: true,
+  tastes: true,
+  ingredients: true,
+  recipe: true,
+  imageUrl: true
 };
 
 export const findAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, taste, timing) => {
@@ -47,40 +60,48 @@ export const findAlcoholsAndCocktails = async (category, minAbv, maxAbv, aroma, 
     conditions.AND.push(...taste.map(t => ({ tastes: { array_contains: t } })));
   }
 
-  // timing 필터 (Cocktail 전용)
-  if (timing?.length > 0) {
-    conditions.AND.push(...timing.map(time => ({ timing: { array_contains: time } })));
+  let cocktails = [];
+  let alcohols = [];
+  let userRecipes = await prisma.userRecipes.findMany({ select: selectUserRecipeFields });
+
+  if (timing?.length > 0 || category === "Cocktail") {
+    if (timing?.length > 0) {
+      conditions.AND.push(...timing.map(time => ({ timing: { array_contains: time } })));
+    }
+    cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
+    return cocktails;
   }
 
-  // 카테고리 필터 적용
   if (category) {
     switch (category) {
-      case "Cocktail":
-        return await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
-
       case "Whiskey":
         conditions.AND.push({ Category: "Whiskey" });
-        return await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        userRecipes = userRecipes.filter(recipe => recipe.ingredients && Object.keys(recipe.ingredients).includes("Whiskey"));
+        break;
 
       case "Gin/Rum/Tequila":
         conditions.AND.push({ Category: { in: ["Gin", "Rum", "Tequila"] } });
-        return await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        userRecipes = userRecipes.filter(recipe => 
+          recipe.ingredients && ["Gin", "Rum", "Tequila"].some(ing => Object.keys(recipe.ingredients).includes(ing))
+        );
+        break;
 
       case "Others":
         conditions.AND.push({ Category: { notIn: ["Whiskey", "Gin", "Rum", "Tequila"] } });
-        return await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        userRecipes = userRecipes.filter(recipe => 
+          recipe.ingredients && !["Whiskey", "Gin", "Rum", "Tequila"].some(ing => Object.keys(recipe.ingredients).includes(ing))
+        );
+        break;
 
-      case "All": 
-        const cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
-        const alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
-        return [...cocktails, ...alcohols];
-
+      case "All":
+        cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
+        alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
+        break;
     }
   }
 
-  // category가 없으면 모든 데이터를 가져옴
-  const cocktails = await prisma.cocktails.findMany({ where: conditions, select: selectCocktailFields });
-  const alcohols = await prisma.alcohols.findMany({ where: conditions, select: selectAlcoholFields });
-
-  return [...cocktails, ...alcohols];
+  return [...cocktails, ...alcohols, ...userRecipes];
 };
