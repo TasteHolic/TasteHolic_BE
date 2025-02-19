@@ -177,7 +177,7 @@ export const handleGetAllTastingNotes = async (req, res, next) => {
   console.log("Request received for /api/v1/users/tasting-note/list"); // 이 로그가 콘솔에 출력되는지 확인
 
   try {
-    const { type } = req.query; // 타입 쿼리 파라미터 (cocktail, whiskey, gin, rum, tequila, wine, beer, other)
+    const { type } = req.query; // 타입 쿼리 파라미터 (cocktail, whiskey&rum&tequila, wine, other)
     console.log(type);
     const userId = req.user.id;
     
