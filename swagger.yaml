@@ -4,7 +4,7 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: http://54.180.45.230:3000/swagger
     description: TasteHolic Server URL
 # 예시
 paths:
