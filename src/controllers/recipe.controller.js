@@ -110,12 +110,8 @@ export const getRecipeList = async (req, res, next) => {
     const parsedRecipes = parseRecipeList(recipes);
 
     // 로그인한 경우만 `myBar` 값을 계산
-    const recipesWithMyBar = await Promise.all(
-      parsedRecipes.map(async (recipe) => ({
-        ...recipe,
-        myBar: await applyMyBarFilter(userId, recipe),
-      }))
-    );
+    const recipesWithMyBar = await applyMyBarFilter(userId, parsedRecipes);
+
 
     res.status(StatusCodes.OK).success({
       recipes: recipesWithMyBar,
