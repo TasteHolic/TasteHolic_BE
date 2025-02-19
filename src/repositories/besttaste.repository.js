@@ -17,8 +17,9 @@ UNION ALL
 SELECT 
     id, 
     nameKor,
-    'cocktail' AS category, 
+    
     imageUrl,
+    'cocktail' AS category, 
     intro
 FROM Cocktails
 WHERE id IN (10, 4, 11);
