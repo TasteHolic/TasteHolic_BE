@@ -220,95 +220,6 @@ paths:
                     type: object
                     nullable: true
                     example: null
-  /api/v1/users/my-bar/search:
-    get:
-      summary: 마이바에 있는 술들을 기반으로 칵테일과 유저 레시피 검색.
-      security:
-        - bearerAuth: [] # 이 경로는 인증이 필요함
-      description: 해당하는 칵테일과 유저 레시피를 반환.
-      tags:
-        - MyBar
-      responses:
-        200:
-          description: 칵테일과 유저 레시피 정보
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resultType:
-                    type: string
-                    example: "SUCCESS"
-                  error:
-                    type: object
-                    nullable: true
-                    properties:
-                      code:
-                        type: string
-                        example: null
-                      message:
-                        type: string
-                        example: null
-                  success:
-                    type: object
-                    properties:
-                      data:
-                        type: object
-                        properties:
-                          cocktails:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                nameEng:
-                                  type: string
-                                nameKor:
-                                  type: string
-                                ingredientsEng:
-                                  type: object
-                                  additionalProperties:
-                                    type: string
-                                recipe:
-                                  type: array
-                                  items:
-                                    type: string
-                                aromas:
-                                  type: array
-                                  items:
-                                    type: string
-                                tastes:
-                                  type: array
-                                  items:
-                                    type: string
-                                abv:
-                                  type: string
-                                glass:
-                                  type: string
-                                ingredientsKor:
-                                  type: object
-                                  additionalProperties:
-                                    type: string
-                          recipes:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                userId:
-                                  type: integer
-                                name:
-                                  type: string
-                                ingredients:
-                                  type: object
-                                  additionalProperties:
-                                    type: string
-                                status:
-                                  type: string
-                                likes:
-                                  type: integer
   /api/v1/recipes:
     post:
       summary: 유저 레시피 등록
@@ -1429,12 +1340,199 @@ paths:
                     type: integer
                     nullable: true
                     example: null
+  /api/v1/search:
+    post:
+      summary: "칵테일 및 유저 레시피 검색(로그인X)"
+      description: "사용자가 원하는 조건으로 칵테일을 검색할 수 있는 API, 로그인 시에는 myBar 필터링 (스웨거에서는 선택전 로그인 지원안해서 확인 불가. 포스트맨으로 확인함)"
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: "검색어 (이름 검색)"
+                category:
+                  type: string
+                  description: "카테고리 필터 (예: Whiskey, Gin/Rum/Tequila, Others)"
+                minAbv:
+                  type: integer
+                  description: "최소 도수"
+                  example: 10
+                maxAbv:
+                  type: integer
+                  description: "최대 도수"
+                  example: 40
+                aroma:
+                  type: array
+                  items:
+                    type: string
+                  description: "향 필터 (예: Citrus, Floral 등) 한국어, 영어 둘 다 어레이로 주세요"
+                taste:
+                  type: array
+                  items:
+                    type: string
+                  description: "맛 필터 (예: Sweet, Sour 등) 한국어, 영어 둘 다 어레이로 주세요"
+                timing:
+                  type: array
+                  items:
+                    type: string
+                  description: "마시는 상황 필터 (예: 취하고 싶은 날 등)"
+      responses:
+        "200":
+          description: "검색 성공"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: "null"
+                    example: null
+                  success:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 30
+                        userId:
+                          type: integer
+                          example: 65
+                        name:
+                          type: string
+                          example: "간단하게 만드는 럼 드링크"
+                        nameEng:
+                          type: string
+                          nullable: true
+                          example: null
+                        imageUrl:
+                          type: string
+                          nullable: true
+                          example: null
+                        ingredients:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            "소다수": "적당량"
+                            "민트 잎": "7개"
+                            "라이트 럼": "2 온스"
+                            "라임 웨지": "3개"
+                            "심플 시럽": "3/4 온스"
+                        ingredientsKor:
+                          type: string
+                          nullable: true
+                          example: null
+                        recipe:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "재료들을 함께 넣고 섞는다"
+                            - "차갑게 마신다"
+                        glassType:
+                          type: string
+                          example: "마티니 글라스스"
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-14T13:57:33.000Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-02-14T13:57:33.000Z"
+                        status:
+                          type: string
+                          example: "published"
+                        tastes:
+                          type: array
+                          items:
+                            type: string
+                          example: ["Sweet", "Sour"]
+                        aromas:
+                          type: array
+                          items:
+                            type: string
+                          example: ["Citrus"]
+                        colors:
+                          type: string
+                          nullable: true
+                          example: null
+                        likes:
+                          type: integer
+                          example: 0
+                        abv:
+                          type: integer
+                          example: 12
+                        views:
+                          type: integer
+                          example: 0
+                        type:
+                          type: string
+                          example: "user"
+                        myBar:
+                          type: boolean
+                          example: false
+        "400":
+          description: "잘못된 요청 (입력값 오류)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "BAD_REQUEST"
+                      reason:
+                        type: string
+                        example: "Invalid request parameters"
+                  success:
+                    type: "null"
+                    example: null
+        "500":
+          description: "서버 내부 오류"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "FAIL"
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: "INTERNAL_SERVER_ERROR"
+                      reason:
+                        type: string
+                        example: "Unexpected error occurred"
+                  success:
+                    type: "null"
+                    example: null
+
   /api/v1/users/tasting-note/search:
     get:
       summary: 주류 검색
       description: 검색어와 타입을 입력하면 해당 주류 정보를 조회합니다.
       tags:
-        - Search
+        - TastingNote
       parameters:
         - name: query
           in: query
@@ -1525,46 +1623,46 @@ paths:
         content:
           application/json:
             schema:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      description: "테이스팅한 칵테일의 이름"
-                    tasteRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "맛 평가"
-                    aromaRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "향 평가"
-                    abv:
-                      type: number
-                      format: float
-                      description: "알콜 도수 (칵테일)"
-                    color:
-                      type: array
-                      items:
-                        type: string
-                      nullable: true
-                      description: "색상 평가"
-                    finishRating:
-                        type: array
-                        items:
-                          type: string
-                        nullable: true
-                        description: "마지막 맛 평가"
-                    description:
-                      type: string
-                      description: "칵테일에 대한 설명"
-                  required:
-                    - name
-                    - tasteRating
-                    - aromaRating
-                    - abv
-                    - description
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "테이스팅한 칵테일의 이름"
+                tasteRating:
+                  type: array
+                  items:
+                    type: string
+                  description: "맛 평가"
+                aromaRating:
+                  type: array
+                  items:
+                    type: string
+                  description: "향 평가"
+                abv:
+                  type: number
+                  format: float
+                  description: "알콜 도수 (칵테일)"
+                color:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  description: "색상 평가"
+                finishRating:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  description: "마지막 맛 평가"
+                description:
+                  type: string
+                  description: "칵테일에 대한 설명"
+              required:
+                - name
+                - tasteRating
+                - aromaRating
+                - abv
+                - description
       responses:
         "200(칵테일)":
           description: "테이스팅 노트 작성 성공"
@@ -1645,10 +1743,10 @@ paths:
                         format: float
                         description: "알콜 도수 (알코올)"
                       finishRating:
-                          type: array
-                          items:
-                            type: string
-                          description: "마지막 맛 평가"
+                        type: array
+                        items:
+                          type: string
+                        description: "마지막 맛 평가"
                       description:
                         type: string
                         description: "알코올에 대한 설명"
@@ -1720,42 +1818,42 @@ paths:
         content:
           application/json:
             schema:
-                  type: object
-                  properties:
-                    tasteRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "맛 평가"
-                    aromaRating:
-                      type: array
-                      items:
-                        type: string
-                      description: "향 평가"
-                    abv:
-                      type: number
-                      format: float
-                      description: "알콜 도수 (칵테일)"
-                    color:
-                      type: array
-                      items:
-                        type: string
-                      nullable: true
-                      description: "색상 평가"
-                    finishRating:
-                        type: array
-                        items:
-                          type: string
-                        nullable: true
-                        description: "마지막 맛 평가"
-                    description:
-                      type: string
-                      description: "칵테일에 대한 설명"
-                  required:
-                    - tasteRating
-                    - aromaRating
-                    - abv
-                    - description
+              type: object
+              properties:
+                tasteRating:
+                  type: array
+                  items:
+                    type: string
+                  description: "맛 평가"
+                aromaRating:
+                  type: array
+                  items:
+                    type: string
+                  description: "향 평가"
+                abv:
+                  type: number
+                  format: float
+                  description: "알콜 도수 (칵테일)"
+                color:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  description: "색상 평가"
+                finishRating:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  description: "마지막 맛 평가"
+                description:
+                  type: string
+                  description: "칵테일에 대한 설명"
+              required:
+                - tasteRating
+                - aromaRating
+                - abv
+                - description
       responses:
         "200(칵테일)":
           description: "테이스팅 노트 수정 성공"
@@ -1836,11 +1934,11 @@ paths:
                         format: float
                         description: "알콜 도수 (알코올)"
                       finishRating:
-                          type: array
-                          items:
-                            type: string
-                          nullable: true
-                          description: "마지막 맛 평가"
+                        type: array
+                        items:
+                          type: string
+                        nullable: true
+                        description: "마지막 맛 평가"
                       description:
                         type: string
                         description: "알코올에 대한 설명"
@@ -2585,347 +2683,7 @@ paths:
                             type: string
         500:
           description: 서버 오류
-  /api/v1/users/search/category:
-    post:
-      summary: 술, 칵테일, 유저 레시피 검색(필터)
-      description: 카테고리, 도수 범위, 아로마, 맛, 타이밍 필터를 적용하여 술, 칵테일, 유저 레시피를 검색합니다.
-      tags:
-        - Search
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                category:
-                  type: string
-                  enum:
-                    ["All", "Cocktail", "Whiskey", "Gin/Rum/Tequila", "Others"]
-                  example: "Cocktail"
-                minAbv:
-                  type: number
-                  format: float
-                  minimum: 0
-                  maximum: 100
-                  example: 10
-                maxAbv:
-                  type: number
-                  format: float
-                  minimum: 0
-                  maximum: 100
-                  example: 40
-                aroma:
-                  type: array
-                  items:
-                    type: string
-                  example: ["라임", "시트러스"]
-                taste:
-                  type: array
-                  items:
-                    type: string
-                  example: ["달콤함", "상쾌함", "드라이함"]
-                timing:
-                  type: array
-                  items:
-                    type: string
-                  example: ["취하고 싶은 날"]
-                imageUrl:
-                  type: string
-                  example: "https://images.cocktailflow.com/v1/cocktail/w_300,h_540/cocktail_amaretto_sour-1.png"
-      responses:
-        200:
-          description: 검색 결과 반환
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resultType:
-                    type: string
-                    example: "SUCCESS"
-                  error:
-                    type: object
-                    nullable: true
-                    properties:
-                      code:
-                        type: string
-                        example: null
-                      message:
-                        type: string
-                        example: null
-                  success:
-                    type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                            nameEng:
-                              type: string
-                            nameKor:
-                              type: string
-                            abv:
-                              type: number
-                              format: float
-                            aromas:
-                              type: array
-                              items:
-                                type: string
-                            tastes:
-                              type: array
-                              items:
-                                type: string
-                            categoryEng:
-                              type: string
-                              nullable: true
-                            categoryKor:
-                              type: string
-                              nullable: true
-                            recipe:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-                            timing:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-        400:
-          description: 잘못된 요청
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resultType:
-                    type: string
-                    example: "FAILURE"
-                  error:
-                    type: object
-                    properties:
-                      code:
-                        type: string
-                        example: "S002"
-                      message:
-                        type: string
-                        example: "유효한 카테고리를 선택해야 합니다."
-      500:
-        description: 서버 오류
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resultType:
-                  type: string
-                  example: "FAILURE"
-                error:
-                  type: object
-                  properties:
-                    code:
-                      type: string
-                      example: "UNKNOWN"
-                    message:
-                      type: string
-                      example: "서버 내부 오류가 발생했습니다."
-  /api/v1/users/search/alltype:
-    get:
-      summary: 공식 레시피 및 유저 레시피 검색
-      description: nameEng, nameKor 필드로 칵테일 테이블과 name 필드로 유저 레시피 테이블을 검색하여 해당하는 레시피를 반환합니다.
-      tags:
-        - Search
-      parameters:
-        - name: query
-          in: query
-          required: true
-          description: 검색할 키워드
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 검색 결과 반환
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  resultType:
-                    type: string
-                    example: "SUCCESS"
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  success:
-                    type: object
-                    properties:
-                      officialRecipes:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              description: 칵테일 ID
-                            nameEng:
-                              type: string
-                              description: 영어 이름
-                            nameKor:
-                              type: string
-                              description: 한국어 이름
-                            ingredientsEng:
-                              type: object
-                              additionalProperties:
-                                type: string
-                              description: 영어로 된 재료 목록
-                            recipe:
-                              type: array
-                              items:
-                                type: string
-                              description: 레시피 단계
-                            aromas:
-                              type: array
-                              items:
-                                type: string
-                              description: 향
-                            tastes:
-                              type: array
-                              items:
-                                type: string
-                              description: 맛
-                            abv:
-                              type: string
-                              description: 알콜 도수
-                            createdAt:
-                              type: string
-                              format: date-time
-                              description: 생성일
-                            updatedAt:
-                              type: string
-                              format: date-time
-                              description: 업데이트일
-                            imageUrl:
-                              type: string
-                              description: 이미지 URL
-                            glass:
-                              type: string
-                              description: 사용할 잔 종류
-                            ingredientsKor:
-                              type: object
-                              additionalProperties:
-                                type: string
-                              description: 한국어로 된 재료 목록
-                            views:
-                              type: integer
-                              description: 조회수
-                            likes:
-                              type: integer
-                              description: 좋아요 수
-                            intro:
-                              type: string
-                              description: 레시피 소개
 
-                      userRecipes:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              description: 유저 레시피 ID
-                            userId:
-                              type: integer
-                              description: 유저 ID
-                            name:
-                              type: string
-                              description: 레시피 이름
-                            imageUrl:
-                              type: string
-                              nullable: true
-                              description: 이미지 URL (없을 경우 null)
-                            ingredients:
-                              type: object
-                              additionalProperties:
-                                type: string
-                              description: 유저가 입력한 재료 목록
-                            recipe:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-                              description: 유저가 입력한 레시피 단계 (없을 경우 null)
-                            glassType:
-                              type: string
-                              nullable: true
-                              description: 유저가 입력한 잔 종류 (없을 경우 null)
-                            createdAt:
-                              type: string
-                              format: date-time
-                              description: 생성일
-                            updatedAt:
-                              type: string
-                              format: date-time
-                              description: 업데이트일
-                            status:
-                              type: string
-                              description: 레시피 상태
-                            tastes:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-                              description: 유저가 입력한 맛 (없을 경우 null)
-                            aromas:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-                              description: 유저가 입력한 향 (없을 경우 null)
-                            colors:
-                              type: array
-                              items:
-                                type: string
-                              nullable: true
-                              description: 유저가 입력한 색상 (없을 경우 null)
-                            likes:
-                              type: integer
-                              description: 좋아요 수
-                            abv:
-                              type: string
-                              nullable: true
-                              description: 알콜 도수 (없을 경우 null)
-                            views:
-                              type: integer
-                              description: 조회수
-        '400':
-          description: 검색어를 입력하지 않음
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-                    example: "검색어를 입력하세요"
-        '500':
-          description: 서버 오류
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-                    example: "데이터 검색 중 오류가 발생했습니다."
   /api/v1/home/pick:
     get:
       summary: 칵테일 추천
