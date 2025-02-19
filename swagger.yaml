@@ -4,7 +4,7 @@ info:
   description: TasteHolic API 서버 문서
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: http://54.180.45.230:3000/
     description: TasteHolic Server URL
 # 예시
 paths:
@@ -2876,16 +2876,13 @@ paths:
       description: 카카오에서 Authorization Code를 받아, Access Token을 요청 후 JWT를 반환.
       tags:
         - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  description: 카카오에서 받은 Authorization Code
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 카카오에서 받은 Authorization Code
       responses:
         200:
           description: JWT 발급 성공
@@ -2967,16 +2964,13 @@ paths:
       description: 카카오 Access Token을 만료시켜 로그아웃 처리.
       tags:
         - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                accessToken:
-                  type: string
-                  description: 카카오 Access Token
+      parameters:
+        - name: accessToken
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 카카오 Access Token
       responses:
         200:
           description: 로그아웃 성공
