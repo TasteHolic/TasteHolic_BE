@@ -33,7 +33,7 @@ export const addBar = async (data) => {
   let id = null;
   let image = null;
 
-  if (alcohol != null){
+  if (alcohol != null) {
     id = alcohol.id;
     image = alcohol.imageUrl;
   }
@@ -54,13 +54,13 @@ export const addBar = async (data) => {
 export const viewBar = async (userId) => {
   const bar = await prisma.MyBars.findMany({
     where: { userId: userId },
-    select: { 
-              id: true,
-              alcoholId: true,
-              name: true,
-              category: true,
-              imageUrl: true
-            },
+    select: {
+      id: true,
+      alcoholId: true,
+      name: true,
+      category: true,
+      imageUrl: true,
+    },
   });
 
   if (!bar || bar.length === 0) {
@@ -88,66 +88,71 @@ export const deleteBar = async (barId) => {
 };
 
 export const searchBar = async (userId) => {
+  // 🔹 유저가 보유한 술 정보 가져오기
   const mybar = await prisma.MyBars.findMany({
     where: { userId: userId },
-    select: { category: true },
+    select: { category: true, name: true }, // ✅ 카테고리 + 술 이름 가져오기
   });
 
-  const categories = [...new Set(mybar.map((bar) => bar.category))];
-  console.log("검색할 카테고리:", categories);
+  // 🔹 유저가 보유한 술 이름과 카테고리 목록 만들기
+  const ingredients = [...new Set(mybar.map((bar) => bar.name))]; // ✅ 술 이름 리스트
+  const categories = [...new Set(mybar.map((bar) => bar.category))]; // ✅ 카테고리 리스트
 
-  if (categories.length === 0) {
+  if (ingredients.length === 0 && categories.length === 0) {
     return {
       cocktails: [],
       recipes: [],
     };
   }
 
-  // Cocktails 검색
+  // 사용할 재료 및 카테고리 리스트 합치기
+  const searchItems = [...ingredients, ...categories];
+
+  // 🔹 Cocktails 검색 (이름 + 카테고리 포함)
+  // JSON_KEYS로 JSON 객체의 모든 키를 문자열로 변환한 후, LIKE로 부분 매칭
   const cocktailsQuery = Prisma.sql`
         SELECT *
         FROM Cocktails
-        WHERE ${Prisma.join(
-          categories.map(
-            (category) =>
-              Prisma.sql`JSON_EXTRACT(ingredientsEng, ${`$."${category}"`}) IS NOT NULL`
+        WHERE (${Prisma.join(
+          searchItems.map(
+            (item) =>
+              Prisma.sql`
+                CAST(JSON_KEYS(ingredientsEng) AS CHAR) LIKE CONCAT('%', ${item}, '%')
+                OR CAST(JSON_KEYS(ingredientsKor) AS CHAR) LIKE CONCAT('%', ${item}, '%')
+              `
           ),
           " OR "
-        )}
+        )})
       `;
 
   const cocktails = await prisma.$queryRaw(cocktailsQuery);
 
-  // UserRecipes 검색
+  // 🔹 UserRecipes 검색 (이름 + 카테고리 포함)
   const recipesQuery = Prisma.sql`
         SELECT *
         FROM UserRecipes
-        WHERE ${Prisma.join(
-          categories.map(
-            (category) =>
-              Prisma.sql`JSON_EXTRACT(ingredients, ${`$."${category}"`}) IS NOT NULL`
+        WHERE (${Prisma.join(
+          searchItems.map(
+            (item) =>
+              Prisma.sql`
+                CAST(JSON_KEYS(ingredients) AS CHAR) LIKE CONCAT('%', ${item}, '%')
+              `
           ),
           " OR "
-        )}
+        )})
       `;
 
   const recipes = await prisma.$queryRaw(recipesQuery);
-
   return {
     cocktails,
     recipes,
   };
 };
 
-
-
 export const findAlcoholsByCategory = async (category) => {
   return await prisma.alcohols.findMany({
     where: {
-      OR: [
-        { categoryEng: category },
-        { categoryKor: category },
-      ],
+      OR: [{ categoryEng: category }, { categoryKor: category }],
     },
     select: {
       id: true,

@@ -59,7 +59,7 @@ import {
   handleGetTastingNote,
   handleGetAllTastingNotes,
 } from "./controllers/tastingnote.controller.js";
-import {handleSearch} from "./controllers/search.controller.js";
+import { handleSearch } from "./controllers/search.controller.js";
 import {
   authenticateToken,
   optionalAuthenticateToken,
@@ -195,7 +195,6 @@ app.get(
   handleGetAllTastingNotes
 );
 
-
 app.post("/api/v1/users/register", handleRegisterUser);
 app.post("/api/v1/users/login", handleLoginUser);
 app.post("/api/v1/users/logout", authenticateToken, handleLogoutUser);
@@ -216,8 +215,8 @@ app.post(
 );
 app.post("/api/v1/users/check-email", handleCheckEmail);
 
-app.post("/api/v1/users/search/category", handleSearch);
-app.get("/api/v1/users/search/alltype", optionalAuthenticateToken, handleAllTypeSearch);
+app.post("/api/v1/search", optionalAuthenticateToken, handleSearch);
+// app.get("/api/v1/users/search/alltype", optionalAuthenticateToken, handleAllTypeSearch);
 
 app.get("/api/v1/home/best", handleGetBestTaste);
 app.get("/api/v1/home/pick", handleGetRandomCocktails);
@@ -298,7 +297,8 @@ app.get("/api/auth/kakao/user", async (req, res) => {
 // 🔹 4️⃣ 로그아웃 (POST ✅)
 app.post("/api/auth/kakao/logout", async (req, res) => {
   const { accessToken } = req.body; // GET → POST 변경했으므로 body에서 accessToken을 받아야 함
-  if (!accessToken) return res.status(401).json({ error: "Access Token required" });
+  if (!accessToken)
+    return res.status(401).json({ error: "Access Token required" });
 
   try {
     await axios.post(
