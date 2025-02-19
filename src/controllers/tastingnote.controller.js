@@ -51,7 +51,7 @@ export const handleUserTastingNote = async (req, res, next) => {
     res.status(StatusCodes.OK).success(tastingnote);
   } catch (error) {
     console.error("오류 발생:", error.message);
-    next(err);
+    next(error);
   }
 };
 
@@ -105,7 +105,7 @@ export const handleUpdateTastingNote = async (req, res, next) => {
     res.status(StatusCodes.OK).success(updatedTastingNote);
   } catch (error) {
     console.error("테이스팅 노트 수정 오류:", error.message);
-    next(err);
+    next(error);
   }
 };
 
@@ -142,13 +142,13 @@ export const handleDeleteTastingNote = async (req, res, next) => {
     // 테이스팅 노트 삭제
     const deletedNote = await deleteTastingNote(noteId, type);
     if (!deletedNote) {
-      next(err);
+      throw new error();
     }
 
     res.status(StatusCodes.OK).success("테이스팅 노트가 성공적으로 삭제되었습니다.");
   } catch (error) {
     console.error("테이스팅 노트 삭제 오류:", error.message);
-    next(err);
+    next(error);
   }
 };
 
