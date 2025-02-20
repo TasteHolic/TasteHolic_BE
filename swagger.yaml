@@ -387,8 +387,8 @@ paths:
           required: true
           schema:
             type: string
-            enum: [user, zero, high, fruity, under2, fav]
-          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하, fav: 내가 좋아요한한 레시피)"
+            enum: [user, zero, high, fruity, under2]
+          description: "레시피 필터링 타입 (user: 유저 레시피, zero: 무알콜, high: 도수 높은 칵테일, fruity: 과일 향 레시피, under2: 재료 2개 이하"
         - name: cursor
           in: query
           required: false
@@ -1274,7 +1274,7 @@ paths:
                               type: string
                               enum: ["high", "medium", "low", "non-alcohol"]
                               example: "high"
-  /users/recipes/fav:
+  /api/v1/users/recipes/fav:
     get:
       tags:
         - Recipes
