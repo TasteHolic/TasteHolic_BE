@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://54.180.45.230:3000/
     description: TasteHolic Server URL
+  - url: http://localhost:3000/
+    description: local Server URL
 # 예시
 paths:
   /api/v1/users/my-bar/post:
