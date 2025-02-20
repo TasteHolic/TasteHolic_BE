@@ -7,8 +7,11 @@ import yaml from "js-yaml";
 import swaggerUi from "swagger-ui-express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { prisma } from "../db.config.js";
+import { StatusCodes } from "http-status-codes";
 
 import dotenv from "dotenv";
+import axios from "axios";
 
 import {
   handleRegisterUser,
@@ -44,6 +47,7 @@ import {
   logoutUser,
   deleteUser,
   socialLogin,
+  generateToken,
 } from "./services/user.service.js";
 import {
   handleUserTastingNote,
@@ -219,8 +223,7 @@ app.get("/api/v1/home/pick", handleGetRandomCocktails);
 // 카카오 설정
 const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
 const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET;
-const REDIRECT_URI = "http://54.180.45.230:3000/api/auth/kakao/callback";
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // JWT 비밀 키
+const REDIRECT_URI = process.env.REDIRECT_URI;
 
 // 🔹 1️⃣ 프론트엔드에서 카카오 로그인 요청 → 카카오 로그인 페이지로 리디렉트 (GET ✅)
 app.get("/api/auth/kakao/login", (req, res) => {
@@ -229,10 +232,10 @@ app.get("/api/auth/kakao/login", (req, res) => {
 });
 
 // 🔹 2️⃣ 카카오에서 Authorization Code 수신 → Access Token 요청 & JWT 발급 (POST ✅)
-app.post("/api/auth/kakao/callback", async (req, res) => {
-  const { code } = req.body; // GET → POST 변경했으므로 body에서 code를 받아야 함
-  if (!code)
-    return res.status(400).json({ error: "Authorization code is missing" });
+app.get("/api/auth/kakao/callback", async (req, res) => {
+  console.log("카카오 리디렉션 요청이 들어왔습니다.");
+  const { code } = req.query; // `GET` 방식으로 받은 `code`
+  if (!code) return res.status(400).json({ error: "Authorization code is missing" });
 
   try {
     // Authorization Code → Access Token 변환
@@ -257,47 +260,71 @@ app.post("/api/auth/kakao/callback", async (req, res) => {
 
     const kakaoUser = userResponse.data;
 
-    // JWT 발급 (7일 동안 유효)
-    const token = jwt.sign(
-      { id: kakaoUser.id, email: kakaoUser.kakao_account?.email },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // DB에서 기존 사용자 확인 (email로)
+    const existingUser = await prisma.users.findUnique({
+      where: { email: kakaoUser.kakao_account.email },
+    });
 
-    // 프론트엔드 리디렉트 + JWT 전달
-    res.redirect(`http://54.180.45.230:3000/oauth/kakao?token=${token}`);
+    let user;
+
+    // 기존 사용자 있으면 업데이트, 없으면 새로 생성
+    if (existingUser) {
+      user = await prisma.users.update({
+        where: { email: kakaoUser.kakao_account.email },
+        data: {
+          nickname: kakaoUser.kakao_account.profile.nickname, // 카카오에서 제공하는 닉네임
+          imageUrl: kakaoUser.kakao_account.profile.profile_image_url || null,
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      // 새로 사용자 등록
+      user = await prisma.users.create({
+        data: {
+          email: kakaoUser.kakao_account.email,
+          nickname: kakaoUser.kakao_account.profile.nickname,
+          imageUrl: kakaoUser.kakao_account.profile.profile_image_url || null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    // JWT 발급
+    const token = generateToken(user.id); // user.id를 사용하여 JWT 토큰 생성
+    res
+          .status(StatusCodes.OK)
+          .success({ message: "로그인 성공", token: token, kakaoAccessToken: access_token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 🔹 3️⃣ 카카오 사용자 정보 요청 (GET ✅)
-app.get("/api/auth/kakao/user", async (req, res) => {
-  const token = req.query.token;
-  if (!token) return res.status(401).json({ error: "JWT token required" });
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    res.json({ id: decoded.id, email: decoded.email });
-  } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
-  }
-});
 
 // 🔹 4️⃣ 로그아웃 (POST ✅)
-app.post("/api/auth/kakao/logout", async (req, res) => {
-  const { accessToken } = req.body; // GET → POST 변경했으므로 body에서 accessToken을 받아야 함
-  if (!accessToken)
+app.post("/api/auth/kakao/logout", authenticateToken, async (req, res) => {
+  const { accessToken } = req.body; // 클라이언트에서 제공하는 카카오 액세스 토큰
+  if (!accessToken) {
     return res.status(401).json({ error: "Access Token required" });
+  }
 
   try {
-    await axios.post(
+    // 카카오 로그아웃 요청 (카카오 액세스 토큰 사용)
+    const kakaoLogoutResponse = await axios.post(
       "https://kapi.kakao.com/v1/user/logout",
       {},
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // 카카오 액세스 토큰을 Authorization 헤더로 전달
+        },
+      }
     );
-    res.json({ message: "로그아웃 완료" });
+
+    // 로그아웃 성공 후 응답
+    res.json({ message: "카카오 로그아웃 완료" });
   } catch (err) {
+    // 카카오 로그아웃 실패 시 처리
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
