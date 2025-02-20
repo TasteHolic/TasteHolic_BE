@@ -180,7 +180,7 @@ export const cancelLikeOnUserRecipeInDB = async (recipeId, userId) => {
         throw new NoExistingFavError("좋아요 기록이 없습니다.");
       }
 
-      const updatedRecipe = await tx.userRecipe.update({
+      const updatedRecipe = await tx.userRecipes.update({
         where: { id: recipeId },
         data: { likes: { decrement: 1 } },
       });
