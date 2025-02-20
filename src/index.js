@@ -234,7 +234,7 @@ app.get("/api/auth/kakao/login", (req, res) => {
 // 🔹 2️⃣ 카카오에서 Authorization Code 수신 → Access Token 요청 & JWT 발급 (POST ✅)
 app.post("/api/auth/kakao/callback", async (req, res) => {
   console.log("카카오 리디렉션 요청이 들어왔습니다.");
-  const { code } = req.query; // `GET` 방식으로 받은 `code`
+  const { code } = req.body; // `POST` 방식으로 받은 `code`
   if (!code) return res.status(400).json({ error: "Authorization code is missing" });
 
   try {
