@@ -2859,7 +2859,7 @@ paths:
       summary: 카카오 로그인 페이지로 리디렉트
       description: 사용자를 카카오 OAuth 2.0 로그인 페이지로 리디렉트.
       tags:
-        - Authentication
+        - Kakao Login
       responses:
         302:
           description: 카카오 로그인 페이지로 리디렉트
@@ -2868,14 +2868,13 @@ paths:
               description: 카카오 로그인 URL
               schema:
                 type: string
-                example: "https://kauth.kakao.com/oauth/authorize?client_id=YOUR_KAKAO_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code"
-
+                example: "http://localhost:3000/api/auth/kakao/login"
   /api/auth/kakao/callback:
     post:
       summary: 카카오 로그인 콜백 (Authorization Code → Access Token 변환)
       description: 카카오에서 Authorization Code를 받아, Access Token을 요청 후 JWT를 반환.
       tags:
-        - Authentication
+        - Kakao Login
       parameters:
         - name: code
           in: query
@@ -2896,7 +2895,8 @@ paths:
                     example: "로그인 성공"
                   token:
                     type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                  kakaoAccessToken:
+                    type: string
         400:
           description: Authorization Code 누락
           content:
@@ -2918,52 +2918,14 @@ paths:
                     type: string
                     example: "Failed to get access token"
 
-  /api/auth/kakao/user:
-    get:
-      summary: 로그인한 사용자 정보 가져오기
-      description: JWT를 이용해 로그인한 카카오 사용자 정보를 조회.
-      tags:
-        - Authentication
-      security:
-        - bearerAuth: [] # JWT 인증 필요
-      parameters:
-        - name: token
-          in: query
-          required: true
-          schema:
-            type: string
-          description: JWT Access Token
-      responses:
-        200:
-          description: 사용자 정보 반환
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 123456789
-                  email:
-                    type: string
-                    example: "user@example.com"
-        401:
-          description: 인증 실패 (잘못된 토큰)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid token"
-
   /api/auth/kakao/logout:
     post:
       summary: 카카오 로그아웃
       description: 카카오 Access Token을 만료시켜 로그아웃 처리.
       tags:
-        - Authentication
+        - Kakao Login
+      security:
+        - bearerAuth: []
       parameters:
         - name: accessToken
           in: query
